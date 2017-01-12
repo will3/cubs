@@ -18,7 +18,15 @@ public class PlanetController : MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown (KeyCode.LeftArrow)) {
+			nextQuaternion = Quaternion.Euler (0, 0, -90) * nextQuaternion;
+		}
+
+		if (Input.GetKeyDown (KeyCode.UpArrow)) {
 			nextQuaternion = Quaternion.Euler (-90, 0, 0) * nextQuaternion;
+		}
+
+		if (Input.GetKeyDown (KeyCode.DownArrow)) {
+			nextQuaternion = Quaternion.Euler (90, 0, 0) * nextQuaternion;
 		}
 			
 		transform.rotation = Quaternion.Slerp (transform.rotation, nextQuaternion, 0.1f);

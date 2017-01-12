@@ -5,8 +5,11 @@ using Cubiquity;
 using AssemblyCSharp;
 
 public class Planet : MonoBehaviour {
-	private ColoredCubesVolume coloredCubesVolume;
 	public int size = 16;
+	public float heightDiff = 4.0f;
+
+	private ColoredCubesVolume coloredCubesVolume;
+	private Terrian terrian = new Terrian();
 
 	// Use this for initialization
 	void Start () {
@@ -16,15 +19,13 @@ public class Planet : MonoBehaviour {
 		}
 
 		ColoredCubesVolumeData data = VolumeData.CreateEmptyVolumeData<ColoredCubesVolumeData>(new Region(0, 0, 0, size, size, size));
-
 		coloredCubesVolume.data = data;
-
-		var color = new QuantizedColor (143, 216, 70, 255);
-
+	
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				for (int k = 0; k < size; k++) {
-					data.SetVoxel (i, j, k, color);
+					var coord = new Vector3i (i, j, k);
+					terrian.SetVoxel (i, j, k, new TerrianBlock (coord, BlockType.Grass));
 				}
 			}
 		}
@@ -33,12 +34,14 @@ public class Planet : MonoBehaviour {
 		gameObject.transform.position = center;
 
 		generateHeightMap ();
-		generateTerrian ();
+		generateBiomes ();
+
+		loadData ();
+
+		terrian.Init (size);
 	}
 
 	private void generateHeightMap() {
-		var data = coloredCubesVolume.data;
-
 		for (var d = 0; d < 3; d++) {
 			foreach(var side in new [] {0, 1}) {
 				var g1 = new Noise ();
@@ -53,7 +56,7 @@ public class Planet : MonoBehaviour {
 				for (var i = 0; i < size; i++) {
 					for (var j = 0; j < size; j++) {
 						var noise = g1.get (i, j, 0) + g2.get(i, j, 0) * 0.5f;
-						var height = (int)Mathf.Floor(noise * 4.0f);
+						var height = (int)Mathf.Floor(noise / 1.5f * heightDiff);
 
 						var coord = new [] { 0, 0, 0 };
 						var startD = side * (size - 1);
@@ -63,7 +66,7 @@ public class Planet : MonoBehaviour {
 
 						for (var k = 0; k < height; k++) {
 							coord [d] = startD + k * dir;
-							data.SetVoxel (coord [0], coord [1], coord [2], new QuantizedColor (0, 0, 0, 0));
+							terrian.SetVoxel (coord [0], coord [1], coord [2], null);
 						}
 					}
 				}
@@ -71,21 +74,16 @@ public class Planet : MonoBehaviour {
 		}
 	}
 
-	private void generateTerrian() {
-		var data = coloredCubesVolume.data;
-
+	private void generateBiomes() {
 		var g1 = new Noise ();
 		g1.scale = 0.05f;
 		var g2 = new Noise ();
 		g2.scale = g1.scale * 2;
 
-		var stone = new QuantizedColor (178, 175, 171, 255);
-
 		for (var i = 0; i < size; i++) {
 			for (var j = 0; j < size; j++) {
 				for (var k = 0; k < size; k++) {
-					var v = data.GetVoxel (i, j, k);
-					if (v.alpha == 0) {
+					if (!terrian.HasVoxel (i, j, k)) {
 						continue;
 					}
 
@@ -93,15 +91,39 @@ public class Planet : MonoBehaviour {
 					noise /= 1.5f;
 
 					if (noise > 0.5) {
-						data.SetVoxel (i, j, k, stone);
+						var coord = new Vector3i (i, j, k);
+						terrian.SetVoxel (i, j, k, new TerrianBlock (coord, BlockType.Stone));
 					}
 				}
 			}
 		}
 	}
+
+	private void loadData() {
+		var data = coloredCubesVolume.data;
+
+		foreach (var kv in terrian.map) {
+			var coord = kv.Key;
+			var block = kv.Value;
+			var color = block.GetColor ();
+			data.SetVoxel (coord.x, coord.y, coord.z, new QuantizedColor (
+				(byte)(color.r * 255), 
+				(byte)(color.g * 255), 
+				(byte)(color.b * 255), 
+				(byte)(color.a * 255)
+			));
+		}
+	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+		foreach (var block in terrian.map.Values) {
+			foreach (var surface in block.surfaceMap.Values) {
+				Debug.DrawLine (
+					gameObject.transform.TransformPoint(surface.center),
+					gameObject.transform.TransformPoint(surface.pointAbove),
+					Color.red);
+			}
+		}
 	}
 }
