@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cubiquity;
 using AssemblyCSharp;
+using System;
 
 public class Planet : MonoBehaviour {
 	public int size = 16;
@@ -21,12 +22,38 @@ public class Planet : MonoBehaviour {
 	private ColoredCubesVolumeCollider volumeCollider;
 	private ColoredCubesVolumeRenderer volumeRenderer;
 
-	public GameObject Create(string name, Surface surface) {
+	public class BlockPrefab {
+		public readonly GameObject gameObject;
+		public readonly BlockComponent blockComponent;
+
+		public BlockPrefab(GameObject gameObject, BlockComponent blockComponent) {
+			this.gameObject = gameObject;
+			this.blockComponent = blockComponent;
+		}
+	}
+
+	public BlockPrefab Create(string name, Surface surface) {
 		var resourcePath = "Prefabs/" + name;
 		GameObject obj = Instantiate(Resources.Load(resourcePath)) as GameObject;
-		obj.transform.parent = gameObject.transform;
-		SetSurface (obj, surface);
-		return obj;
+		obj.transform.parent = gameObject.transform.parent;
+
+		BlockComponent blockComponent;
+
+		if (name.Equals (BlockPrefabType.Critter)) {
+			blockComponent = obj.GetComponent<Critter> ();
+		} else if (name.Equals (BlockPrefabType.Spawner)) {
+			blockComponent = obj.GetComponent<Spawner> ();
+		} else if (name.Equals (BlockPrefabType.Turrent)) {
+			blockComponent = obj.GetComponent<Turrent> ();
+		} else {
+			throw new Exception ("Invalid component " + name);
+		}
+
+		SetSurface (blockComponent, surface);
+
+		var prefab = new BlockPrefab (obj, blockComponent);
+		blockComponent.currentSurface = surface;
+		return prefab;
 	}
 
 	// Use this for initialization
@@ -109,9 +136,23 @@ public class Planet : MonoBehaviour {
 		}
 	}
 		
-	public void SetSurface(GameObject obj, Surface surface) {
+	public bool SetSurface(BlockComponent blockComponent, Surface surface) {
+		if (surface.hasObject) {
+			return false;
+		}
+
+		if (blockComponent.currentSurface != null) {
+			blockComponent.currentSurface.hasObject = false;
+		}
+
 		var position = gameObject.transform.TransformPoint (surface.pointAbove);
-		obj.transform.position = position;
+		blockComponent.transform.position = position;
+		blockComponent.currentSurface = surface;
+		surface.hasObject = true;
+
+		blockComponent.transform.localRotation = surface.rotation;
+
+		return true;
 	}
 
 	public Surface GetSurface() {
@@ -122,7 +163,6 @@ public class Planet : MonoBehaviour {
 	public Surface GetSurface(Ray ray) {
 		RaycastHit hit;
 		if (Physics.Raycast (ray, out hit)) {
-			Debug.Log (hit.point);
 			var diff = hit.point - ray.origin;
 
 			var pointAbove = hit.point - diff.normalized * 0.01f;

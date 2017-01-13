@@ -18,6 +18,8 @@ namespace AssemblyCSharp
 		public readonly Dictionary<string, List<Connection>> connectionBySurfaceIdentifier = 
 			new Dictionary<string, List<Connection>> ();
 
+		const float maxDistanceBetweenSurfaces = 1000.0f;
+
 		private Graph graph = new Graph ();
 
 		public Terrian (int size, float heightDiff) {
@@ -281,6 +283,10 @@ namespace AssemblyCSharp
 			// TODO handle no surface
 			var surface1 = surfaceByIdentifier [a];
 			var surface2 = surfaceByIdentifier [b];
+
+			if (surface1.hasObject || surface2.hasObject) {
+				return maxDistanceBetweenSurfaces;
+			}
 
 			return surface1.DistanceTo (surface2);
 		}

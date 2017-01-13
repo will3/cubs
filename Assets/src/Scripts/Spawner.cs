@@ -4,9 +4,7 @@ using UnityEngine;
 using AssemblyCSharp;
 using Cubiquity;
 
-public class Spawner : MonoBehaviour {
-	public Surface surface;
-
+public class Spawner : BlockComponent {
 	private double spawnTimestamp;
 	private double spawnTime = 1.0;
 
@@ -25,8 +23,6 @@ public class Spawner : MonoBehaviour {
 
 	void Spawn() {
 		var planet = Game.Instance.Planet;
-		var obj = planet.Create ("Critter", surface);
-		var critter = obj.GetComponent<Critter> ();
-		critter.SetSurface (surface);
+		planet.Create (BlockPrefabType.Critter, currentSurface);
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Cubiquity;
+using UnityEngine;
 
 namespace AssemblyCSharp
 {
@@ -56,6 +57,24 @@ namespace AssemblyCSharp
 				return Dir.Back;
 			} 
 			return Dir.None;
+		}
+
+		public static Quaternion GetRotation(Dir dir) {
+			switch (dir) {
+			case Dir.Up:
+				return new Quaternion ();
+			case Dir.Down:
+				return Quaternion.Euler (180, 0, 0);
+			case Dir.Left:
+				return Quaternion.Euler (0, 0, 90);
+			case Dir.Right:
+				return Quaternion.Euler (0, 0, -90);
+			case Dir.Forward:
+				return Quaternion.Euler(90, 0, 0);
+			case Dir.Back:
+				return Quaternion.Euler(-90, 0, 0);
+			}
+			return new Quaternion ();
 		}
 
 		public static readonly Dir[] Dirs = new [] { Dir.Up, Dir.Down, Dir.Left, Dir.Right, Dir.Forward, Dir.Back };

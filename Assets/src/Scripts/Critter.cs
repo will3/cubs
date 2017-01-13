@@ -4,12 +4,7 @@ using UnityEngine;
 using AssemblyCSharp;
 using Cubiquity;
 
-public class Critter : MonoBehaviour {
-
-	public bool debugMode = false;
-
-	private Surface currentSurface;
-
+public class Critter : BlockComponent {
 	private List<string> path = new List<string>();
 
 	private double stepTimestamp;
@@ -21,33 +16,9 @@ public class Critter : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		var planet = Game.Instance.Planet;
-
-		if (debugMode) {
-			if (Input.GetKeyDown (KeyCode.Mouse0)) {
-				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-				var surface = planet.GetSurface (ray);
-
-				if (surface != null) {
-					if (currentSurface == null) {
-						SetSurface (surface);
-					} else {
-						SetTarget (surface);
-					}
-				}
-			}
-		}
-
 		if (Time.time > stepTimestamp) {
 			step ();
 		}	
-	}
-
-	public void SetSurface(Surface surface) {
-		var planet = Game.Instance.Planet;
-		currentSurface = surface;
-		planet.SetSurface (gameObject, surface);
-		resetStepTimer ();
 	}
 
 	public void SetTarget(Surface surface) {
@@ -77,7 +48,7 @@ public class Critter : MonoBehaviour {
 				var connection = connections [index];
 
 				var otherSurface = connection.OtherSurface (currentSurface);
-				SetSurface (otherSurface);
+				planet.SetSurface (this, otherSurface);
 				resetStepTimer ();
 			}
 
@@ -86,8 +57,9 @@ public class Critter : MonoBehaviour {
 			
 		// TODO handle surface not found
 		var surface = planet.Terrian.surfaceByIdentifier [path [0]];
-		SetSurface (surface);
-		path.RemoveAt (0);
+		if (planet.SetSurface (this, surface)) {
+			path.RemoveAt (0);
+		}
 		resetStepTimer ();
 	}
 

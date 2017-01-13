@@ -8,20 +8,28 @@ namespace AssemblyCSharp
 		public readonly Dir dir;
 		public readonly Vector3i coord;
 		public readonly Vector3i coordAbove;
+		public readonly Vector3 normal;
 		public readonly string identifier;
 
 		public readonly Vector3 point;
 		public readonly Vector3 pointAbove;
 
+		public readonly Quaternion rotation;
+
+		public bool hasObject;
+
 		public Surface(Vector3i coord, Dir dir) {
 			this.coord = coord;
 			this.dir = dir;
 			var vector = DirUtils.GetUnitVector (dir);
+			normal = new Vector3(vector.x, vector.y, vector.z);
 			coordAbove = coord + vector;
 			identifier = coord.x + "," + coord.y + "," + coord.z + "," + dir;
 
 			point = new Vector3 (coord.x, coord.y, coord.z);
 			pointAbove = new Vector3 (coordAbove.x, coordAbove.y, coordAbove.z);
+
+			rotation = DirUtils.GetRotation (dir);
 		}
 
 		public float DistanceTo(Surface surface2) {
