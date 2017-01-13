@@ -2,14 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cubiquity;
+using Dijkstras;
 
 namespace AssemblyCSharp
 {
-	public class Terrian
+	public class Terrian : PathFindingHeruistics
 	{
 		public Dictionary<Vector3i, TerrianBlock> map = new Dictionary<Vector3i, TerrianBlock>();
+		public readonly int size;
+		public readonly float heightDiff;
+		public readonly Dictionary<string, Surface> surfaceByIdentifier = 
+			new Dictionary<string, Surface> ();
+		public readonly Dictionary<string, Connection> connectionLookUp = 
+			new Dictionary<string, Connection> ();
 
-		public Terrian () {}
+		private Graph graph = new Graph ();
+
+		public Terrian (int size, float heightDiff) {
+			this.size = size;
+			this.heightDiff = heightDiff;
+			graph.herusitics = this;
+		}
 
 		public void SetVoxel(int i, int j, int k, TerrianBlock block) {
 			var coord = new Vector3i (i, j, k);
@@ -35,9 +48,16 @@ namespace AssemblyCSharp
 			return v;
 		}
 
-		public void Init(int size) {
-			initGravity (size);
+		public void Init() {
+			initBlocks ();
+			generateHeightMap ();
+			generateBiomes ();
+			initGravity ();
+			initSurfaces ();
+			initConnections ();
+		}
 
+		private void initSurfaces() {
 			foreach (var kv in map) {
 				var coord = kv.Key;
 				var block = kv.Value;
@@ -51,12 +71,13 @@ namespace AssemblyCSharp
 					if (HasVoxel (nextCoord)) {
 						continue;
 					}
-					block.SetSurface (dir);
+					var surface = block.AddSurface (dir);
+					surfaceByIdentifier [surface.identifier] = surface;
 				}
 			}
 		}
 
-		private void initGravity(int size) {
+		private void initGravity() {
 			var center = new Vector3 (size, size, size) * 0.5f - new Vector3 (0.5f, 0.5f, 0.5f);
 
 			foreach (var kv in map) {
@@ -105,6 +126,158 @@ namespace AssemblyCSharp
 			var ratio = Math.Abs (a / b);
 			return ratio > ratio1 && ratio < ratio2;
 		}
+
+		private void initBlocks() {
+			for (int i = 0; i < size; i++) {
+				for (int j = 0; j < size; j++) {
+					for (int k = 0; k < size; k++) {
+						var coord = new Vector3i (i, j, k);
+						SetVoxel (i, j, k, new TerrianBlock (coord, BlockType.Grass));
+					}
+				}
+			}
+		}
+
+		private void generateHeightMap() {
+			for (var d = 0; d < 3; d++) {
+				foreach(var side in new [] {0, 1}) {
+					var g1 = new Noise ();
+					var g2 = new Noise ();
+					g2.scale = g1.scale * 2;
+
+					var dir = side == 0 ? 1 : -1;
+
+					var u = (d + 1) % 3;
+					var v = (d + 2) % 3;
+
+					for (var i = 0; i < size; i++) {
+						for (var j = 0; j < size; j++) {
+							var noise = g1.get (i, j, 0) + g2.get(i, j, 0) * 0.5f;
+							var height = (int)Mathf.Floor(noise / 1.5f * heightDiff);
+
+							var coord = new [] { 0, 0, 0 };
+							var startD = side * (size - 1);
+							coord [d] = startD;
+							coord [u] = i;
+							coord [v] = j;
+
+							for (var k = 0; k < height; k++) {
+								coord [d] = startD + k * dir;
+								SetVoxel (coord [0], coord [1], coord [2], null);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		private void generateBiomes() {
+			var g1 = new Noise ();
+			g1.scale = 0.05f;
+			var g2 = new Noise ();
+			g2.scale = g1.scale * 2;
+
+			for (var i = 0; i < size; i++) {
+				for (var j = 0; j < size; j++) {
+					for (var k = 0; k < size; k++) {
+						if (!HasVoxel (i, j, k)) {
+							continue;
+						}
+
+						var noise = g1.get (i, j, k) + g2.get (i, j, k) * 0.5f;
+						noise /= 1.5f;
+
+						if (noise > 0.5) {
+							var coord = new Vector3i (i, j, k);
+							SetVoxel (i, j, k, new TerrianBlock (coord, BlockType.Stone));
+						}
+					}
+				}
+			}
+		}
+
+		private void initConnections() {
+			foreach (var coord in map.Keys) {
+				var block1 = map [coord];
+
+				foreach(var surface1 in block1.surfaceMap.Values) {
+					var surfaceConnections = new Dictionary<string, float> ();
+
+					for (var i = -1; i <= 1; i++) {
+						for (var j = -1; j <= 1; j++) {
+							for (var k = -1; k <= 1; k++) {
+								
+								var coord2 = coord + new Vector3i (i, j, k);
+								if (!map.ContainsKey (coord2)) {
+									continue;
+								}
+								var block2 = map [coord2];
+
+								foreach (var surface2 in block2.surfaceMap.Values) {
+									if (surface1 == surface2) {
+										continue;
+									}
+
+									var distance = Vector3.Distance(surface1.pointAbove, surface2.pointAbove);
+
+									if (surface1.dir != surface2.dir &&
+										coord != coord2) {
+										continue;
+									}
+
+									if (distance >= 2) {
+										continue;
+									}
+
+									var connection = new Connection (surface1, surface2);
+									connectionLookUp [connection.identifier] = connection;
+									surfaceConnections [surface2.identifier] = surface2.DistanceTo (surface1);
+								}
+							}
+						}
+					}
+
+					graph.add_vertex (surface1.identifier, surfaceConnections);
+				}
+			}
+		}
+
+		public Surface GetSurface(Vector3i coordBelow, Vector3i coordAbove) {
+			if (!map.ContainsKey (coordBelow)) {
+				return null;
+			}
+
+			var block = map [coordBelow];
+
+			var dir = DirUtils.GetDir (coordAbove - coordBelow);
+
+			if (dir == Dir.None) {
+				return null;
+			}
+
+			if (!block.surfaceMap.ContainsKey (dir)) {
+				return null;
+			}
+
+			return block.surfaceMap [dir];
+		}
+
+		public Path GetPath(Surface a, Surface b) {
+			return graph.shortest_path (a.identifier, b.identifier);
+		}
+
+		#region PathFindingHeruistics implementation
+
+		public float DistanceBetweenNodes (string a, string b)
+		{			
+			// TODO handle no surface
+			var surface1 = surfaceByIdentifier [a];
+			var surface2 = surfaceByIdentifier [b];
+
+			return surface1.DistanceTo (surface2);
+		}
+
+		#endregion
 	}
 }
 

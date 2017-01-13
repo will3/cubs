@@ -41,6 +41,23 @@ namespace AssemblyCSharp
 			return zero;
 		}
 
+		public static Dir GetDir(Vector3i unitVector) {
+			if (unitVector == up) {
+				return Dir.Up;
+			} else if (unitVector == down) {
+				return Dir.Down;
+			} else if (unitVector == left) {
+				return Dir.Left;
+			} else if (unitVector == right) {
+				return Dir.Right;
+			} else if (unitVector == forward) {
+				return Dir.Forward;
+			} else if (unitVector == back) {
+				return Dir.Back;
+			} 
+			return Dir.None;
+		}
+
 		public static readonly Dir[] Dirs = new [] { Dir.Up, Dir.Down, Dir.Left, Dir.Right, Dir.Forward, Dir.Back };
 	}
 }

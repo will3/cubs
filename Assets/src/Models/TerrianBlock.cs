@@ -15,8 +15,9 @@ namespace AssemblyCSharp
 		public readonly BlockType type;
 		public readonly Vector3i coord;
 
-		private Dir gravityMask;
 		public readonly Dictionary<Dir, Surface> surfaceMap = new Dictionary<Dir, Surface>();
+
+		private Dir gravityMask;
 
 		private static Dictionary<BlockType, Color> colorMap = 
 			new Dictionary<BlockType, Color> {
@@ -42,10 +43,12 @@ namespace AssemblyCSharp
 			return (gravityMask & dir) != Dir.None;
 		}
 
-		public void SetSurface(Dir dir) {
+		public Surface AddSurface(Dir dir) {
 			if (!surfaceMap.ContainsKey (dir)) {
 				surfaceMap [dir] = new Surface (coord, dir);
 			}
+
+			return surfaceMap [dir];
 		}
 
 		public Surface GetSurface(Dir dir) {
