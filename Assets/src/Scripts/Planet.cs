@@ -21,6 +21,14 @@ public class Planet : MonoBehaviour {
 	private ColoredCubesVolumeCollider volumeCollider;
 	private ColoredCubesVolumeRenderer volumeRenderer;
 
+	public GameObject Create(string name, Surface surface) {
+		var resourcePath = "Prefabs/" + name;
+		GameObject obj = Instantiate(Resources.Load(resourcePath)) as GameObject;
+		obj.transform.parent = gameObject.transform;
+		SetSurface (obj, surface);
+		return obj;
+	}
+
 	// Use this for initialization
 	void Start () {
 		_terrian = new Terrian (size, heightDiff);
@@ -99,6 +107,16 @@ public class Planet : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.Alpha2)) {
 			drawConnections = !drawConnections;
 		}
+	}
+		
+	public void SetSurface(GameObject obj, Surface surface) {
+		var position = gameObject.transform.TransformPoint (surface.pointAbove);
+		obj.transform.position = position;
+	}
+
+	public Surface GetSurface() {
+		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		return GetSurface (ray);
 	}
 
 	public Surface GetSurface(Ray ray) {

@@ -6,6 +6,8 @@ using Cubiquity;
 
 public class Critter : MonoBehaviour {
 
+	public bool debugMode = false;
+
 	private Surface currentSurface;
 
 	private List<string> path = new List<string>();
@@ -20,33 +22,31 @@ public class Critter : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		var planet = Game.Instance.Planet;
-		if (Input.GetKeyDown (KeyCode.Mouse0)) {
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			var surface = planet.GetSurface (ray);
 
-			if (surface != null) {
-				if (currentSurface == null) {
-					SetSurface (surface);
-				} else {
-					SetTarget (surface);
+		if (debugMode) {
+			if (Input.GetKeyDown (KeyCode.Mouse0)) {
+				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+				var surface = planet.GetSurface (ray);
+
+				if (surface != null) {
+					if (currentSurface == null) {
+						SetSurface (surface);
+					} else {
+						SetTarget (surface);
+					}
 				}
 			}
 		}
 
-		if (path != null && path.Count > 0) {
-			if (Time.time > stepTimestamp) {
-				step ();
-			}	
-		}
+		if (Time.time > stepTimestamp) {
+			step ();
+		}	
 	}
 
 	public void SetSurface(Surface surface) {
 		var planet = Game.Instance.Planet;
 		currentSurface = surface;
-		var position = surface.pointAbove;
-		position = planet.gameObject.transform.TransformPoint (position);
-		gameObject.transform.position = position;
-
+		planet.SetSurface (gameObject, surface);
 		resetStepTimer ();
 	}
 
@@ -67,6 +67,23 @@ public class Critter : MonoBehaviour {
 
 	void step() {
 		var planet = Game.Instance.Planet;
+		if (path == null || path.Count == 0) {
+			// Wander
+
+			if (planet.Terrian.connectionBySurfaceIdentifier.ContainsKey (currentSurface.identifier)) {
+				var connections = planet.Terrian.connectionBySurfaceIdentifier [currentSurface.identifier];
+
+				var index = Random.Range(0, connections.Count - 1);
+				var connection = connections [index];
+
+				var otherSurface = connection.OtherSurface (currentSurface);
+				SetSurface (otherSurface);
+				resetStepTimer ();
+			}
+
+			return;
+		}
+			
 		// TODO handle surface not found
 		var surface = planet.Terrian.surfaceByIdentifier [path [0]];
 		SetSurface (surface);

@@ -15,6 +15,8 @@ namespace AssemblyCSharp
 			new Dictionary<string, Surface> ();
 		public readonly Dictionary<string, Connection> connectionLookUp = 
 			new Dictionary<string, Connection> ();
+		public readonly Dictionary<string, List<Connection>> connectionBySurfaceIdentifier = 
+			new Dictionary<string, List<Connection>> ();
 
 		private Graph graph = new Graph ();
 
@@ -232,6 +234,12 @@ namespace AssemblyCSharp
 									var connection = new Connection (surface1, surface2);
 									connectionLookUp [connection.identifier] = connection;
 									surfaceConnections [surface2.identifier] = surface2.DistanceTo (surface1);
+
+									if (!connectionBySurfaceIdentifier.ContainsKey (surface1.identifier)) {
+										connectionBySurfaceIdentifier [surface1.identifier] = new List<Connection> ();
+									}
+
+									connectionBySurfaceIdentifier [surface1.identifier].Add (connection);
 								}
 							}
 						}
