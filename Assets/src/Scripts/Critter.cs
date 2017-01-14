@@ -6,9 +6,9 @@ using Cubiquity;
 
 public class Critter : BlockComponent {
 	private List<string> path = new List<string>();
-
-	private double stepTimestamp;
-	private double timePerStep = 0.2;
+	private Surface nextSurface;
+	private float stepAmount = 0.0f;
+	private float speed = 0.04f;
 
 	// Use this for initialization
 	void Start () {
@@ -16,9 +16,32 @@ public class Critter : BlockComponent {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Time.time > stepTimestamp) {
-			step ();
-		}	
+		if (path == null || path.Count == 0) {
+			wander ();
+		}
+
+		var planet = Game.Instance.Planet;
+
+		if (path != null && path.Count > 0) {
+			var nextSurface = planet.Terrian.surfaceByIdentifier [path [0]];
+
+			var distance = nextSurface.DistanceTo (currentSurface);
+			stepAmount += speed;
+
+			var ratio = stepAmount / distance;
+
+			if (ratio > 1.0f) {
+				ratio = 1.0f;
+				stepAmount -= distance;
+			}
+				
+			planet.LerpSurface (this, currentSurface, nextSurface, ratio);
+
+			if (ratio == 1.0f) {
+				path.RemoveAt (0);
+				ratio = 0.0f;
+			}
+		}
 	}
 
 	public void SetTarget(Surface surface) {
@@ -36,41 +59,15 @@ public class Critter : BlockComponent {
 		}
 	}
 
-	void step() {
+	void wander() {
 		var planet = Game.Instance.Planet;
-		if (path == null || path.Count == 0) {
-			// Wander
+			
+		var target = planet.RandomSurface (currentSurface, 6);
 
-			if (!planet.Terrian.connectionBySurfaceIdentifier.ContainsKey (currentSurface.identifier)) {
-				return;
-			}
-
-			var connections = planet.Terrian.connectionBySurfaceIdentifier [currentSurface.identifier];
-
-			var index = Random.Range (0, connections.Count - 1);
-			var connection = connections [index];
-
-			var otherSurface = connection.OtherSurface (currentSurface);
-			if (planet.CanSetSurface (this, otherSurface)) {
-				path.Add (otherSurface.identifier);
-			}
-			//				planet.SetSurface (this, otherSurface);
-			//				resetStepTimer ();
-			//			return;
+		if (target.identifier.Equals (currentSurface.identifier)) {
+			return;	
 		}
 
-		if (path.Count > 0) {
-			// TODO handle surface not found
-			var surface = planet.Terrian.surfaceByIdentifier [path [0]];
-			if (planet.SetSurface (this, surface)) {
-				path.RemoveAt (0);
-			}
-		}
-
-		resetStepTimer ();
-	}
-
-	void resetStepTimer() {
-		stepTimestamp = Time.time + timePerStep;
+		SetTarget (target);
 	}
 }

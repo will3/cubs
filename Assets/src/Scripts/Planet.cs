@@ -146,15 +146,61 @@ public class Planet : MonoBehaviour {
 		}
 
 		if (blockComponent.currentSurface != null) {
-			blockComponent.currentSurface.hasObject = false;
+			blockComponent.currentSurface.blockComponent = null;
 		}
 
 		var position = gameObject.transform.TransformPoint (surface.pointAbove);
 		blockComponent.transform.position = position;
 		blockComponent.currentSurface = surface;
-		surface.hasObject = true;
+		surface.blockComponent = blockComponent;
 
 		blockComponent.transform.localRotation = surface.rotation;
+
+		return true;
+	}
+
+	public Connection RandomConnection(string surfaceIdentifier) {
+		var connections = Terrian.connectionBySurfaceIdentifier [surfaceIdentifier];
+		var index = UnityEngine.Random.Range (0, connections.Count - 1);
+		return connections [index];	
+	}
+
+	public Surface RandomSurface(Surface surface, int num = 1) {
+		var identifier = surface.identifier;
+
+		for (var i = 0; i < num; i++) {
+			var connection = RandomConnection (identifier);
+			identifier = connection.OtherSurface (identifier).identifier;
+		}
+
+		return Terrian.surfaceByIdentifier [identifier];
+	}
+
+	// Ratio should be more than 0 and less than or equal to 1
+	public bool LerpSurface(BlockComponent blockComponent, Surface surface1, Surface surface2, float ratio) {
+		if (surface1.identifier.Equals (surface2.identifier)) {
+			throw new Exception ("Invalid surface");
+		}
+		if (blockComponent.currentSurface != null) {
+			blockComponent.currentSurface.blockComponent = null;
+		}
+
+		var position1 = surface1.pointAbove;
+		var position2 = surface2.pointAbove;
+
+		var position = position1 + (position2 - position1) * ratio;
+
+		blockComponent.transform.position = gameObject.transform.TransformPoint (position);
+		Debug.Log (blockComponent.transform.position);
+		Debug.Log (ratio);
+
+		if (ratio == 1.0f) {
+			blockComponent.currentSurface = surface2;
+		}
+
+		surface2.blockComponent = blockComponent;
+
+		blockComponent.transform.localRotation = surface2.rotation;
 
 		return true;
 	}

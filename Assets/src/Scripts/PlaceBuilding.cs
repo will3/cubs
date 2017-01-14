@@ -19,6 +19,10 @@ public class PlaceBuilding : MonoBehaviour {
 			prefabType = BlockPrefabType.Turrent;
 		}
 
+		if (Input.GetKeyDown (KeyCode.E)) {
+			prefabType = BlockPrefabType.Critter;
+		}
+
 		if (Input.GetKeyDown (KeyCode.Mouse0)) {
 			var planet = Game.Instance.Planet;
 			var surface = planet.GetSurface ();

@@ -17,6 +17,10 @@ namespace AssemblyCSharp
 		public Surface OtherSurface(Surface surface) {
 			return a.identifier.Equals (surface.identifier) ? b : a;
 		}
+
+		public Surface OtherSurface(string surfaceIdentifier) {
+			return a.identifier.Equals (surfaceIdentifier) ? b : a;
+		}
 	}
 }
 

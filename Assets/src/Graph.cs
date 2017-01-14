@@ -52,7 +52,8 @@ namespace Dijkstras
 			}
 
 			var step = 0;
-			while (nodes.Count != 0)
+			var nodesCount = 0;
+			while (nodesCount < nodes.Count)
 			{
 				step++;
 				if (step > maxStep) {
@@ -62,8 +63,8 @@ namespace Dijkstras
 					return	distances[x].CompareTo(distances[y]);
 				});
 
-				var smallest = nodes[0];
-				nodes.Remove(smallest);
+				var smallest = nodes[nodesCount];
+				nodesCount++;
 
 				if (smallest == finish)
 				{
