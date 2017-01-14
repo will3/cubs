@@ -136,6 +136,10 @@ public class Planet : MonoBehaviour {
 		}
 	}
 		
+	public bool CanSetSurface(BlockComponent blockComponent, Surface surface) {
+		return !surface.hasObject;
+	}
+
 	public bool SetSurface(BlockComponent blockComponent, Surface surface) {
 		if (surface.hasObject) {
 			return false;

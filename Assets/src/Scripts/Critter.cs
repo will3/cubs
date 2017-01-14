@@ -41,25 +41,32 @@ public class Critter : BlockComponent {
 		if (path == null || path.Count == 0) {
 			// Wander
 
-			if (planet.Terrian.connectionBySurfaceIdentifier.ContainsKey (currentSurface.identifier)) {
-				var connections = planet.Terrian.connectionBySurfaceIdentifier [currentSurface.identifier];
-
-				var index = Random.Range(0, connections.Count - 1);
-				var connection = connections [index];
-
-				var otherSurface = connection.OtherSurface (currentSurface);
-				planet.SetSurface (this, otherSurface);
-				resetStepTimer ();
+			if (!planet.Terrian.connectionBySurfaceIdentifier.ContainsKey (currentSurface.identifier)) {
+				return;
 			}
 
-			return;
+			var connections = planet.Terrian.connectionBySurfaceIdentifier [currentSurface.identifier];
+
+			var index = Random.Range (0, connections.Count - 1);
+			var connection = connections [index];
+
+			var otherSurface = connection.OtherSurface (currentSurface);
+			if (planet.CanSetSurface (this, otherSurface)) {
+				path.Add (otherSurface.identifier);
+			}
+			//				planet.SetSurface (this, otherSurface);
+			//				resetStepTimer ();
+			//			return;
 		}
-			
-		// TODO handle surface not found
-		var surface = planet.Terrian.surfaceByIdentifier [path [0]];
-		if (planet.SetSurface (this, surface)) {
-			path.RemoveAt (0);
+
+		if (path.Count > 0) {
+			// TODO handle surface not found
+			var surface = planet.Terrian.surfaceByIdentifier [path [0]];
+			if (planet.SetSurface (this, surface)) {
+				path.RemoveAt (0);
+			}
 		}
+
 		resetStepTimer ();
 	}
 
