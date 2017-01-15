@@ -12,15 +12,15 @@ public class PlaceBuilding : MonoBehaviour {
 
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.Q)) {
-			prefabType = BlockPrefabType.Spawner;
+			prefabType = Prefabs.Spawner;
 		} 
 
 		if (Input.GetKeyDown (KeyCode.W)) {
-			prefabType = BlockPrefabType.Turrent;
+			prefabType = Prefabs.Turrent;
 		}
 
 		if (Input.GetKeyDown (KeyCode.E)) {
-			prefabType = BlockPrefabType.Critter;
+			prefabType = Prefabs.Critter;
 		}
 
 		if (Input.GetKeyDown (KeyCode.Mouse0)) {

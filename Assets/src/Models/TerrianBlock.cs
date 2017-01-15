@@ -7,7 +7,8 @@ namespace AssemblyCSharp
 {
 	public enum BlockType {
 		Stone,
-		Grass
+		Grass,
+		Water
 	}
 
 	public class TerrianBlock
@@ -22,7 +23,8 @@ namespace AssemblyCSharp
 		private static Dictionary<BlockType, Color> colorMap = 
 			new Dictionary<BlockType, Color> {
 			{ BlockType.Grass, new Color (143 / 255.0f, 216 / 255.0f, 70 / 255.0f) },
-			{ BlockType.Stone, new Color (178 / 255.0f, 175 / 255.0f, 171 / 255.0f) }
+			{ BlockType.Stone, new Color (178 / 255.0f, 175 / 255.0f, 171 / 255.0f) },
+			{ BlockType.Water, Colors.hexToColor("#00B4C3") }
 		};
 
 		public TerrianBlock (Vector3i coord, BlockType type)

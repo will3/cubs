@@ -18,11 +18,7 @@ namespace AssemblyCSharp
 
 		public BlockComponent blockComponent;
 
-		public bool hasObject {
-			get {
-				return blockComponent != null;
-			}
-		}
+		public bool hasObject { get { return blockComponent != null; } }
 
 		public Surface(Vector3i coord, Dir dir) {
 			this.coord = coord;

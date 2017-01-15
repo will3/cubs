@@ -4,14 +4,25 @@ using UnityEngine;
 using AssemblyCSharp;
 using Cubiquity;
 
-public class Critter : BlockComponent {
+public class Critter : MonoBehaviour {
 	private List<string> path = new List<string>();
 	private Surface nextSurface;
 	private float stepAmount = 0.0f;
 	private float speed = 0.04f;
+	private BlockComponent blockComponent;
+
+	private Surface currentSurface {
+		get { 
+			return blockComponent.currentSurface; 
+		}
+	}
 
 	// Use this for initialization
 	void Start () {
+		blockComponent = GetComponent<BlockComponent> ();
+		if (blockComponent == null) {
+			Debug.LogError ("'Critter' must have 'BlockComponent'"); 
+		}
 	}
 	
 	// Update is called once per frame
@@ -35,7 +46,7 @@ public class Critter : BlockComponent {
 				stepAmount -= distance;
 			}
 				
-			planet.LerpSurface (this, currentSurface, nextSurface, ratio);
+			planet.LerpSurface (blockComponent, currentSurface, nextSurface, ratio);
 
 			if (ratio == 1.0f) {
 				path.RemoveAt (0);
@@ -67,7 +78,7 @@ public class Critter : BlockComponent {
 		if (target.identifier.Equals (currentSurface.identifier)) {
 			return;	
 		}
-
+			
 		SetTarget (target);
 	}
 }

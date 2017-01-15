@@ -17,6 +17,7 @@ namespace AssemblyCSharp
 			new Dictionary<string, Connection> ();
 		public readonly Dictionary<string, List<Connection>> connectionBySurfaceIdentifier = 
 			new Dictionary<string, List<Connection>> ();
+		public readonly int seaLevel = -2;
 
 		const float maxDistanceBetweenSurfaces = 1000.0f;
 
@@ -146,8 +147,10 @@ namespace AssemblyCSharp
 			for (var d = 0; d < 3; d++) {
 				foreach(var side in new [] {0, 1}) {
 					var g1 = new Noise ();
+					g1.scale = 1.0f / (float)size * 1.0f;
+
 					var g2 = new Noise ();
-					g2.scale = g1.scale * 2;
+					g2.scale = 0.05f;
 
 					var dir = side == 0 ? 1 : -1;
 
@@ -156,8 +159,8 @@ namespace AssemblyCSharp
 
 					for (var i = 0; i < size; i++) {
 						for (var j = 0; j < size; j++) {
-							var noise = g1.get (i, j, 0) + g2.get(i, j, 0) * 0.5f;
-							var height = (int)Mathf.Floor(noise / 1.5f * heightDiff);
+							var noise = (g1.get (i, j, 0) + g2.get (i, j, 0));
+							var height = (int)Mathf.Floor(noise * heightDiff);
 
 							var coord = new [] { 0, 0, 0 };
 							var startD = side * (size - 1);
@@ -167,6 +170,7 @@ namespace AssemblyCSharp
 
 							for (var k = 0; k < height; k++) {
 								coord [d] = startD + k * dir;
+							
 								SetVoxel (coord [0], coord [1], coord [2], null);
 							}
 						}

@@ -7,7 +7,7 @@ using System;
 
 public class Planet : MonoBehaviour {
 	public int size = 16;
-	public float heightDiff = 4.0f;
+	public float heightDiff = 2.0f;
 
 	private Terrian _terrian;
 	public Terrian Terrian {
@@ -22,38 +22,16 @@ public class Planet : MonoBehaviour {
 	private ColoredCubesVolumeCollider volumeCollider;
 	private ColoredCubesVolumeRenderer volumeRenderer;
 
-	public class BlockPrefab {
-		public readonly GameObject gameObject;
-		public readonly BlockComponent blockComponent;
-
-		public BlockPrefab(GameObject gameObject, BlockComponent blockComponent) {
-			this.gameObject = gameObject;
-			this.blockComponent = blockComponent;
-		}
-	}
-
-	public BlockPrefab Create(string name, Surface surface) {
-		var resourcePath = "Prefabs/" + name;
-		GameObject obj = Instantiate(Resources.Load(resourcePath)) as GameObject;
+	public GameObject Create(string name, Surface surface) {
+		var obj = Prefabs.Create (name);
 		obj.transform.parent = gameObject.transform.parent;
-
-		BlockComponent blockComponent;
-
-		if (name.Equals (BlockPrefabType.Critter)) {
-			blockComponent = obj.GetComponent<Critter> ();
-		} else if (name.Equals (BlockPrefabType.Spawner)) {
-			blockComponent = obj.GetComponent<Spawner> ();
-		} else if (name.Equals (BlockPrefabType.Turrent)) {
-			blockComponent = obj.GetComponent<Turrent> ();
-		} else {
-			throw new Exception ("Invalid component " + name);
-		}
+		var blockComponent = obj.GetComponent<BlockComponent> ();
 
 		SetSurface (blockComponent, surface);
 
-		var prefab = new BlockPrefab (obj, blockComponent);
 		blockComponent.currentSurface = surface;
-		return prefab;
+
+		return obj;
 	}
 
 	// Use this for initialization
@@ -85,6 +63,11 @@ public class Planet : MonoBehaviour {
 		Terrian.Init ();
 
 		loadData ();
+
+		var dragCamera = Camera.main.GetComponent<DragCamera> ();
+		if (dragCamera != null) {
+			dragCamera.distance = size * 1.5f;
+		}
 	}
 
 	private void loadData() {
@@ -107,10 +90,7 @@ public class Planet : MonoBehaviour {
 		if (drawNormals) {
 			foreach (var block in Terrian.map.Values) {
 				foreach (var surface in block.surfaceMap.Values) {
-					Debug.DrawLine (
-						gameObject.transform.TransformPoint(surface.point),
-						gameObject.transform.TransformPoint(surface.pointAbove),
-						Color.red);
+					DebugUtil.DrawSurface (surface);
 				}
 			}
 		}
@@ -135,10 +115,6 @@ public class Planet : MonoBehaviour {
 			drawConnections = !drawConnections;
 		}
 	}
-		
-	public bool CanSetSurface(BlockComponent blockComponent, Surface surface) {
-		return !surface.hasObject;
-	}
 
 	public bool SetSurface(BlockComponent blockComponent, Surface surface) {
 		if (surface.hasObject) {
@@ -159,6 +135,42 @@ public class Planet : MonoBehaviour {
 		return true;
 	}
 
+	// Ratio should be more than 0 and less than or equal to 1
+	public bool LerpSurface(BlockComponent blockComponent, Surface surface1, Surface surface2, float ratio) {
+		if (surface1.identifier.Equals (surface2.identifier)) {
+			throw new Exception ("Invalid surface");
+		}
+
+		ratio *= 4.0f;
+		ratio = Mathf.Floor (ratio);
+		ratio /= 4.0f;
+
+		var position1 = surface1.pointAbove;
+		var position2 = surface2.pointAbove;
+
+		var position = position1 + (position2 - position1) * ratio;
+
+		blockComponent.transform.position = gameObject.transform.TransformPoint (position);
+
+		if (ratio == 1.0f) {
+			if (blockComponent.currentSurface != null) {
+				blockComponent.currentSurface.blockComponent = null;
+			}
+
+			blockComponent.currentSurface = surface2;
+		}
+
+		surface2.blockComponent = blockComponent;
+
+		if (ratio < 0.5) {
+			blockComponent.transform.localRotation = surface1.rotation;	
+		} else {
+			blockComponent.transform.localRotation = surface2.rotation;
+		}
+
+		return true;
+	}
+
 	public Connection RandomConnection(string surfaceIdentifier) {
 		var connections = Terrian.connectionBySurfaceIdentifier [surfaceIdentifier];
 		var index = UnityEngine.Random.Range (0, connections.Count - 1);
@@ -174,35 +186,6 @@ public class Planet : MonoBehaviour {
 		}
 
 		return Terrian.surfaceByIdentifier [identifier];
-	}
-
-	// Ratio should be more than 0 and less than or equal to 1
-	public bool LerpSurface(BlockComponent blockComponent, Surface surface1, Surface surface2, float ratio) {
-		if (surface1.identifier.Equals (surface2.identifier)) {
-			throw new Exception ("Invalid surface");
-		}
-		if (blockComponent.currentSurface != null) {
-			blockComponent.currentSurface.blockComponent = null;
-		}
-
-		var position1 = surface1.pointAbove;
-		var position2 = surface2.pointAbove;
-
-		var position = position1 + (position2 - position1) * ratio;
-
-		blockComponent.transform.position = gameObject.transform.TransformPoint (position);
-		Debug.Log (blockComponent.transform.position);
-		Debug.Log (ratio);
-
-		if (ratio == 1.0f) {
-			blockComponent.currentSurface = surface2;
-		}
-
-		surface2.blockComponent = blockComponent;
-
-		blockComponent.transform.localRotation = surface2.rotation;
-
-		return true;
 	}
 
 	public Surface GetSurface() {

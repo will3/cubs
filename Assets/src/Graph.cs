@@ -29,67 +29,77 @@ namespace Dijkstras
 			vertices[name] = edges;
 		}
 
+		class PathFindingCache {
+			internal Dictionary<string, string> previous = new Dictionary<string, string>();
+			Dictionary<string, float> distances = new Dictionary<string, float>();
+			internal List<string> nodes = new List<string> ();
+
+			internal void setDistance(string vertex, float value) {
+				distances [vertex] = value;
+				nodes.Add(vertex);
+			}
+
+			internal float getDistance(string vertex) {
+				if (distances.ContainsKey (vertex)) {
+					return distances [vertex];
+				}
+				return int.MaxValue;
+			}
+
+			internal void sort() {
+				nodes.Sort((x, y) => {
+					return	
+						getDistance(x).CompareTo(getDistance(y));
+				});
+			}
+		}
+
 		public Path shortest_path(string start, string finish, int maxStep = 64)
 		{
-			var previous = new Dictionary<string, string>();
-			var distances = new Dictionary<string, float>();
-			var nodes = new List<string>();
+			var cache = new PathFindingCache ();
 
 			List<string> path = null;
 
-			foreach (var vertex in vertices)
-			{
-				if (vertex.Key == start)
-				{
-					distances[vertex.Key] = 0;
-				}
-				else
-				{
-					distances[vertex.Key] = int.MaxValue;
-				}
-
-				nodes.Add(vertex.Key);
-			}
+			cache.setDistance (start, 0);
 
 			var step = 0;
 			var nodesCount = 0;
-			while (nodesCount < nodes.Count)
+			var maxNodesCount = vertices.Count;
+			while (nodesCount < maxNodesCount)
 			{
 				step++;
 				if (step > maxStep) {
 					return new Path (path, false);
 				}
-				nodes.Sort((x, y) => {
-					return	distances[x].CompareTo(distances[y]);
-				});
+		
 
-				var smallest = nodes[nodesCount];
+				var smallest = cache.nodes[nodesCount];
 				nodesCount++;
 
 				if (smallest == finish)
 				{
 					path = new List<string>();
-					while (previous.ContainsKey(smallest))
+					while (cache.previous.ContainsKey(smallest))
 					{
 						path.Add(smallest);
-						smallest = previous[smallest];
+						smallest = cache.previous[smallest];
 					}
 
 					break;
 				}
 
-				if (distances[smallest] == int.MaxValue)
+				if (cache.getDistance(smallest) == int.MaxValue)
 				{
 					break;
 				}
 
 				foreach (var neighbor in vertices[smallest])
 				{
-					var alt = distances[smallest] + neighbor.Value + getHerustics(smallest, neighbor.Key, finish);
-					if (alt < distances[neighbor.Key])
+					var alt = cache.getDistance(smallest) + neighbor.Value + getHerustics(smallest, neighbor.Key, finish);
+					if (alt < cache.getDistance(neighbor.Key))
 					{
-						distances[neighbor.Key] = alt;
-						previous[neighbor.Key] = smallest;
+						cache.setDistance (neighbor.Key, alt);
+						cache.previous[neighbor.Key] = smallest;
 					}
 				}
 			}

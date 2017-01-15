@@ -4,13 +4,22 @@ using UnityEngine;
 using AssemblyCSharp;
 using Cubiquity;
 
-public class Spawner : BlockComponent {
+public class Spawner : MonoBehaviour {
 	private double spawnTimestamp;
 	private double spawnTime = 1.0;
+	private BlockComponent blockComponent;
+
+	private Surface currentSurface {
+		get { return blockComponent.currentSurface; }
+	}
 
 	// Use this for initialization
 	void Start () {
 		spawnTimestamp = Time.time + spawnTime;
+		blockComponent = GetComponent<BlockComponent> ();
+		if (blockComponent == null) {
+			Debug.LogError ("'Spawner' must have 'BlockComponent'");
+		}
 	}
 	
 	// Update is called once per frame
@@ -23,6 +32,6 @@ public class Spawner : BlockComponent {
 
 	void Spawn() {
 		var planet = Game.Instance.Planet;
-		planet.Create (BlockPrefabType.Critter, currentSurface);
+		planet.Create (Prefabs.Critter, currentSurface);
 	}
 }
