@@ -11,22 +11,27 @@ public class Critter : MonoBehaviour {
 	private float speed = 0.04f;
 	private BlockComponent blockComponent;
 
-	private Surface currentSurface {
-		get { 
-			return blockComponent.currentSurface; 
-		}
-	}
+	private Surface currentSurface { get { return blockComponent.currentSurface; } }
+
+	private Billboard billBoard;
 
 	// Use this for initialization
 	void Start () {
 		blockComponent = GetComponent<BlockComponent> ();
-		if (blockComponent == null) {
-			Debug.LogError ("'Critter' must have 'BlockComponent'"); 
-		}
+		Debug.Assert (blockComponent != null);
+		billBoard = GetComponentInChildren<Billboard> ();
+		Debug.Assert (billBoard != null);
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
+		// Unplaced
+		if (currentSurface == null) {
+			return;
+		}
+
+		billBoard.up = transform.TransformDirection (Vector3.up);
+
 		if (path == null || path.Count == 0) {
 			wander ();
 		}
@@ -47,7 +52,7 @@ public class Critter : MonoBehaviour {
 			}
 				
 			planet.LerpSurface (blockComponent, currentSurface, nextSurface, ratio);
-
+				
 			if (ratio == 1.0f) {
 				path.RemoveAt (0);
 				ratio = 0.0f;

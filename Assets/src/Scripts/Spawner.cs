@@ -32,6 +32,6 @@ public class Spawner : MonoBehaviour {
 
 	void Spawn() {
 		var planet = Game.Instance.Planet;
-		planet.Create (Prefabs.Critter, currentSurface);
+		planet.Create (Prefabs.Spider, currentSurface);
 	}
 }

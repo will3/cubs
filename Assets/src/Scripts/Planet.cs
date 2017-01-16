@@ -66,7 +66,7 @@ public class Planet : MonoBehaviour {
 
 		var dragCamera = Camera.main.GetComponent<DragCamera> ();
 		if (dragCamera != null) {
-			dragCamera.distance = size * 1.5f;
+			dragCamera.distance = size * 1.3f;
 		}
 	}
 
@@ -125,7 +125,7 @@ public class Planet : MonoBehaviour {
 			blockComponent.currentSurface.blockComponent = null;
 		}
 
-		var position = gameObject.transform.TransformPoint (surface.pointAbove);
+		var position = gameObject.transform.TransformPoint (surface.point);
 		blockComponent.transform.position = position;
 		blockComponent.currentSurface = surface;
 		surface.blockComponent = blockComponent;
@@ -145,8 +145,8 @@ public class Planet : MonoBehaviour {
 		ratio = Mathf.Floor (ratio);
 		ratio /= 4.0f;
 
-		var position1 = surface1.pointAbove;
-		var position2 = surface2.pointAbove;
+		var position1 = surface1.point;
+		var position2 = surface2.point;
 
 		var position = position1 + (position2 - position1) * ratio;
 

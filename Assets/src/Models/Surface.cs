@@ -28,7 +28,7 @@ namespace AssemblyCSharp
 			coordAbove = coord + vector;
 			identifier = coord.x + "," + coord.y + "," + coord.z + "," + dir;
 
-			point = new Vector3 (coord.x, coord.y, coord.z);
+			point = new Vector3 (coord.x, coord.y, coord.z) + normal * 0.5f;;
 			pointAbove = new Vector3 (coordAbove.x, coordAbove.y, coordAbove.z);
 
 			rotation = DirUtils.GetRotation (dir);

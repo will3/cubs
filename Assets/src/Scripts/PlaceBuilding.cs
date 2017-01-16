@@ -20,7 +20,7 @@ public class PlaceBuilding : MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown (KeyCode.E)) {
-			prefabType = Prefabs.Critter;
+			prefabType = Prefabs.Spider;
 		}
 
 		if (Input.GetKeyDown (KeyCode.Mouse0)) {
