@@ -12,14 +12,10 @@ public class PlaceBuilding : MonoBehaviour {
 
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.Q)) {
-			prefabType = Prefabs.Spawner;
+			prefabType = Prefabs.Swordsman;
 		} 
 
 		if (Input.GetKeyDown (KeyCode.W)) {
-			prefabType = Prefabs.Turrent;
-		}
-
-		if (Input.GetKeyDown (KeyCode.E)) {
 			prefabType = Prefabs.Spider;
 		}
 

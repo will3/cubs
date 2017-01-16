@@ -5,13 +5,11 @@ namespace AssemblyCSharp
 {
 	public static class Prefabs
 	{
-		public static string Spawner = "Spawner";
-		public static string Turrent = "Turrent";
-		public static string Bullet = "Bullet";
-		public static string Spider = "spider/spider";
+		public static string Swordsman = "Units/swordsman/swordsman";
+		public static string Spider = "Units/spider/spider";
 
 		public static GameObject Create(string name) {
-			var resourcePath = "Prefabs/" + name;
+			var resourcePath = name;
 			var res = Resources.Load (resourcePath, typeof(GameObject));
 			var obj = GameObject.Instantiate (res) as GameObject;
 
