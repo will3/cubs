@@ -22,14 +22,13 @@ namespace AssemblyCSharp
 			counter += Time.deltaTime;
 		}
 
-		public void Use() {
-			counter -= max;
-		}
-
-		public bool Ready {
-			get {
-				return counter >= max;
+		public bool Ready() {
+			if (counter >= max) {
+				counter -= max;
+				return true;
 			}
+
+			return false;
 		}
 	}
 }

@@ -25,11 +25,11 @@ public class Planet : MonoBehaviour {
 	public GameObject Create(string name, Surface surface) {
 		var obj = Prefabs.Create (name);
 		obj.transform.parent = gameObject.transform.parent;
-		var blockComponent = obj.GetComponent<BlockComponent> ();
+		var block = obj.GetComponent<Block> ();
 
-		SetSurface (blockComponent, surface);
+		SetSurface (obj, block, surface);
 
-		blockComponent.currentSurface = surface;
+		block.currentSurface = surface;
 
 		return obj;
 	}
@@ -116,27 +116,27 @@ public class Planet : MonoBehaviour {
 		}
 	}
 
-	public bool SetSurface(BlockComponent blockComponent, Surface surface) {
+	public bool SetSurface(GameObject obj, Block block, Surface surface) {
 		if (surface.hasObject) {
 			return false;
 		}
 
-		if (blockComponent.currentSurface != null) {
-			blockComponent.currentSurface.blockComponent = null;
+		if (block.currentSurface != null) {
+			block.currentSurface.block = null;
 		}
 
 		var position = gameObject.transform.TransformPoint (surface.point);
-		blockComponent.transform.position = position;
-		blockComponent.currentSurface = surface;
-		surface.blockComponent = blockComponent;
+		obj.transform.position = position;
+		block.currentSurface = surface;
+		surface.block = block;
 
-		blockComponent.transform.localRotation = surface.rotation;
+		obj.transform.localRotation = surface.rotation;
 
 		return true;
 	}
 
 	// Ratio should be more than 0 and less than or equal to 1
-	public bool LerpSurface(BlockComponent blockComponent, Surface surface1, Surface surface2, float ratio) {
+	public bool LerpSurface(Block block, GameObject obj, Surface surface1, Surface surface2, float ratio) {
 		if (surface1.identifier.Equals (surface2.identifier)) {
 			throw new Exception ("Invalid surface");
 		}
@@ -150,22 +150,22 @@ public class Planet : MonoBehaviour {
 
 		var position = position1 + (position2 - position1) * ratio;
 
-		blockComponent.transform.position = gameObject.transform.TransformPoint (position);
+		obj.transform.position = gameObject.transform.TransformPoint (position);
 
 		if (ratio == 1.0f) {
-			if (blockComponent.currentSurface != null) {
-				blockComponent.currentSurface.blockComponent = null;
+			if (block.currentSurface != null) {
+				block.currentSurface.block = null;
 			}
 
-			blockComponent.currentSurface = surface2;
+			block.currentSurface = surface2;
 		}
 
-		surface2.blockComponent = blockComponent;
+		surface2.block = block;
 
 		if (ratio < 0.5) {
-			blockComponent.transform.localRotation = surface1.rotation;	
+			obj.transform.localRotation = surface1.rotation;	
 		} else {
-			blockComponent.transform.localRotation = surface2.rotation;
+			obj.transform.localRotation = surface2.rotation;
 		}
 
 		return true;
