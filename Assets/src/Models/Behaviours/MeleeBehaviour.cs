@@ -10,7 +10,10 @@ namespace AssemblyCSharp
 		Block block;
 		Character character;
 
-		public MeleeBehaviour (Block block, Character character, GameObject obj)
+		public MeleeBehaviour (
+			Block block, 
+			Character character, 
+			GameObject obj)
 		{
 			this.block = block;
 			this.obj = obj;
@@ -46,7 +49,9 @@ namespace AssemblyCSharp
 
 				var path = p.path;
 
-				path.RemoveAt (0);
+				if (path.Count > 0) {
+					path.RemoveAt (0);
+				}
 
 				if (p.finished) {
 					path.Add (target.identifier);

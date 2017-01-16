@@ -58,7 +58,7 @@ namespace Dijkstras
 		{
 			var cache = new PathFindingCache ();
 
-			List<string> path = null;
+			List<string> path = new List<string> ();
 
 			cache.setDistance (start, 0);
 
@@ -78,7 +78,6 @@ namespace Dijkstras
 
 				if (smallest == finish)
 				{
-					path = new List<string>();
 					while (cache.previous.ContainsKey(smallest))
 					{
 						path.Add(smallest);
