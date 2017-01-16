@@ -4,18 +4,17 @@ using UnityEngine;
 
 namespace AssemblyCSharp
 {
-	public class MeleeCharacter : ICharacter
+	public class MeleeBehaviour : ICharacterBehaviour
 	{
-		private readonly Traits traits = new Traits();
-		public Traits Traits { get { return traits; } }
-
 		GameObject obj;
 		Block block;
+		Character character;
 
-		public MeleeCharacter (Block block, GameObject obj)
+		public MeleeBehaviour (Block block, Character character, GameObject obj)
 		{
 			this.block = block;
 			this.obj = obj;
+			this.character = character;
 		}
 
 		public void Idle ()
@@ -31,35 +30,37 @@ namespace AssemblyCSharp
 			var planet = Game.Instance.Planet;
 			var currentSurface = block.currentSurface;
 
-			if (currentPath == null) {
+			if (currentPath == null || currentPath.Count == 0) {
 
 				var target = planet.RandomSurface (currentSurface, 6);
 
-				// Reject target
 				if (target.identifier.Equals (currentSurface.identifier)) {
 					return;
 				}
 
 				var p = planet.Terrian.GetPath (target, currentSurface);
 
-				if (p != null) {
-					var path = p.path;
-
-					path.RemoveAt (0);
-
-					if (p.finished) {
-						path.Add (target.identifier);
-					}
-
-					currentPath = path;
+				if (p.path == null) {
+					throw new Exception ("path finding failed for patrol point");
 				}
+
+				var path = p.path;
+
+				path.RemoveAt (0);
+
+				if (p.finished) {
+					path.Add (target.identifier);
+				}
+
+				currentPath = path;
 			}
 
 			if (currentPath != null && currentPath.Count > 0) {
+				
 				var nextSurface = planet.Terrian.surfaceByIdentifier [currentPath [0]];
 
 				var distance = nextSurface.DistanceTo (currentSurface);
-				stepAmount += traits.speed;
+				stepAmount += character.speed;
 
 				var ratio = stepAmount / distance;
 
@@ -77,18 +78,17 @@ namespace AssemblyCSharp
 			}
 		}
 
-		public bool Chase (ICharacter character)
+		public bool Chase (Character character)
 		{
-//			var planet = Game.Instance.Planet;
-			return false;
+			throw new NotImplementedException ();
 		}
 
-		public bool Attack (ICharacter character)
+		public bool Attack (Character character)
 		{
-			return false;
+			throw new NotImplementedException ();
 		}
 
-		public ICharacter FindTarget ()
+		public Character FindTarget ()
 		{
 			return null;
 		}

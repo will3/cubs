@@ -2,29 +2,30 @@ using System;
 
 namespace AssemblyCSharp
 {
-
 	class IdleState : CharacterState {
 		// Find target available straight away
 		private readonly Cooldown findTargetCooldown = new Cooldown(0.5f, 0.5f);
 		private readonly Cooldown idleDoneCooldown;
+		private readonly Character character;
 
-		ICharacter character;
-		public IdleState(ICharacter character) {
-			idleDoneCooldown = new Cooldown(character.Traits.idleLength);
+		ICharacterBehaviour behaviour;
+		public IdleState(ICharacterBehaviour behaviour, Character character) {
 			this.character = character;
+			idleDoneCooldown = new Cooldown(character.idleLength);
+			this.behaviour = behaviour;
 		}
 
 		public CharacterState Step() {
-			character.Idle ();
+			behaviour.Idle ();
 			findTargetCooldown.Update ();
 			idleDoneCooldown.Update ();
 
 			// If there's target, attack
 			if (findTargetCooldown.Ready ()) {
-				var target = character.FindTarget ();
+				var target = behaviour.FindTarget ();
 
 				if (target != null) {
-					return new AttackState (character, target);
+					return new AttackState (behaviour, character, target);
 				}
 			}
 
@@ -34,7 +35,7 @@ namespace AssemblyCSharp
 			}
 
 			// Otherwise patrol
-			return new PatrolState (character);
+			return new PatrolState (behaviour, character);
 		}
 	}
 	

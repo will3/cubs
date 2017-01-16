@@ -8,11 +8,7 @@ public class Critter : MonoBehaviour {
 
 	#region Editor properties
 
-	public bool targetable = true;
-
-	public float hitPoints = 100.0f;
-
-	public bool isMonster = false;
+	public Character character = new Character();
 
 	#endregion
 
@@ -20,7 +16,7 @@ public class Critter : MonoBehaviour {
 
 	private CharacterAI characterAI;
 
-	private ICharacter character;
+	private ICharacterBehaviour behaviour;
 
 	private Block block;
 
@@ -31,8 +27,8 @@ public class Critter : MonoBehaviour {
 		block = GetComponent<Block> ();
 		Debug.Assert (block != null);
 
-		character = new MeleeCharacter (this.block, gameObject);
-		characterAI = new CharacterAI (character);
+		behaviour = new MeleeBehaviour (this.block, character, gameObject);
+		characterAI = new CharacterAI (behaviour, character);
 	}
 
 	// Update is called once per frame
@@ -46,7 +42,7 @@ public class Critter : MonoBehaviour {
 
 		characterAI.Step ();
 
-		if (hitPoints <= 0.0f) {
+		if (character.hitPoints <= 0.0f) {
 			Destroy (gameObject);
 		}
 	}

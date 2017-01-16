@@ -2,16 +2,15 @@
 
 namespace AssemblyCSharp
 {
-
 	public class CharacterAI 
 	{
-		public readonly ICharacter character;
+		public readonly ICharacterBehaviour behaviour;
 
 		private CharacterState state;
 
-		public CharacterAI(ICharacter character) {
-			this.character = character;
-			state = new IdleState(character);
+		public CharacterAI(ICharacterBehaviour behaviour, Character character) {
+			this.behaviour = behaviour;
+			state = new IdleState(behaviour, character);
 		}
 
 		public void Step() {

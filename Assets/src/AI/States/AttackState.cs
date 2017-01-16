@@ -4,23 +4,25 @@ namespace AssemblyCSharp
 {
 
 	class AttackState : CharacterState {
-		ICharacter character;
-		ICharacter target;
+		ICharacterBehaviour behaviour;
+		Character target;
+		Character character;
 
-		public AttackState(ICharacter character, ICharacter target) {
+		public AttackState(ICharacterBehaviour behaviour, Character character, Character target) {
+			this.behaviour = behaviour;
 			this.character = character;
 			this.target = target;
 		}
 
 		public CharacterState Step() {
-			var reached = character.Chase (target);
+			var reached = behaviour.Chase (target);
 
 			if (reached) {
-				var done = character.Attack (target);
+				var done = behaviour.Attack (target);
 
 				if (done) {
 					// Re-evaluate after each attack
-					return new IdleState (character);
+					return new IdleState (behaviour, character);
 				}
 			} 
 
