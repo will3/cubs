@@ -104,6 +104,9 @@ namespace AssemblyCSharp
 		{
 			return GameObject.FindObjectsOfType<Character> ()
 				.Where (u => {
+					if (u.NotPlaced) {
+						return false;
+					}
 					if (u == character) {
 						return false;
 					}

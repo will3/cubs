@@ -17,7 +17,11 @@ namespace AssemblyCSharp
 			get { return connectionLookUp; }	
 		}
 
-		private readonly Dictionary<string, Surface> surfaceByIdentifier = 
+		public IDictionary<string, Surface> AllSurfaces {
+			get { return surfaceLookUp; }
+		}
+
+		private readonly Dictionary<string, Surface> surfaceLookUp = 
 			new Dictionary<string, Surface> ();
 		private readonly Dictionary<string, Connection> connectionLookUp = 
 			new Dictionary<string, Connection> ();
@@ -82,7 +86,7 @@ namespace AssemblyCSharp
 						continue;
 					}
 					var surface = block.AddSurface (dir);
-					surfaceByIdentifier [surface.identifier] = surface;
+					surfaceLookUp [surface.identifier] = surface;
 				}
 			}
 		}
@@ -294,7 +298,7 @@ namespace AssemblyCSharp
 		}
 
 		public Surface GetSurface(string identifier) {
-			return surfaceByIdentifier [identifier];
+			return surfaceLookUp [identifier];
 		}
 
 		public IList<Connection> GetConnections(string surfaceIdentifier) {
@@ -306,8 +310,8 @@ namespace AssemblyCSharp
 		public float DistanceBetweenNodes (string a, string b)
 		{			
 			// TODO handle no surface
-			var surface1 = surfaceByIdentifier [a];
-			var surface2 = surfaceByIdentifier [b];
+			var surface1 = surfaceLookUp [a];
+			var surface2 = surfaceLookUp [b];
 
 			if (surface1.hasObject || surface2.hasObject) {
 				return maxDistanceBetweenSurfaces;
