@@ -16,7 +16,7 @@ namespace AssemblyCSharp
 
 		public readonly Quaternion rotation;
 
-		public Block block;
+		public IBlock block;
 
 		public bool hasObject { get { return block != null; } }
 

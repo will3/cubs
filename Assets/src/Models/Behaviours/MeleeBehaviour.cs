@@ -8,15 +8,12 @@ namespace AssemblyCSharp
 {
 	public class MeleeBehaviour : MonoBehaviour, ICharacterBehaviour
 	{
-		Block block;
 		Character character;
 		private float stepRatio = 0.0f;
 		private Path currentPath;
 		private float stepAmount;
 
 		public void Start() {
-			block = GetComponent<Block> ();	
-			Debug.Assert (block != null);
 			character = GetComponent<Character> ();
 			Debug.Assert (character != null);
 		}
@@ -51,9 +48,9 @@ namespace AssemblyCSharp
 
 			var planet = Game.Instance.Planet;
 
-			var currentSurface = block.currentSurface;
+			var currentSurface = character.CurrentSurface;
 
-			currentPath = planet.Terrian.GetPath (target, currentSurface, character.maxPathFindingSteps);
+			currentPath = planet.Terrian.GetPath (currentSurface, target, character.maxPathFindingSteps);
 
 			currentPath.NextTo = nextTo;
 		}
@@ -65,7 +62,7 @@ namespace AssemblyCSharp
 		public void Patrol ()
 		{
 			var planet = Game.Instance.Planet;
-			var currentSurface = block.currentSurface;
+			var currentSurface = character.CurrentSurface;
 
 			if (currentPath == null || currentPath.Empty) {
 				var target = planet.RandomSurface (currentSurface, 6);
@@ -78,17 +75,17 @@ namespace AssemblyCSharp
 			}
 		}
 
-		public bool Chase (Character character)
+		public bool Chase (Character targetCharacter)
 		{
 			var planet = Game.Instance.Planet;
 
-			var target = character.GetComponent<Block> ().currentSurface;
+			var target = targetCharacter.CurrentSurface;
 
 			MoveNextTo (target);
 
 			// If next to target
 			if (currentPath.Empty) {
-				var connection = planet.Terrian.ConnectionBetween (block.currentSurface, target);
+				var connection = planet.Terrian.ConnectionBetween (character.CurrentSurface, target);
 			
 				if (connection != null) {
 					return true;
@@ -123,9 +120,9 @@ namespace AssemblyCSharp
 			}
 
 			var planet = Game.Instance.Planet;
-			var currentSurface = block.currentSurface;
+			var currentSurface = character.CurrentSurface;
 				
-			var nextSurface = planet.Terrian.surfaceByIdentifier [currentPath.Next];
+			var nextSurface = planet.Terrian.GetSurface (currentPath.Next);
 
 			var distance = nextSurface.DistanceTo (currentSurface);
 			stepAmount += character.speed;
@@ -137,7 +134,7 @@ namespace AssemblyCSharp
 				stepAmount -= distance;
 			}
 
-			planet.LerpSurface (this.block, gameObject, currentSurface, nextSurface, ratio);
+			planet.LerpSurface (character, gameObject, currentSurface, nextSurface, ratio);
 
 			if (ratio == 1.0f) {
 				currentPath.RemoveOne ();

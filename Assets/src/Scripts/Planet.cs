@@ -25,11 +25,11 @@ public class Planet : MonoBehaviour {
 	public GameObject Create(string name, Surface surface) {
 		var obj = Prefabs.Create (name);
 		obj.transform.parent = gameObject.transform.parent;
-		var block = obj.GetComponent<Block> ();
+		var character = obj.GetComponent<Character> ();
 
-		SetSurface (obj, block, surface);
+		SetSurface (obj, character, surface);
 
-		block.currentSurface = surface;
+		character.CurrentSurface = surface;
 
 		return obj;
 	}
@@ -60,7 +60,7 @@ public class Planet : MonoBehaviour {
 		ColoredCubesVolumeData data = VolumeData.CreateEmptyVolumeData<ColoredCubesVolumeData>(new Region(0, 0, 0, size, size, size));
 		volume.data = data;
 
-		Terrian.Init ();
+		Terrian.Generate ();
 
 		loadData ();
 
@@ -96,7 +96,7 @@ public class Planet : MonoBehaviour {
 		}
 
 		if (drawConnections) {
-			foreach (var connection in Terrian.connectionLookUp.Values) {
+			foreach (var connection in Terrian.AllConnections.Values) {
 				var point1 = gameObject.transform.TransformPoint (connection.a.pointAbove);
 				var point2 = gameObject.transform.TransformPoint (connection.b.pointAbove);
 				Debug.DrawLine (point1, point2, Color.red);
@@ -116,18 +116,18 @@ public class Planet : MonoBehaviour {
 		}
 	}
 
-	public bool SetSurface(GameObject obj, Block block, Surface surface) {
+	public bool SetSurface(GameObject obj, IBlock block, Surface surface) {
 		if (surface.hasObject) {
 			return false;
 		}
 
-		if (block.currentSurface != null) {
-			block.currentSurface.block = null;
+		if (block.CurrentSurface != null) {
+			block.CurrentSurface.block = null;
 		}
 
 		var position = gameObject.transform.TransformPoint (surface.point);
 		obj.transform.position = position;
-		block.currentSurface = surface;
+		block.CurrentSurface = surface;
 		surface.block = block;
 
 		obj.transform.localRotation = surface.rotation;
@@ -136,8 +136,8 @@ public class Planet : MonoBehaviour {
 	}
 
 	// Ratio should be more than 0 and less than or equal to 1
-	public bool LerpSurface(Block block, GameObject obj, Surface surface1, Surface surface2, float ratio) {
-		if (surface1.identifier.Equals (surface2.identifier)) {
+	public bool LerpSurface(IBlock block, GameObject obj, Surface surface1, Surface surface2, float ratio) {
+		if (surface1.identifier == surface2.identifier) {
 			throw new Exception ("Invalid surface");
 		}
 
@@ -153,11 +153,11 @@ public class Planet : MonoBehaviour {
 		obj.transform.position = gameObject.transform.TransformPoint (position);
 
 		if (ratio == 1.0f) {
-			if (block.currentSurface != null) {
-				block.currentSurface.block = null;
+			if (block.CurrentSurface != null) {
+				block.CurrentSurface.block = null;
 			}
 
-			block.currentSurface = surface2;
+			block.CurrentSurface = surface2;
 		}
 
 		surface2.block = block;
@@ -172,7 +172,7 @@ public class Planet : MonoBehaviour {
 	}
 
 	public Connection RandomConnection(string surfaceIdentifier) {
-		var connections = Terrian.connectionBySurfaceIdentifier [surfaceIdentifier];
+		var connections = Terrian.GetConnections (surfaceIdentifier);
 		var index = UnityEngine.Random.Range (0, connections.Count - 1);
 		return connections [index];	
 	}
@@ -185,7 +185,7 @@ public class Planet : MonoBehaviour {
 			identifier = connection.OtherSurface (identifier).identifier;
 		}
 
-		return Terrian.surfaceByIdentifier [identifier];
+		return _terrian.GetSurface (identifier);
 	}
 
 	public Surface GetSurface() {

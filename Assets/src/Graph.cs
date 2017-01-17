@@ -52,6 +52,12 @@ namespace Dijkstras
 		}
 
 		public bool NextTo = false;
+
+		public int Count {
+			get {
+				return path.Count;
+			}
+		}
 	}
 
 	class Graph
@@ -109,6 +115,7 @@ namespace Dijkstras
 					if (path.Count > 0) {
 						path.RemoveAt (0);
 					}
+					path.Reverse ();
 					return new Path (path, finish);
 				}
 		
@@ -148,6 +155,7 @@ namespace Dijkstras
 			if (path.Count > 0) {
 				path.RemoveAt (0);
 			}
+			path.Reverse ();
 			return new Path (path, finish);
 		}
 

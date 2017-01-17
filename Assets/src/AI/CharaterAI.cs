@@ -1,20 +1,30 @@
 ﻿using System;
+using UnityEngine;
 
 namespace AssemblyCSharp
 {
-	public class CharacterAI 
+	public class CharacterAI : MonoBehaviour
 	{
-		public readonly ICharacterBehaviour behaviour;
+		public ICharacterBehaviour behaviour;
+		public Character character;
 
-		private CharacterState state;
+		private CharacterState currentState;
 
-		public CharacterAI(ICharacterBehaviour behaviour, Character character) {
-			this.behaviour = behaviour;
-			state = new IdleState(behaviour, character);
+		public void Start() {
+			Debug.Assert (behaviour != null);
+
+			character = GetComponent<Character> ();
+			Debug.Assert (character != null);
+
+			currentState = new IdleState(behaviour, character);
 		}
 
-		public void Step() {
-			state = state.Step ();
+		public void Update() {
+			if (character.NotPlaced) {
+				return;
+			}
+
+			currentState = currentState.Step ();
 		}
 	}
 }

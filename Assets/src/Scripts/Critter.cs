@@ -6,40 +6,36 @@ using Cubiquity;
 
 public class Critter : MonoBehaviour {
 
-	private Character character;
+	public Character character;
 
-	private Billboard billBoard;
+	public Billboard billBoard;
 
-	private CharacterAI characterAI;
+	public CharacterAI characterAI;
 
-	private ICharacterBehaviour behaviour;
-
-	private Block block;
+	public ICharacterBehaviour behaviour;
 
 	// Use this for initialization
 	void Start () {
 		billBoard = GetComponentInChildren<Billboard> ();
 		Debug.Assert (billBoard != null);
-		block = GetComponent<Block> ();
-		Debug.Assert (block != null);
+
 		character = GetComponent<Character> ();
 		Debug.Assert (character != null);
 
+		// TODO make it configurable
 		behaviour = gameObject.AddComponent<MeleeBehaviour> ();
 
-		characterAI = new CharacterAI (behaviour, character);
+		characterAI = gameObject.AddComponent<CharacterAI> ();
+		characterAI.behaviour = behaviour;
 	}
 
 	// Update is called once per frame
 	void Update () {
-		// Unplaced
-		if (block.currentSurface == null) {
+		if (character.NotPlaced) {
 			return;
 		}
 
 		billBoard.up = transform.TransformDirection (Vector3.up);
-
-		characterAI.Step ();
 
 		if (character.hitPoints <= 0.0f) {
 			Destroy (gameObject);

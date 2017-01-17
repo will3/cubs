@@ -9,18 +9,22 @@ namespace AssemblyCSharp
 	public class Terrian : PathFindingHeruistics
 	{
 		// Should prob be encapsulated
-		public Dictionary<Vector3i, TerrianBlock> map = new Dictionary<Vector3i, TerrianBlock>();
 		public readonly int size;
 		public readonly float heightDiff;
-		public readonly Dictionary<string, Surface> surfaceByIdentifier = 
-			new Dictionary<string, Surface> ();
-		public readonly Dictionary<string, Connection> connectionLookUp = 
-			new Dictionary<string, Connection> ();
-		public readonly Dictionary<string, List<Connection>> connectionBySurfaceIdentifier = 
-			new Dictionary<string, List<Connection>> ();
-		public readonly int seaLevel = -2;
+		public Dictionary<Vector3i, TerrianBlock> map = new Dictionary<Vector3i, TerrianBlock>();
 
-		const float maxDistanceBetweenSurfaces = 1000.0f;
+		public IDictionary<string, Connection> AllConnections {
+			get { return connectionLookUp; }	
+		}
+
+		private readonly Dictionary<string, Surface> surfaceByIdentifier = 
+			new Dictionary<string, Surface> ();
+		private readonly Dictionary<string, Connection> connectionLookUp = 
+			new Dictionary<string, Connection> ();
+		private readonly Dictionary<string, List<Connection>> connectionBySurfaceIdentifier = 
+			new Dictionary<string, List<Connection>> ();
+
+		private const float maxDistanceBetweenSurfaces = 1000.0f;
 
 		private Graph graph = new Graph ();
 
@@ -54,7 +58,7 @@ namespace AssemblyCSharp
 			return v;
 		}
 
-		public void Init() {
+		public void Generate() {
 			initBlocks ();
 			generateHeightMap ();
 			generateBiomes ();
@@ -287,6 +291,14 @@ namespace AssemblyCSharp
 
 		public Path GetPath(Surface a, Surface b, int maxStep) {
 			return graph.shortest_path (a.identifier, b.identifier, maxStep);
+		}
+
+		public Surface GetSurface(string identifier) {
+			return surfaceByIdentifier [identifier];
+		}
+
+		public IList<Connection> GetConnections(string surfaceIdentifier) {
+			return connectionBySurfaceIdentifier [surfaceIdentifier];
 		}
 
 		#region PathFindingHeruistics implementation
