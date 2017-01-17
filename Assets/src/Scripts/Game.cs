@@ -5,6 +5,7 @@ namespace AssemblyCSharp
 	public class Game
 	{
 		public Planet Planet;
+		public Terrian Terrian;
 
 		private static Game _instance;
 		public static Game Instance {

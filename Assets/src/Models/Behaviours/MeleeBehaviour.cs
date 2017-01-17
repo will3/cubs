@@ -34,6 +34,7 @@ namespace AssemblyCSharp
 
 		// Update route
 		private void Move(Surface target, bool nextTo = false) {
+			// If current path moving to destination
 			if (currentPath.path.Count > 0 &&
 			    currentPath.path [currentPath.path.Count - 1] == target.identifier) {
 				return;
@@ -49,7 +50,16 @@ namespace AssemblyCSharp
 				currentPath.path [0] : 
 				character.CurrentSurface.identifier;
 
+			// Already at destination
+			if (startPoint == target.identifier) {
+				return;
+			}
+
 			var planet = Game.Instance.Planet;
+
+			if (startPoint == target.identifier) {
+				throw new Exception ("start point and target are the same!");
+			}
 
 			var p = planet.Terrian.GetPath (startPoint, target.identifier, character.maxPathFindingSteps);
 
@@ -88,7 +98,7 @@ namespace AssemblyCSharp
 			MoveNextTo (target);
 
 			// If next to target
-			if (currentPath.path.Count == 0) {
+			if (currentPath.path.Count == 1) {
 				var connection = planet.Terrian.ConnectionBetween (character.CurrentSurface, target);
 			
 				if (connection != null) {
@@ -101,6 +111,7 @@ namespace AssemblyCSharp
 
 		public bool Attack (Character character)
 		{
+			character.attacking = true;
 			return false;
 		}
 

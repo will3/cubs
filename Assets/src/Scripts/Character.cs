@@ -4,19 +4,6 @@ using UnityEngine;
 namespace AssemblyCSharp
 {
 	public class Character : MonoBehaviour, IBlock {
-		#region IBlock implementation
-
-		public Surface CurrentSurface {
-			get {
-				return currentSurface;
-			}
-			set {
-				currentSurface = value;
-			}
-		}
-
-		#endregion
-
 		public float idleLength = 0.1f;
 
 		public float patrolLength = 10.0f;
@@ -31,6 +18,8 @@ namespace AssemblyCSharp
 
 		private Surface currentSurface;
 
+		public bool attacking = false;
+
 		public bool NotPlaced {
 			get {
 				return currentSurface == null;
@@ -40,6 +29,19 @@ namespace AssemblyCSharp
 		public bool IsTarget(Character character) {
 			return this.isMonster != character.isMonster;
 		}
+
+		#region IBlock implementation
+
+		public Surface CurrentSurface {
+			get {
+				return currentSurface;
+			}
+			set {
+				currentSurface = value;
+			}
+		}
+
+		#endregion
 	}
 	
 }

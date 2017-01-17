@@ -6,13 +6,13 @@ using Cubiquity;
 
 public class Critter : MonoBehaviour {
 
-	public Character character;
+	private Character character;
 
-	public Billboard billBoard;
+	private Billboard billBoard;
 
-	public CharacterAI characterAI;
+	private CharacterAI characterAI;
 
-	public ICharacterBehaviour behaviour;
+	private ICharacterBehaviour behaviour;
 
 	// Use this for initialization
 	void Start () {

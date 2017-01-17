@@ -38,6 +38,7 @@ public class Planet : MonoBehaviour {
 	void Start () {
 		_terrian = new Terrian (size, heightDiff);
 		Game.Instance.Planet = this;
+		Game.Instance.Terrian = _terrian;
 
 		volume = gameObject.GetComponent<ColoredCubesVolume> ();
 		if (volume == null) {
