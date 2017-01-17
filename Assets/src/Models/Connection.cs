@@ -11,7 +11,11 @@ namespace AssemblyCSharp
 		{
 			this.a = a;
 			this.b = b;
-			identifier = a.identifier + "," + b.identifier;
+			identifier = IdentifierForSurfaces (a, b);
+		}
+
+		public static string IdentifierForSurfaces(Surface a, Surface b) {
+			return a.identifier + "," + b.identifier;
 		}
 
 		public Surface OtherSurface(Surface surface) {

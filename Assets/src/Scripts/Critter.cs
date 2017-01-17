@@ -6,11 +6,7 @@ using Cubiquity;
 
 public class Critter : MonoBehaviour {
 
-	#region Editor properties
-
-	public Character character = new Character();
-
-	#endregion
+	private Character character;
 
 	private Billboard billBoard;
 
@@ -26,8 +22,11 @@ public class Critter : MonoBehaviour {
 		Debug.Assert (billBoard != null);
 		block = GetComponent<Block> ();
 		Debug.Assert (block != null);
+		character = GetComponent<Character> ();
+		Debug.Assert (character != null);
 
-		behaviour = new MeleeBehaviour (this.block, character, gameObject);
+		behaviour = gameObject.AddComponent<MeleeBehaviour> ();
+
 		characterAI = new CharacterAI (behaviour, character);
 	}
 

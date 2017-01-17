@@ -8,6 +8,7 @@ namespace AssemblyCSharp
 {
 	public class Terrian : PathFindingHeruistics
 	{
+		// Should prob be encapsulated
 		public Dictionary<Vector3i, TerrianBlock> map = new Dictionary<Vector3i, TerrianBlock>();
 		public readonly int size;
 		public readonly float heightDiff;
@@ -276,8 +277,16 @@ namespace AssemblyCSharp
 			return block.surfaceMap [dir];
 		}
 
-		public Path GetPath(Surface a, Surface b) {
-			return graph.shortest_path (a.identifier, b.identifier);
+		public Connection ConnectionBetween(Surface a, Surface b) {
+			var identifier = Connection.IdentifierForSurfaces (a, b);
+			if (connectionLookUp.ContainsKey (identifier)) {
+				return connectionLookUp [identifier];
+			}
+			return null;
+		}
+
+		public Path GetPath(Surface a, Surface b, int maxStep) {
+			return graph.shortest_path (a.identifier, b.identifier, maxStep);
 		}
 
 		#region PathFindingHeruistics implementation

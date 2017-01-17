@@ -8,13 +8,50 @@ namespace Dijkstras
 	}
 
 	public class Path {
-		public readonly List<string> path;
-		public readonly bool finished;
+		// Destination of path
+		public readonly string destination;
+		private readonly List<string> path;
 
-		public Path(List<string> path, bool finished) {
+		public Path(List<string> path, string destination) {
 			this.path = path;
-			this.finished = finished;
+			this.destination = destination;
 		}
+
+		// True if path leads to destination, false if partial path
+		public bool LeadsToDestination {
+			get {
+				if (path.Count == 0) {
+					return false;
+				}
+				return path [path.Count - 1] == destination;
+			}
+		}
+
+		// Remove all waypoints except next one
+		public void Stop() {
+			path.RemoveRange (1, path.Count - 1);
+		}
+
+		// Return true if no more points to reach
+		public bool Empty {
+			get {
+				return NextTo ? path.Count == 1 : path.Count == 0;
+			}
+		}
+
+		// Return next point
+		public string Next {
+			get {
+				return path [0];
+			}
+		}
+
+		// Call this when reaching a point
+		public void RemoveOne() {
+			path.RemoveAt (0);
+		}
+
+		public bool NextTo = false;
 	}
 
 	class Graph
@@ -54,7 +91,7 @@ namespace Dijkstras
 			}
 		}
 
-		public Path shortest_path(string start, string finish, int maxStep = 64)
+		public Path shortest_path(string start, string finish, int maxStep)
 		{
 			var cache = new PathFindingCache ();
 
@@ -69,7 +106,10 @@ namespace Dijkstras
 			{
 				step++;
 				if (step > maxStep) {
-					return new Path (path, false);
+					if (path.Count > 0) {
+						path.RemoveAt (0);
+					}
+					return new Path (path, finish);
 				}
 		
 
@@ -102,8 +142,13 @@ namespace Dijkstras
 					}
 				}
 			}
+				
+			path.Add (finish);
 
-			return new Path (path, true);
+			if (path.Count > 0) {
+				path.RemoveAt (0);
+			}
+			return new Path (path, finish);
 		}
 
 		private float getHerustics(string a, string b, string finish) {
