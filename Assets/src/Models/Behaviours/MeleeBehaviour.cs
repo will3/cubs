@@ -10,7 +10,8 @@ namespace AssemblyCSharp
 	{
 		Character character;
 		private float stepRatio = 0.0f;
-		private Path currentPath;
+		private readonly Path currentPath = new Path(new List<string>());
+		private bool pathNextTo = false;
 		private float stepAmount;
 
 		public void Start() {
@@ -20,6 +21,10 @@ namespace AssemblyCSharp
 
 		public void Update() {
 			stepPath ();
+
+			if (character.CurrentSurface != null) {
+				DebugUtil.DrawPath (character.CurrentSurface, currentPath);
+			}
 		}
 
 		public void Idle ()
@@ -27,32 +32,31 @@ namespace AssemblyCSharp
 			// Play idle animation
 		}
 
+		// Update route
 		private void Move(Surface target, bool nextTo = false) {
-			if (currentPath != null) {
-				currentPath.NextTo = nextTo;
+			if (currentPath.path.Count > 0 &&
+			    currentPath.path [currentPath.path.Count - 1] == target.identifier) {
+				return;
+			}
+
+			if (stepRatio == 0.0f) {
+				currentPath.path.Clear ();
+			} else {
+				currentPath.path.RemoveRange (1, currentPath.path.Count - 1);
 			}
 				
-			// Path stay true, do nothing
-			if (currentPath != null && target.identifier == currentPath.destination) {
-				return;
-			}
-
-			// If moving to wrong point, stop first
-			if (stepRatio != 0.0f) {
-				currentPath.Stop ();
-				return;
-			}
-
-			// At this point, path should be empty
-			Debug.Assert (currentPath == null || currentPath.Empty);
+			var startPoint = currentPath.path.Count == 1 ? 
+				currentPath.path [0] : 
+				character.CurrentSurface.identifier;
 
 			var planet = Game.Instance.Planet;
 
-			var currentSurface = character.CurrentSurface;
+			var p = planet.Terrian.GetPath (startPoint, target.identifier, character.maxPathFindingSteps);
 
-			currentPath = planet.Terrian.GetPath (currentSurface, target, character.maxPathFindingSteps);
+			// Append path
+			currentPath.path.AddRange (p.path);
 
-			currentPath.NextTo = nextTo;
+			pathNextTo = nextTo;
 		}
 
 		private void MoveNextTo(Surface target) {
@@ -64,8 +68,8 @@ namespace AssemblyCSharp
 			var planet = Game.Instance.Planet;
 			var currentSurface = character.CurrentSurface;
 
-			if (currentPath == null || currentPath.Empty) {
-				var target = planet.RandomSurface (currentSurface, 6);
+			if (currentPath.path.Count == 0) {
+				var target = planet.RandomSurface (currentSurface, 4);
 
 				if (target.identifier.Equals (currentSurface.identifier)) {
 					return;
@@ -84,7 +88,7 @@ namespace AssemblyCSharp
 			MoveNextTo (target);
 
 			// If next to target
-			if (currentPath.Empty) {
+			if (currentPath.path.Count == 0) {
 				var connection = planet.Terrian.ConnectionBetween (character.CurrentSurface, target);
 			
 				if (connection != null) {
@@ -118,14 +122,18 @@ namespace AssemblyCSharp
 		}
 
 		private void stepPath() {
-			if (currentPath == null || currentPath.Empty) {
+			if (currentPath.path.Count == 0) {
+				return;
+			}
+
+			if (currentPath.path.Count == 1 && pathNextTo) {
 				return;
 			}
 
 			var planet = Game.Instance.Planet;
 			var currentSurface = character.CurrentSurface;
 				
-			var nextSurface = planet.Terrian.GetSurface (currentPath.Next);
+			var nextSurface = planet.Terrian.GetSurface (currentPath.path[0]);
 
 			var distance = nextSurface.DistanceTo (currentSurface);
 			stepAmount += character.speed;
@@ -140,7 +148,7 @@ namespace AssemblyCSharp
 			planet.LerpSurface (character, gameObject, currentSurface, nextSurface, ratio);
 
 			if (ratio == 1.0f) {
-				currentPath.RemoveOne ();
+				currentPath.path.RemoveAt (0);
 				ratio = 0.0f;
 			}
 

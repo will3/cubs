@@ -294,7 +294,11 @@ namespace AssemblyCSharp
 		}
 
 		public Path GetPath(Surface a, Surface b, int maxStep) {
-			return graph.shortest_path (a.identifier, b.identifier, maxStep);
+			return GetPath (a.identifier, b.identifier, maxStep);
+		}
+
+		public Path GetPath(string a, string b, int maxStep) {
+			return graph.shortest_path (a, b, maxStep);
 		}
 
 		public Surface GetSurface(string identifier) {
@@ -313,9 +317,9 @@ namespace AssemblyCSharp
 			var surface1 = surfaceLookUp [a];
 			var surface2 = surfaceLookUp [b];
 
-			if (surface1.hasObject || surface2.hasObject) {
-				return maxDistanceBetweenSurfaces;
-			}
+//			if (surface1.hasObject || surface2.hasObject) {
+//				return maxDistanceBetweenSurfaces;
+//			}
 
 			return surface1.DistanceTo (surface2);
 		}

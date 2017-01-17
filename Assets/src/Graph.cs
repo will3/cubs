@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Dijkstras
 {
@@ -8,55 +9,10 @@ namespace Dijkstras
 	}
 
 	public class Path {
-		// Destination of path
-		public readonly string destination;
-		private readonly List<string> path;
+		public readonly List<string> path;
 
-		public Path(List<string> path, string destination) {
+		public Path(List<string> path) {
 			this.path = path;
-			this.destination = destination;
-		}
-
-		// True if path leads to destination, false if partial path
-		public bool LeadsToDestination {
-			get {
-				if (path.Count == 0) {
-					return false;
-				}
-				return path [path.Count - 1] == destination;
-			}
-		}
-
-		// Remove all waypoints except next one
-		public void Stop() {
-			path.RemoveRange (1, path.Count - 1);
-		}
-
-		// Return true if no more points to reach
-		public bool Empty {
-			get {
-				return NextTo ? path.Count == 1 : path.Count == 0;
-			}
-		}
-
-		// Return next point
-		public string Next {
-			get {
-				return path [0];
-			}
-		}
-
-		// Call this when reaching a point
-		public void RemoveOne() {
-			path.RemoveAt (0);
-		}
-
-		public bool NextTo = false;
-
-		public int Count {
-			get {
-				return path.Count;
-			}
 		}
 	}
 
@@ -65,7 +21,7 @@ namespace Dijkstras
 		Dictionary<string, Dictionary<string, float>> vertices = new Dictionary<string, Dictionary<string, float>>();
 
 		public PathFindingHeruistics herusitics;
-		public float herusticsFactor = 10.0f;
+		public float herusticsFactor = 100.0f;
 
 		public void add_vertex(string name, Dictionary<string, float> edges)
 		{
@@ -76,6 +32,16 @@ namespace Dijkstras
 			internal Dictionary<string, string> previous = new Dictionary<string, string>();
 			Dictionary<string, float> distances = new Dictionary<string, float>();
 			internal List<string> nodes = new List<string> ();
+
+			private float closestDistance = int.MaxValue;
+			public string closestVertex;
+
+			internal void setClosest(string vertex, float value) {
+				if (value < closestDistance) {
+					closestDistance = value;
+					closestVertex = vertex;
+				}
+			}
 
 			internal void setDistance(string vertex, float value) {
 				distances [vertex] = value;
@@ -99,6 +65,10 @@ namespace Dijkstras
 
 		public Path shortest_path(string start, string finish, int maxStep)
 		{
+			if (start == finish) {
+				throw new Exception ("start and finish are the same!");
+			}
+
 			var cache = new PathFindingCache ();
 
 			List<string> path = new List<string> ();
@@ -108,20 +78,28 @@ namespace Dijkstras
 			var step = 0;
 			var nodesCount = 0;
 			var maxNodesCount = vertices.Count;
+			string smallest;
+			var reached = false;
 			while (nodesCount < maxNodesCount)
 			{
-				step++;
-				if (step > maxStep) {
-					if (path.Count > 0) {
-						path.RemoveAt (0);
-					}
-					path.Reverse ();
-					return new Path (path, finish);
-				}
-		
+				step++;	
 
-				var smallest = cache.nodes[nodesCount];
+				smallest = cache.nodes[nodesCount];
 				nodesCount++;
+
+				if (step > maxStep) {
+					// Incomplete
+					var v = cache.closestVertex;
+
+					if (v != null) {
+						while (cache.previous.ContainsKey (v)) {
+							path.Add (v);
+							v = cache.previous [v];
+						}	
+					}
+
+					break;
+				}
 
 				if (smallest == finish)
 				{
@@ -130,6 +108,8 @@ namespace Dijkstras
 						path.Add(smallest);
 						smallest = cache.previous[smallest];
 					}
+
+					reached = true;
 
 					break;
 				}
@@ -141,7 +121,9 @@ namespace Dijkstras
 
 				foreach (var neighbor in vertices[smallest])
 				{
-					var alt = cache.getDistance(smallest) + neighbor.Value + getHerustics(smallest, neighbor.Key, finish);
+					var distanceFrom = herusitics.DistanceBetweenNodes (smallest, finish);
+					cache.setClosest (smallest, distanceFrom);
+					var alt = cache.getDistance(smallest) + neighbor.Value + distanceFrom * herusticsFactor;
 					if (alt < cache.getDistance(neighbor.Key))
 					{
 						cache.setDistance (neighbor.Key, alt);
@@ -150,20 +132,15 @@ namespace Dijkstras
 				}
 			}
 				
-			path.Add (finish);
-
-			if (path.Count > 0) {
-				path.RemoveAt (0);
-			}
 			path.Reverse ();
-			return new Path (path, finish);
-		}
 
-		private float getHerustics(string a, string b, string finish) {
-			var distance2 = herusitics.DistanceBetweenNodes (finish, b);
-			var distance1 = herusitics.DistanceBetweenNodes (finish, a);
+			if (reached) {
+				Debug.Assert (path [path.Count - 1] == finish);
+			} else {
+				var a = 1;
+			}
 
-			return (distance2 - distance1) * herusticsFactor;
+			return new Path (path);
 		}
 	}
 

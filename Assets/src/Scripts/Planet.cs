@@ -141,10 +141,6 @@ public class Planet : MonoBehaviour {
 			throw new Exception ("Invalid surface");
 		}
 
-		ratio *= 4.0f;
-		ratio = Mathf.Floor (ratio);
-		ratio /= 4.0f;
-
 		var position1 = surface1.point;
 		var position2 = surface2.point;
 
