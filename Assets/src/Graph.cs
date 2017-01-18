@@ -10,6 +10,7 @@ namespace Dijkstras
 
 	public class Path {
 		public readonly List<string> path;
+		public bool isNextTo = false;
 
 		public Path(List<string> path) {
 			this.path = path;

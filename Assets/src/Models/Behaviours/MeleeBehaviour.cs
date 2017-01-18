@@ -9,10 +9,9 @@ namespace AssemblyCSharp
 	public class MeleeBehaviour : MonoBehaviour, ICharacterBehaviour
 	{
 		Character character;
-		private float stepRatio = 0.0f;
-		private readonly Path currentPath = new Path(new List<string>());
-		private bool pathNextTo = false;
-		private float stepAmount;
+
+		Movement movement;
+
 		private Animator animator;
 
 		public void Start() {
@@ -20,13 +19,16 @@ namespace AssemblyCSharp
 			Debug.Assert (character != null);
 			animator = GetComponentInChildren<Animator> ();
 			Debug.Assert (animator != null);
+
+			movement = new Movement (character);
 		}
 
 		public void Update() {
-			stepPath ();
+			movement.StepPath ();
+			animator.SetWalking (movement.Walking);
 
 			if (character.CurrentSurface != null) {
-				DebugUtil.DrawPath (character.CurrentSurface, currentPath);
+				DebugUtil.DrawPath (character.CurrentSurface, movement.CurrentPath);
 			}
 		}
 
@@ -34,45 +36,8 @@ namespace AssemblyCSharp
 		{
 		}
 
-		// Update route
-		private void Move(Surface target, bool nextTo = false) {
-			// If current path moving to destination
-			if (currentPath.path.Count > 0 &&
-			    currentPath.path [currentPath.path.Count - 1] == target.identifier) {
-				return;
-			}
-
-			if (stepRatio == 0.0f) {
-				currentPath.path.Clear ();
-			} else {
-				currentPath.path.RemoveRange (1, currentPath.path.Count - 1);
-			}
-				
-			var startPoint = currentPath.path.Count == 1 ? 
-				currentPath.path [0] : 
-				character.CurrentSurface.identifier;
-
-			// Already at destination
-			if (startPoint == target.identifier) {
-				return;
-			}
-
-			var planet = Game.Instance.Planet;
-
-			if (startPoint == target.identifier) {
-				throw new Exception ("start point and target are the same!");
-			}
-
-			var p = planet.Terrian.GetPath (startPoint, target.identifier, character.maxPathFindingSteps);
-
-			// Append path
-			currentPath.path.AddRange (p.path);
-
-			pathNextTo = nextTo;
-		}
-
 		private void MoveNextTo(Surface target) {
-			Move (target, true);
+			movement.Move (target, true);
 		}
 
 		public void Patrol ()
@@ -80,14 +45,14 @@ namespace AssemblyCSharp
 			var planet = Game.Instance.Planet;
 			var currentSurface = character.CurrentSurface;
 
-			if (currentPath.path.Count == 0) {
+			if (movement.CurrentPath.path.Count == 0) {
 				var target = planet.RandomSurface (currentSurface, 4);
 
 				if (target.identifier.Equals (currentSurface.identifier)) {
 					return;
 				}
 
-				Move (target);
+				movement.Move (target);
 			}
 		}
 
@@ -100,7 +65,7 @@ namespace AssemblyCSharp
 			MoveNextTo (target);
 
 			// If next to target
-			if (currentPath.path.Count == 1) {
+			if (movement.CurrentPath.path.Count == 1) {
 				var connection = planet.Terrian.ConnectionBetween (character.CurrentSurface, target);
 			
 				if (connection != null) {
@@ -141,44 +106,6 @@ namespace AssemblyCSharp
 				})
 				.OrderBy (u => (u.gameObject.transform.position - transform.position).sqrMagnitude)
 				.FirstOrDefault ();
-		}
-
-		private void stepPath() {
-			if (currentPath.path.Count == 0) {
-				animator.SetWalking (false);
-				return;
-			}
-
-			if (currentPath.path.Count == 1 && pathNextTo) {
-				animator.SetWalking (false);
-				return;
-			}
-
-			animator.SetWalking (true);
-
-			var planet = Game.Instance.Planet;
-			var currentSurface = character.CurrentSurface;
-				
-			var nextSurface = planet.Terrian.GetSurface (currentPath.path[0]);
-
-			var distance = nextSurface.DistanceTo (currentSurface);
-			stepAmount += character.speed;
-
-			var ratio = stepAmount / distance;
-
-			if (ratio > 1.0f) {
-				ratio = 1.0f;
-				stepAmount -= distance;
-			}
-
-			planet.LerpSurface (character, gameObject, currentSurface, nextSurface, ratio);
-
-			if (ratio == 1.0f) {
-				currentPath.path.RemoveAt (0);
-				ratio = 0.0f;
-			}
-
-			stepRatio = ratio;
 		}
 	}
 }
