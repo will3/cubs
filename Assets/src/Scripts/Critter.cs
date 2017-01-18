@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using AssemblyCSharp;
 using Cubiquity;
+using UnityEditor.Animations;
 
 public class Critter : MonoBehaviour {
 

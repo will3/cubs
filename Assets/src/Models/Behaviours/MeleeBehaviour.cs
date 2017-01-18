@@ -13,10 +13,13 @@ namespace AssemblyCSharp
 		private readonly Path currentPath = new Path(new List<string>());
 		private bool pathNextTo = false;
 		private float stepAmount;
+		private Animator animator;
 
 		public void Start() {
 			character = GetComponent<Character> ();
 			Debug.Assert (character != null);
+			animator = GetComponentInChildren<Animator> ();
+			Debug.Assert (animator != null);
 		}
 
 		public void Update() {
@@ -111,7 +114,16 @@ namespace AssemblyCSharp
 
 		public bool Attack (Character character)
 		{
-			character.attacking = true;
+			animator.SetTrigger ("attack");
+
+			if (animator.IsInTransition (0)) {
+				var info = animator.GetAnimatorTransitionInfo (0);
+
+				if (info.IsName ("attack -> idle")) {
+					return true;
+				}
+			}
+
 			return false;
 		}
 
