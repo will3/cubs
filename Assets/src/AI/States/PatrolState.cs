@@ -3,7 +3,7 @@ using System;
 namespace AssemblyCSharp
 {
 
-	class PatrolState : CharacterState {
+	class PatrolState : ICharacterState {
 		ICharacterBehaviour behaviour;
 		private readonly Cooldown patrolDoneCooldown;
 		private readonly Cooldown findTargetCooldown = new Cooldown(0.5f);
@@ -15,7 +15,7 @@ namespace AssemblyCSharp
 			patrolDoneCooldown = new Cooldown(character.patrolLength);
 		}
 
-		public CharacterState Step() {
+		public ICharacterState Step() {
 			patrolDoneCooldown.Update ();
 			findTargetCooldown.Update ();
 
@@ -36,6 +36,10 @@ namespace AssemblyCSharp
 			// Keep patrolling
 			behaviour.Patrol ();
 			return this;
+		}
+
+		public string Name() {
+			return "Patrol";
 		}
 	}
 	

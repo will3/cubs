@@ -6,14 +6,17 @@ namespace Dijkstras
 {
 	interface PathFindingHeruistics {
 		float DistanceBetweenNodes(string a, string b);
+		float CostToEnter (string a);
 	}
 
 	public class Path {
 		public readonly List<string> path;
 		public bool isNextTo = false;
+		public readonly string destination;
 
-		public Path(List<string> path) {
+		public Path(List<string> path, string destination) {
 			this.path = path;
+			this.destination = destination;
 		}
 	}
 
@@ -22,7 +25,7 @@ namespace Dijkstras
 		Dictionary<string, Dictionary<string, float>> vertices = new Dictionary<string, Dictionary<string, float>>();
 
 		public PathFindingHeruistics herusitics;
-		public float herusticsFactor = 100.0f;
+		public float distanceFactor = 2.0f;
 
 		public void add_vertex(string name, Dictionary<string, float> edges)
 		{
@@ -122,9 +125,10 @@ namespace Dijkstras
 
 				foreach (var neighbor in vertices[smallest])
 				{
-					var distanceFrom = herusitics.DistanceBetweenNodes (smallest, finish);
-					cache.setClosest (smallest, distanceFrom);
-					var alt = cache.getDistance(smallest) + neighbor.Value + distanceFrom * herusticsFactor;
+					var distance = herusitics.DistanceBetweenNodes (smallest, finish) +
+					               (smallest == start ? 0 : herusitics.CostToEnter (smallest));
+					cache.setClosest (smallest, distance);
+					var alt = cache.getDistance(smallest) + neighbor.Value + distance * distanceFactor;
 					if (alt < cache.getDistance(neighbor.Key))
 					{
 						cache.setDistance (neighbor.Key, alt);
@@ -137,11 +141,9 @@ namespace Dijkstras
 
 			if (reached) {
 				Debug.Assert (path [path.Count - 1] == finish);
-			} else {
-				var a = 1;
 			}
 
-			return new Path (path);
+			return new Path (path, finish);
 		}
 	}
 

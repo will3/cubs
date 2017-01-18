@@ -324,6 +324,12 @@ namespace AssemblyCSharp
 			return surface1.DistanceTo (surface2);
 		}
 
+		public float CostToEnter(string a) {
+			var surface1 = surfaceLookUp [a];
+
+			return (surface1.hasObject) ? maxDistanceBetweenSurfaces : 0;
+		}
+
 		#endregion
 	}
 }

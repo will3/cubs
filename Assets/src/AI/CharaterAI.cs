@@ -8,7 +8,7 @@ namespace AssemblyCSharp
 		public ICharacterBehaviour behaviour;
 		public Character character;
 
-		private CharacterState currentState;
+		private ICharacterState currentState;
 
 		public void Start() {
 			Debug.Assert (behaviour != null);

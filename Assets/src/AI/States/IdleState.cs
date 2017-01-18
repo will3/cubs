@@ -2,7 +2,7 @@ using System;
 
 namespace AssemblyCSharp
 {
-	class IdleState : CharacterState {
+	class IdleState : ICharacterState {
 		// Find target available straight away
 		private readonly Cooldown findTargetCooldown = new Cooldown(0.5f, 0.5f);
 		private readonly Cooldown idleDoneCooldown;
@@ -15,7 +15,7 @@ namespace AssemblyCSharp
 			this.behaviour = behaviour;
 		}
 
-		public CharacterState Step() {
+		public ICharacterState Step() {
 			behaviour.Idle ();
 			findTargetCooldown.Update ();
 			idleDoneCooldown.Update ();
@@ -36,6 +36,10 @@ namespace AssemblyCSharp
 
 			// Otherwise patrol
 			return new PatrolState (behaviour, character);
+		}
+
+		public string Name() {
+			return "Idle";
 		}
 	}
 	

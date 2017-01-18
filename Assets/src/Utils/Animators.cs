@@ -23,8 +23,6 @@ namespace AssemblyCSharp
 		public static void SetAttackSpeed(this Animator animator, float speed) {
 			animator.SetFloat ("attack_speed", speed);
 		}
-
-		public static string TransitionAttackToIdle = "attack -> idle";
 	}
 }
 

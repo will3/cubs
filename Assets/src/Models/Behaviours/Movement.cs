@@ -8,7 +8,7 @@ namespace AssemblyCSharp
 	{
 		private float stepAmount;
 		private float stepRatio;
-		private readonly Path currentPath = new Path(new List<string>());
+		private readonly Path currentPath = new Path(new List<string>(), "");
 		private readonly Character character;
 		private bool walking;
 		public bool Walking {
@@ -19,17 +19,11 @@ namespace AssemblyCSharp
 			this.character = character;
 		}
 
-		public Path CurrentPath {
-			get {
-				return currentPath;
-			}
-		}
-
 		// Update route
 		public void Move(Surface target, bool nextTo = false) {
 			// If current path moving to destination
 			if (currentPath.path.Count > 0 &&
-				currentPath.path [currentPath.path.Count - 1] == target.identifier) {
+				currentPath.destination == target.identifier) {
 				return;
 			}
 
@@ -61,13 +55,18 @@ namespace AssemblyCSharp
 			currentPath.isNextTo = nextTo;
 		}
 
+		public bool Done {
+			get {
+				return currentPath.path.Count == 0 || currentPath.path.Count == 1 && currentPath.isNextTo;
+			}
+		}
+
 		public void StepPath() {
-			if (currentPath.path.Count == 0) {
-				walking = false;
-				return;
+			if (character.CurrentSurface != null) {
+				DebugUtil.DrawPath (character.CurrentSurface, currentPath);
 			}
 
-			if (currentPath.path.Count == 1 && currentPath.isNextTo) {
+			if (Done) {
 				walking = false;
 				return;
 			}
@@ -75,9 +74,17 @@ namespace AssemblyCSharp
 			walking = true;
 
 			var planet = Game.Instance.Planet;
-			var currentSurface = character.CurrentSurface;
-
 			var nextSurface = planet.Terrian.GetSurface (currentPath.path[0]);
+
+			// If next surface has object, reset path
+			if (stepRatio == 0.0f && 
+				nextSurface.hasObject) {
+				walking = false;
+				currentPath.path.Clear ();
+				return;
+			}
+
+			var currentSurface = character.CurrentSurface;
 
 			var distance = nextSurface.DistanceTo (currentSurface);
 			stepAmount += character.speed;

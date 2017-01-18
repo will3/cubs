@@ -3,7 +3,7 @@ using System;
 namespace AssemblyCSharp
 {
 
-	class AttackState : CharacterState {
+	class AttackState : ICharacterState {
 		ICharacterBehaviour behaviour;
 		Character target;
 		Character character;
@@ -14,7 +14,11 @@ namespace AssemblyCSharp
 			this.target = target;
 		}
 
-		public CharacterState Step() {
+		public ICharacterState Step() {
+			if (target.Dead) {
+				return new IdleState (behaviour, character);
+			}
+
 			var reached = behaviour.Chase (target);
 
 			if (reached) {
@@ -27,6 +31,10 @@ namespace AssemblyCSharp
 			} 
 
 			return this;
+		}
+
+		public string Name() {
+			return "Attack";
 		}
 	}
 	

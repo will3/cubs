@@ -5,6 +5,8 @@ namespace AssemblyCSharp
 {
 	public class Character : MonoBehaviour, IBlock {
 
+		public string characterName = "<unnamed>";
+
 		public float idleLength = 0.1f;
 
 		public float patrolLength = 10.0f;
@@ -59,11 +61,18 @@ namespace AssemblyCSharp
 
 		public void Damage(Character character) {
 			character.hitPoints -= damage;
+			Debug.LogFormat ("{0} attacked {1} for {2} damage", this.characterName, character.characterName, damage);
 		}
 
 		public bool Placed {
 			get {
 				return currentSurface != null;
+			}
+		}
+
+		public bool Dead {
+			get {
+				return hitPoints <= 0.0f;
 			}
 		}
 

@@ -6,7 +6,7 @@ using Dijkstras;
 
 namespace AssemblyCSharp
 {
-	public class MeleeBehaviour : MonoBehaviour, ICharacterBehaviour
+	public class MeleeBehaviour : MonoBehaviour, ICharacterBehaviour, CritterAnimationEvents.Listener
 	{
 		Character character;
 
@@ -14,6 +14,19 @@ namespace AssemblyCSharp
 
 		private Animator animator;
 
+		private CritterAnimationEvents animationEvents;
+
+		private bool exitAttackTrigger = false;
+		public void DidExitAttack ()
+		{
+			exitAttackTrigger = true;
+		}
+
+		public void DidEnterAny()
+		{
+			exitAttackTrigger = false;
+		}
+			
 		public void Start() {
 			character = GetComponent<Character> ();
 			Debug.Assert (character != null);
@@ -21,15 +34,14 @@ namespace AssemblyCSharp
 			Debug.Assert (animator != null);
 
 			movement = new Movement (character);
+
+			animationEvents = animator.GetBehaviour<CritterAnimationEvents> ();
+			animationEvents.listener = this;
 		}
 
 		public void Update() {
 			movement.StepPath ();
 			animator.SetWalking (movement.Walking);
-
-			if (character.CurrentSurface != null) {
-				DebugUtil.DrawPath (character.CurrentSurface, movement.CurrentPath);
-			}
 		}
 
 		public void Idle ()
@@ -45,7 +57,7 @@ namespace AssemblyCSharp
 			var planet = Game.Instance.Planet;
 			var currentSurface = character.CurrentSurface;
 
-			if (movement.CurrentPath.path.Count == 0) {
+			if (movement.Done) {
 				var target = planet.RandomSurface (currentSurface, 4);
 
 				if (target.identifier.Equals (currentSurface.identifier)) {
@@ -65,7 +77,7 @@ namespace AssemblyCSharp
 			MoveNextTo (target);
 
 			// If next to target
-			if (movement.CurrentPath.path.Count == 1) {
+			if (movement.Done) {
 				var connection = planet.Terrian.ConnectionBetween (character.CurrentSurface, target);
 			
 				if (connection != null) {
@@ -78,27 +90,31 @@ namespace AssemblyCSharp
 
 		public bool Attack (Character targetCharacter)
 		{
-			animator.TriggerAttack ();
-
-			if (animator.IsInTransition (0)) {
-				if (animator.GetAnimatorTransitionInfo (0)
-					.IsName (Animators.TransitionAttackToIdle)) {
-					character.Damage (targetCharacter);
-					return true;
-				}
+			if (exitAttackTrigger) {
+				exitAttackTrigger = false;
+				character.Damage (targetCharacter);
+				return true;
 			}
+
+			animator.TriggerAttack ();
 
 			return false;
 		}
 
 		public Character FindTarget ()
 		{
+			var maxDis = 5.0f;
+			var maxDisSq = maxDis * maxDis;
 			return GameObject.FindObjectsOfType<Character> ()
 				.Where (u => {
 					if (!u.Placed) {
 						return false;
 					}
 					if (u == character) {
+						return false;
+					}
+
+					if ((u.gameObject.transform.position - transform.position).sqrMagnitude > maxDisSq) {
 						return false;
 					}
 
