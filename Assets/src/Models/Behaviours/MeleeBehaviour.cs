@@ -32,7 +32,6 @@ namespace AssemblyCSharp
 
 		public void Idle ()
 		{
-			// Play idle animation
 		}
 
 		// Update route
@@ -112,14 +111,14 @@ namespace AssemblyCSharp
 			return false;
 		}
 
-		public bool Attack (Character character)
+		public bool Attack (Character targetCharacter)
 		{
-			animator.SetTrigger ("attack");
+			animator.TriggerAttack ();
 
 			if (animator.IsInTransition (0)) {
-				var info = animator.GetAnimatorTransitionInfo (0);
-
-				if (info.IsName ("attack -> idle")) {
+				if (animator.GetAnimatorTransitionInfo (0)
+					.IsName (Animators.TransitionAttackToIdle)) {
+					character.Damage (targetCharacter);
 					return true;
 				}
 			}
@@ -131,7 +130,7 @@ namespace AssemblyCSharp
 		{
 			return GameObject.FindObjectsOfType<Character> ()
 				.Where (u => {
-					if (u.NotPlaced) {
+					if (!u.Placed) {
 						return false;
 					}
 					if (u == character) {
@@ -146,12 +145,16 @@ namespace AssemblyCSharp
 
 		private void stepPath() {
 			if (currentPath.path.Count == 0) {
+				animator.SetWalking (false);
 				return;
 			}
 
 			if (currentPath.path.Count == 1 && pathNextTo) {
+				animator.SetWalking (false);
 				return;
 			}
+
+			animator.SetWalking (true);
 
 			var planet = Game.Instance.Planet;
 			var currentSurface = character.CurrentSurface;

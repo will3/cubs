@@ -32,14 +32,6 @@ public class Critter : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if (character.NotPlaced) {
-			return;
-		}
-
 		billBoard.up = transform.TransformDirection (Vector3.up);
-
-		if (character.hitPoints <= 0.0f) {
-			Destroy (gameObject);
-		}
 	}
 }

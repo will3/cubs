@@ -20,7 +20,7 @@ namespace AssemblyCSharp
 		}
 
 		public void Update() {
-			if (character.NotPlaced) {
+			if (!character.Placed) {
 				return;
 			}
 
