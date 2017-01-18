@@ -4,6 +4,13 @@ using UnityEngine;
 namespace AssemblyCSharp
 {
 	public class Character : MonoBehaviour, IBlock {
+
+		public float animAttackSpeed = 1.0f;
+
+		public float animWalkSpeed = 1.0f;
+
+		public float animIdleSpeed = 1.0f;
+
 		public float idleLength = 0.1f;
 
 		public float patrolLength = 10.0f;
@@ -42,6 +49,13 @@ namespace AssemblyCSharp
 		}
 
 		#endregion
+
+		public void Start() {
+			var animator = GetComponentInChildren<Animator> ();
+			animator.SetFloat ("attack_speed", animAttackSpeed);
+			animator.SetFloat ("walk_speed", animWalkSpeed);
+			animator.SetFloat ("idle_speed", animIdleSpeed);
+		}
 	}
 	
 }
