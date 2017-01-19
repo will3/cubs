@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using Dijkstras;
 
 namespace AssemblyCSharp
 {
-	public class MeleeBehaviour : MonoBehaviour, ICharacterBehaviour, CritterAnimationEvents.Listener
+	public class RangeBehaviour : MonoBehaviour, ICharacterBehaviour, CritterAnimationEvents.Listener
 	{
 		private Character character;
 
@@ -19,7 +17,6 @@ namespace AssemblyCSharp
 		private CritterAnimationEvents animationEvents;
 
 		private bool exitAttackTrigger = false;
-
 		public void DidExitAttack ()
 		{
 			exitAttackTrigger = true;
@@ -29,7 +26,7 @@ namespace AssemblyCSharp
 		{
 			exitAttackTrigger = false;
 		}
-			
+
 		public void Start() {
 			character = GetComponent<Character> ();
 			Debug.Assert (character != null);
@@ -47,34 +44,18 @@ namespace AssemblyCSharp
 			movement.StepPath ();
 			animator.SetWalking (movement.Walking);
 		}
-
+			
 		public void Idle ()
-		{
-		}
+		{ }
 
 		public void Patrol ()
 		{
 			movement.Patrol ();
 		}
 
-		public bool Chase (Character targetCharacter)
+		public bool Chase (Character character)
 		{
-			var planet = Game.Instance.Planet;
-
-			var target = targetCharacter.CurrentSurface;
-
-			movement.Move (target, true);
-
-			// If next to target
-			if (movement.Done) {
-				var connection = planet.Terrian.ConnectionBetween (character.CurrentSurface, target);
-			
-				if (connection != null) {
-					return true;
-				}
-			}
-
-			return false;
+			return true;
 		}
 
 		public bool Attack (Character targetCharacter)
@@ -92,7 +73,29 @@ namespace AssemblyCSharp
 
 		public Character FindTarget ()
 		{
-			return targeting.GetTargets().FirstOrDefault ();
+			var targets = targeting.GetTargets ();
+
+			foreach (var target in targets) {
+				if (HasVision (target)) {
+					return target;
+				}
+			}
+
+			return null;
+		}
+
+		private bool HasVision(Character target) {
+			var planet = Game.Instance.Planet;
+			var a = planet.gameObject.transform.TransformPoint (character.CurrentSurface.pointAbove);
+			var b = target.transform.position + 
+				planet.gameObject.transform.TransformDirection(target.CurrentSurface.normal) * 0.5f;
+			var dis = Vector3.Distance (a, b);
+
+			var ray = new Ray (a, (b - a).normalized);
+
+			RaycastHit hitInfo;
+			Physics.Raycast (ray, out hitInfo, dis);
+			return !Physics.Raycast (ray, dis);
 		}
 	}
 }

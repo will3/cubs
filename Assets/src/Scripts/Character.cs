@@ -21,6 +21,10 @@ namespace AssemblyCSharp
 
 		public float damage = 10.0f;
 
+		public float vision = 5.0f;
+
+		public BehaviourType behaviourType;
+
 		#region animation properties
 
 		public float animAttackSpeed = 1.0f;

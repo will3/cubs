@@ -313,13 +313,8 @@ namespace AssemblyCSharp
 
 		public float DistanceBetweenNodes (string a, string b)
 		{			
-			// TODO handle no surface
 			var surface1 = surfaceLookUp [a];
 			var surface2 = surfaceLookUp [b];
-
-//			if (surface1.hasObject || surface2.hasObject) {
-//				return maxDistanceBetweenSurfaces;
-//			}
 
 			return surface1.DistanceTo (surface2);
 		}

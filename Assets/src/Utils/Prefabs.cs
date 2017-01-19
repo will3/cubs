@@ -7,6 +7,7 @@ namespace AssemblyCSharp
 	{
 		public static string Swordsman = "Units/swordsman/swordsman";
 		public static string Spider = "Units/spider/spider";
+		public static string Archer = "Units/archer/archer";
 
 		public static GameObject Create(string name) {
 			var resourcePath = name;

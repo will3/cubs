@@ -23,8 +23,14 @@ public class Critter : MonoBehaviour {
 		character = GetComponent<Character> ();
 		Debug.Assert (character != null);
 
-		// TODO make it configurable
-		behaviour = gameObject.AddComponent<MeleeBehaviour> ();
+		switch (character.behaviourType) {
+		case BehaviourType.Melee:
+			behaviour = gameObject.AddComponent<MeleeBehaviour> ();
+			break;
+		case BehaviourType.Range:
+			behaviour = gameObject.AddComponent<RangeBehaviour> ();
+			break;
+		}
 
 		characterAI = gameObject.AddComponent<CharacterAI> ();
 		characterAI.behaviour = behaviour;

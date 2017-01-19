@@ -19,6 +19,10 @@ public class PlaceBuilding : MonoBehaviour {
 			prefabType = Prefabs.Spider;
 		}
 
+		if (Input.GetKeyDown (KeyCode.E)) {
+			prefabType = Prefabs.Archer;
+		}
+
 		if (Input.GetKeyDown (KeyCode.Mouse0)) {
 			var planet = Game.Instance.Planet;
 			var surface = planet.GetSurface ();

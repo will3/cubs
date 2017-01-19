@@ -105,6 +105,21 @@ namespace AssemblyCSharp
 
 			stepRatio = ratio;
 		}
+
+		public void Patrol() {
+			var planet = Game.Instance.Planet;
+			var currentSurface = character.CurrentSurface;
+
+			if (Done) {
+				var target = planet.RandomSurface (currentSurface, 4);
+
+				if (target.identifier.Equals (currentSurface.identifier)) {
+					return;
+				}
+
+				Move (target);
+			}
+		}
 	}
 }
 
