@@ -1,6 +1,7 @@
 ﻿using System;
 using Dijkstras;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace AssemblyCSharp
 {
@@ -96,7 +97,11 @@ namespace AssemblyCSharp
 				stepAmount -= distance;
 			}
 
+			var a = character.transform.position;
 			planet.LerpSurface (character, character.gameObject, currentSurface, nextSurface, ratio);
+			var b = character.transform.position;
+
+			character.moveDirection = (b - a).normalized;
 
 			if (ratio == 1.0f) {
 				currentPath.path.RemoveAt (0);

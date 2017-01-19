@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace AssemblyCSharp
 {
-	public class RangeBehaviour : MonoBehaviour, ICharacterBehaviour, CritterAnimationEvents.Listener
+	public class RangeBehaviour : MonoBehaviour, ICharacterBehaviour
 	{
 		private Character character;
 
@@ -16,17 +16,6 @@ namespace AssemblyCSharp
 
 		private CritterAnimationEvents animationEvents;
 
-		private bool exitAttackTrigger = false;
-		public void DidExitAttack ()
-		{
-			exitAttackTrigger = true;
-		}
-
-		public void DidEnterAny()
-		{
-			exitAttackTrigger = false;
-		}
-
 		public void Start() {
 			character = GetComponent<Character> ();
 			Debug.Assert (character != null);
@@ -37,7 +26,7 @@ namespace AssemblyCSharp
 			targeting = new Targeting (character);
 
 			animationEvents = animator.GetBehaviour<CritterAnimationEvents> ();
-			animationEvents.listener = this;
+			Debug.Assert (animationEvents != null);
 		}
 
 		public void Update() {
@@ -60,13 +49,15 @@ namespace AssemblyCSharp
 
 		public bool Attack (Character targetCharacter)
 		{
-			if (exitAttackTrigger) {
-				exitAttackTrigger = false;
-				character.Damage (targetCharacter);
+			if (animationEvents.exitAttack) {
 				return true;
 			}
 
 			animator.TriggerAttack ();
+//			character.Damage (targetCharacter);
+
+			// https://en.wikipedia.org/wiki/Trajectory_of_a_projectile#Angle_.CE.B8_required_to_hit_coordinate_.28x.2Cy.29
+			// Angle {\displaystyle \theta }  \theta required to hit coordinate (x,y)
 
 			return false;
 		}

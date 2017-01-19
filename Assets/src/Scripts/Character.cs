@@ -3,6 +3,17 @@ using UnityEngine;
 
 namespace AssemblyCSharp
 {
+	[Serializable]
+	public class AnimationInfo {
+		public float attackSpeed = 1.0f;
+
+		public float walkSpeed = 1.0f;
+
+		public float idleSpeed = 1.0f;
+
+		public float attackFinishTime = 0.5f;
+	}
+
 	public class Character : MonoBehaviour, IBlock {
 
 		public string characterName = "<unnamed>";
@@ -25,15 +36,9 @@ namespace AssemblyCSharp
 
 		public BehaviourType behaviourType;
 
-		#region animation properties
+		public Vector3 moveDirection;
 
-		public float animAttackSpeed = 1.0f;
-
-		public float animWalkSpeed = 1.0f;
-
-		public float animIdleSpeed = 1.0f;
-
-		#endregion
+		public AnimationInfo animationInfo = new AnimationInfo();
 	
 		#region IBlock implementation
 
@@ -52,12 +57,16 @@ namespace AssemblyCSharp
 
 		public void Start() {
 			var animator = GetComponentInChildren<Animator> ();
-			animator.SetAttackSpeed (animAttackSpeed);
-			animator.SetWalkSpeed (animWalkSpeed);
-			animator.SetIdleSpeed (animIdleSpeed);
+			animator.SetAttackSpeed (animationInfo.attackSpeed);
+			animator.SetWalkSpeed (animationInfo.walkSpeed);
+			animator.SetIdleSpeed (animationInfo.idleSpeed);
 		}
 
 		public void Update() {
+			if (!Placed) {
+				Destroy (gameObject);
+			}
+
 			if (hitPoints <= 0.0f) {
 				Destroy (gameObject);
 			}

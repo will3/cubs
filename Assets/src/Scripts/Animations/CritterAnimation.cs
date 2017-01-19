@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AssemblyCSharp
 {
-	public static class Animators {
+	public static class CritterAnimation {
 		public static void SetWalking(this Animator animator, bool flag) {
 			animator.SetBool("walking", flag);
 		}

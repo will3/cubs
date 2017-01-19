@@ -15,6 +15,8 @@ public class Critter : MonoBehaviour {
 
 	private ICharacterBehaviour behaviour;
 
+	private Animator animator;
+
 	// Use this for initialization
 	void Start () {
 		billBoard = GetComponentInChildren<Billboard> ();
@@ -34,10 +36,16 @@ public class Critter : MonoBehaviour {
 
 		characterAI = gameObject.AddComponent<CharacterAI> ();
 		characterAI.behaviour = behaviour;
+
+		animator = GetComponentInChildren<Animator> ();
+		Debug.Assert (animator != null);
+		var animationEvents = animator.GetBehaviour<CritterAnimationEvents> ();
+		animationEvents.animationInfo = character.animationInfo;
 	}
 
 	// Update is called once per frame
 	void Update () {
 		billBoard.up = transform.TransformDirection (Vector3.up);
+		billBoard.dir = character.moveDirection;
 	}
 }

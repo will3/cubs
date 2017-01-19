@@ -1,26 +1,45 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Director;
 
-public class CritterAnimationEvents : StateMachineBehaviour {
-	public interface Listener
-	{
-		void DidExitAttack ();
-		void DidEnterAny ();
-	}
+namespace AssemblyCSharp
+{
+	public class CritterAnimationEvents : StateMachineBehaviour {
+		private bool _exitAttack = false;
+		private bool _finishedAttack = false;
 
-	public Listener listener;
+		public AnimationInfo animationInfo;
 
-	override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-	{
-		var finishedAttack = stateInfo.IsName ("attack");
-		if (finishedAttack) {
-			listener.DidExitAttack ();
+		// Return true if exiting attack
+		public bool exitAttack {
+			get { return _exitAttack; }
 		}
-	}
 
-	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) 
-	{
-		listener.DidEnterAny ();
+		// Return true if attacking but attack has finished, see AnimationInfo.attackFinishTime
+		public bool finishedAttack {
+			get { return _finishedAttack; }
+		}
+
+		override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) 
+		{
+			_exitAttack = false;
+			_finishedAttack = false;
+		}
+
+		override public void OnStateUpdate (Animator animator, AnimatorStateInfo stateInfo, int layerIndex, AnimatorControllerPlayable controller) {
+			_finishedAttack = false;
+			if (stateInfo.IsName ("attack") &&
+				stateInfo.normalizedTime > animationInfo.attackFinishTime) {
+				_finishedAttack = true;
+			}
+		}
+
+		override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+		{
+			if (stateInfo.IsName ("attack")) {
+				_exitAttack = true;
+			}
+		}
 	}
 }

@@ -6,7 +6,7 @@ using Dijkstras;
 
 namespace AssemblyCSharp
 {
-	public class MeleeBehaviour : MonoBehaviour, ICharacterBehaviour, CritterAnimationEvents.Listener
+	public class MeleeBehaviour : MonoBehaviour, ICharacterBehaviour
 	{
 		private Character character;
 
@@ -17,18 +17,6 @@ namespace AssemblyCSharp
 		private Animator animator;
 
 		private CritterAnimationEvents animationEvents;
-
-		private bool exitAttackTrigger = false;
-
-		public void DidExitAttack ()
-		{
-			exitAttackTrigger = true;
-		}
-
-		public void DidEnterAny()
-		{
-			exitAttackTrigger = false;
-		}
 			
 		public void Start() {
 			character = GetComponent<Character> ();
@@ -40,7 +28,7 @@ namespace AssemblyCSharp
 			targeting = new Targeting (character);
 
 			animationEvents = animator.GetBehaviour<CritterAnimationEvents> ();
-			animationEvents.listener = this;
+			Debug.Assert (animationEvents != null);
 		}
 
 		public void Update() {
@@ -79,9 +67,7 @@ namespace AssemblyCSharp
 
 		public bool Attack (Character targetCharacter)
 		{
-			if (exitAttackTrigger) {
-				exitAttackTrigger = false;
-				character.Damage (targetCharacter);
+			if (animationEvents.exitAttack) {
 				return true;
 			}
 
