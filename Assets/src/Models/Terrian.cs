@@ -32,6 +32,8 @@ namespace AssemblyCSharp
 
 		private Graph graph = new Graph ();
 
+		private Vector3 center;
+
 		public Terrian (int size, float heightDiff) {
 			this.size = size;
 			this.heightDiff = heightDiff;
@@ -63,6 +65,7 @@ namespace AssemblyCSharp
 		}
 
 		public void Generate() {
+			center = new Vector3 (size, size, size) * 0.5f - new Vector3 (0.5f, 0.5f, 0.5f);
 			initBlocks ();
 			generateHeightMap ();
 			generateBiomes ();
@@ -92,52 +95,71 @@ namespace AssemblyCSharp
 		}
 
 		private void initGravity() {
-			var center = new Vector3 (size, size, size) * 0.5f - new Vector3 (0.5f, 0.5f, 0.5f);
-
 			foreach (var kv in map) {
 				var coord = kv.Key;
 				var block = kv.Value;
 
-				var diff = new Vector3 (
-					coord.x - center.x,
-					coord.y - center.y,
-					coord.z - center.z);
+				var dirs = GetGravities (coord.to_f() - center);
 
-				var max = Math.Max (Math.Abs(diff.x), 
-					Math.Max(Math.Abs(diff.y), Math.Abs(diff.z)));
-				
-				if (max == 0) {
-					continue;
-				}
-
-				var ratio1 = 1 / 1.2f;
-				var ratio2 = 1.2f;
-
-				if (isWithinRatio(diff.x, max, ratio1, ratio2)) { 
-					block.SetGravity (Dir.Right); 
-				}
-				if (isWithinRatio(diff.x, -max, ratio1, ratio2)) { 
-					block.SetGravity (Dir.Left); 
-				}
-
-				if (isWithinRatio(diff.y, max, ratio1, ratio2)) { 
-					block.SetGravity (Dir.Up); 
-				}
-				if (isWithinRatio(diff.y, -max, ratio1, ratio2)) { 
-					block.SetGravity (Dir.Down); 
-				}
-
-				if (isWithinRatio(diff.z, max, ratio1, ratio2)) { 
-					block.SetGravity (Dir.Forward); 
-				}
-				if (isWithinRatio(diff.z, -max, ratio1, ratio2)) { 
-					block.SetGravity (Dir.Back); 
+				foreach (var dir in dirs) {
+					block.SetGravity (dir);
 				}
 			}
 		}
+			
+		public IList<Dir> GetGravities(Vector3 position) {
+			var max = Math.Max (Math.Abs(position.x), 
+				Math.Max(Math.Abs(position.y), Math.Abs(position.z)));
+
+			var dirs = new List<Dir> ();
+
+			if (max == 0) {
+				return dirs;
+			}
+
+			var ratio1 = 1 / 1.2f;
+			var ratio2 = 1.2f;
+
+			if (isWithinRatio(position.x, max, ratio1, ratio2)) { 
+				dirs.Add (Dir.Right);
+			}
+			if (isWithinRatio(position.x, -max, ratio1, ratio2)) { 
+				dirs.Add (Dir.Left);
+			}
+
+			if (isWithinRatio(position.y, max, ratio1, ratio2)) { 
+				dirs.Add (Dir.Up);
+			}
+			if (isWithinRatio(position.y, -max, ratio1, ratio2)) { 
+				dirs.Add (Dir.Down);
+			}
+
+			if (isWithinRatio(position.z, max, ratio1, ratio2)) {
+				dirs.Add (Dir.Forward);
+			}
+			if (isWithinRatio(position.z, -max, ratio1, ratio2)) { 
+				dirs.Add (Dir.Back);
+			}
+
+			return dirs;
+		}
+
+		public Vector3 GetGravity(Vector3 position) {
+			var dirs = GetGravities (position);
+			if (dirs.Count == 0) {
+				return new Vector3 ();
+			}
+
+			var v = new Vector3 ();
+			foreach (var dir in dirs) {
+				v += DirUtils.GetUnitVector (dir).to_f ();
+			}
+
+			return v.normalized * -300f;
+		}
 
 		private bool isWithinRatio(float a, float b, float ratio1, float ratio2) {
-			var ratio = Math.Abs (a / b);
+			var ratio = a / b;
 			return ratio > ratio1 && ratio < ratio2;
 		}
 

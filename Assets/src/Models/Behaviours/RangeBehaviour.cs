@@ -14,13 +14,19 @@ namespace AssemblyCSharp
 
 		private Animator animator;
 
+		private Billboard billboard;
+
 		private CritterAnimationEvents animationEvents;
+
+		private bool hasFiredArrow = false;
 
 		public void Start() {
 			character = GetComponent<Character> ();
 			Debug.Assert (character != null);
 			animator = GetComponentInChildren<Animator> ();
 			Debug.Assert (animator != null);
+			billboard = GetComponentInChildren<Billboard> ();
+			Debug.Assert (billboard != null);
 
 			movement = new Movement (character);
 			targeting = new Targeting (character);
@@ -32,6 +38,10 @@ namespace AssemblyCSharp
 		public void Update() {
 			movement.StepPath ();
 			animator.SetWalking (movement.Walking);
+
+			if (animationEvents.finishedAttack) {
+				hasFiredArrow = false;
+			}
 		}
 			
 		public void Idle ()
@@ -46,18 +56,29 @@ namespace AssemblyCSharp
 		{
 			return true;
 		}
-
+			
 		public bool Attack (Character targetCharacter)
 		{
-			if (animationEvents.exitAttack) {
+			if (animationEvents.exitAttack && !hasFiredArrow) {
+				hasFiredArrow = true;
+				var planet = Game.Instance.Planet;
+				var obj = Prefabs.Create (Prefabs.Objects.Arrow);
+				var arrow = obj.GetComponent<Arrow> ();
+				arrow.transform.parent = planet.gameObject.transform;
+
+				var a = character.CalcAttackExitPoint ();
+				var b = targetCharacter.CalcCenterPoint ();
+
+				arrow.gameObject.transform.position = a + (b - a).normalized * 0.5f;
+
+				var dir = (b - a).normalized;
+
+				arrow.velocity = dir * 400.0f;
+
 				return true;
 			}
 
 			animator.TriggerAttack ();
-//			character.Damage (targetCharacter);
-
-			// https://en.wikipedia.org/wiki/Trajectory_of_a_projectile#Angle_.CE.B8_required_to_hit_coordinate_.28x.2Cy.29
-			// Angle {\displaystyle \theta }  \theta required to hit coordinate (x,y)
 
 			return false;
 		}

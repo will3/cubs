@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: d6f382edc1512499fa09662966e982b7
-timeCreated: 1484815712
+timeCreated: 1484954519
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -10,6 +10,12 @@ TextureImporter:
     21300006: archer_3
     21300008: archer_4
     21300010: archer_5
+    21300012: archer_6
+    21300014: archer_7
+    21300016: archer_8
+    21300018: archer_9
+    21300020: archer_10
+    21300022: archer_11
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -79,8 +85,8 @@ TextureImporter:
       name: archer_0
       rect:
         serializedVersion: 2
-        x: 1
-        y: 25
+        x: 0
+        y: 27
         width: 10
         height: 9
       alignment: 9
@@ -92,8 +98,8 @@ TextureImporter:
       name: archer_1
       rect:
         serializedVersion: 2
-        x: 13
-        y: 25
+        x: 10
+        y: 27
         width: 10
         height: 9
       alignment: 9
@@ -105,8 +111,8 @@ TextureImporter:
       name: archer_2
       rect:
         serializedVersion: 2
-        x: 1
-        y: 13
+        x: 20
+        y: 27
         width: 10
         height: 9
       alignment: 9
@@ -118,8 +124,8 @@ TextureImporter:
       name: archer_3
       rect:
         serializedVersion: 2
-        x: 13
-        y: 13
+        x: 0
+        y: 18
         width: 10
         height: 9
       alignment: 9
@@ -131,8 +137,8 @@ TextureImporter:
       name: archer_4
       rect:
         serializedVersion: 2
-        x: 1
-        y: 1
+        x: 10
+        y: 18
         width: 10
         height: 9
       alignment: 9
@@ -144,8 +150,86 @@ TextureImporter:
       name: archer_5
       rect:
         serializedVersion: 2
-        x: 13
-        y: 1
+        x: 20
+        y: 18
+        width: 10
+        height: 9
+      alignment: 9
+      pivot: {x: 0.4, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: archer_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 9
+        width: 10
+        height: 9
+      alignment: 9
+      pivot: {x: 0.4, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: archer_7
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 9
+        width: 10
+        height: 9
+      alignment: 9
+      pivot: {x: 0.4, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: archer_8
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 9
+        width: 10
+        height: 9
+      alignment: 9
+      pivot: {x: 0.4, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: archer_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 10
+        height: 9
+      alignment: 9
+      pivot: {x: 0.4, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: archer_10
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 0
+        width: 10
+        height: 9
+      alignment: 9
+      pivot: {x: 0.4, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: archer_11
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 0
         width: 10
         height: 9
       alignment: 9

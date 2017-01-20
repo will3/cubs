@@ -12,6 +12,10 @@ namespace AssemblyCSharp
 		public float idleSpeed = 1.0f;
 
 		public float attackFinishTime = 0.5f;
+
+		public Vector2 attackExitLocation = new Vector2(0.0f, 1.0f);
+
+		public Vector2 centerLocation = new Vector2(0.0f, 0.5f);
 	}
 
 	public class Character : MonoBehaviour, IBlock {
@@ -39,6 +43,8 @@ namespace AssemblyCSharp
 		public Vector3 moveDirection;
 
 		public AnimationInfo animationInfo = new AnimationInfo();
+
+		private Billboard billboard;
 	
 		#region IBlock implementation
 
@@ -60,6 +66,8 @@ namespace AssemblyCSharp
 			animator.SetAttackSpeed (animationInfo.attackSpeed);
 			animator.SetWalkSpeed (animationInfo.walkSpeed);
 			animator.SetIdleSpeed (animationInfo.idleSpeed);
+
+			billboard = GetComponentInChildren<Billboard> ();
 		}
 
 		public void Update() {
@@ -93,6 +101,15 @@ namespace AssemblyCSharp
 			return this.isMonster != character.isMonster;
 		}
 
+		public Vector3 CalcAttackExitPoint() {
+			var attackExitLocation = animationInfo.attackExitLocation;
+			return gameObject.transform.position + billboard.transform.TransformDirection (attackExitLocation);
+		}
+
+		public Vector3 CalcCenterPoint() {
+			var location = animationInfo.centerLocation;
+			return gameObject.transform.position + billboard.transform.TransformDirection (location);
+		}
 	}
 	
 }

@@ -47,6 +47,11 @@ namespace AssemblyCSharp
 				);
 			}
 		}
+
+		public static void DrawPoint(Vector3 point, float radius = 0.1f) {
+			Gizmos.color = Color.red;
+			Gizmos.DrawSphere (point, radius);
+		}
 	}
 }
 

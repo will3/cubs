@@ -14,6 +14,12 @@ namespace AssemblyCSharp
 		Back = 32
 	}
 
+	public static class VectorUtils {
+		public static Vector3 to_f (this Vector3i coord)  {
+			return new Vector3 (coord.x, coord.y, coord.z);
+		}
+	}
+
 	public class DirUtils 
 	{
 		private static Vector3i up = new Vector3i(0, 1, 0);
