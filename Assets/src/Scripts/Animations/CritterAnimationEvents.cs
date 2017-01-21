@@ -8,6 +8,9 @@ namespace AssemblyCSharp
 	public class CritterAnimationEvents : StateMachineBehaviour {
 		private bool _exitAttack = false;
 		private bool _finishedAttack = false;
+		private bool _idle = false;
+		private bool _walking = false;
+		private bool _attacking = false;
 
 		public AnimationInfo animationInfo;
 
@@ -21,10 +24,18 @@ namespace AssemblyCSharp
 			get { return _finishedAttack; }
 		}
 
+		public bool idle { get { return _idle; } }
+		public bool walking { get { return _walking; } }
+		public bool attacking { get { return _attacking; } }
+
 		override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) 
 		{
 			_exitAttack = false;
 			_finishedAttack = false;
+
+			_idle = stateInfo.IsName("idle");
+			_walking = stateInfo.IsName ("walking");
+			_attacking = stateInfo.IsName ("attacking");
 		}
 
 		override public void OnStateUpdate (Animator animator, AnimatorStateInfo stateInfo, int layerIndex, AnimatorControllerPlayable controller) {

@@ -34,6 +34,10 @@ namespace AssemblyCSharp
 		public void Update() {
 			movement.StepPath ();
 			animator.SetWalking (movement.Walking);
+
+			if (animationEvents.finishedAttack) {
+				hasAppliedAttack = false;
+			}
 		}
 
 		public void Idle ()
@@ -65,14 +69,19 @@ namespace AssemblyCSharp
 			return false;
 		}
 
+		private bool hasAppliedAttack = false;
 		public bool Attack (Character targetCharacter)
 		{
-			if (animationEvents.exitAttack) {
+			if (animationEvents.exitAttack && !hasAppliedAttack) {
+				hasAppliedAttack = true;
+				targetCharacter.ApplyDamage (character.damage);
 				return true;
 			}
 
-			animator.TriggerAttack ();
-
+			if (animationEvents.idle) {
+				animator.TriggerAttack ();
+			}
+				
 			return false;
 		}
 

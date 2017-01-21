@@ -6,6 +6,8 @@ using AssemblyCSharp;
 public class Arrow : MonoBehaviour {
 	public Vector3 velocity = new Vector3(0.0f, 0.0f, 0.0f);
 	public float timeToLive = 2;
+	public Damage damage = new Damage(10.0f, "arrow");
+	public IDamagable target;
 
 	private Planet planet;
 	private bool hitSurface;
@@ -30,10 +32,6 @@ public class Arrow : MonoBehaviour {
 			return;
 		}
 
-//		var g = planet.Terrian.GetGravity (transform.position);
-//
-//		velocity += g * Time.deltaTime * 0.1f;
-
 		var dir = velocity.normalized;
 	
 		transform.LookAt (Camera.main.transform, dir);
@@ -47,7 +45,13 @@ public class Arrow : MonoBehaviour {
 			transform.position = hitInfo.point;
 			hitSurface = true;
 		} else {
-			transform.position += velocity * Time.deltaTime * 0.1f;
+			transform.position += velocity * Time.deltaTime;
+		}
+	}
+
+	void OnDestroy() {
+		if (target != null) {
+			target.ApplyDamage (damage);
 		}
 	}
 }

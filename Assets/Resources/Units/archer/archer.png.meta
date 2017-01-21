@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: d6f382edc1512499fa09662966e982b7
-timeCreated: 1484954519
+timeCreated: 1484957178
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -86,11 +86,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 27
-        width: 10
-        height: 9
+        y: 0
+        width: 12
+        height: 10
       alignment: 9
-      pivot: {x: 0.4, y: 0}
+      pivot: {x: 0.41, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -98,12 +98,12 @@ TextureImporter:
       name: archer_1
       rect:
         serializedVersion: 2
-        x: 10
-        y: 27
-        width: 10
-        height: 9
+        x: 12
+        y: 0
+        width: 12
+        height: 10
       alignment: 9
-      pivot: {x: 0.4, y: 0}
+      pivot: {x: 0.41, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -111,12 +111,12 @@ TextureImporter:
       name: archer_2
       rect:
         serializedVersion: 2
-        x: 20
-        y: 27
-        width: 10
-        height: 9
+        x: 24
+        y: 0
+        width: 12
+        height: 10
       alignment: 9
-      pivot: {x: 0.4, y: 0}
+      pivot: {x: 0.41, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -124,12 +124,12 @@ TextureImporter:
       name: archer_3
       rect:
         serializedVersion: 2
-        x: 0
-        y: 18
-        width: 10
-        height: 9
+        x: 36
+        y: 0
+        width: 12
+        height: 10
       alignment: 9
-      pivot: {x: 0.4, y: 0}
+      pivot: {x: 0.41, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -137,12 +137,12 @@ TextureImporter:
       name: archer_4
       rect:
         serializedVersion: 2
-        x: 10
-        y: 18
-        width: 10
-        height: 9
+        x: 48
+        y: 0
+        width: 12
+        height: 10
       alignment: 9
-      pivot: {x: 0.4, y: 0}
+      pivot: {x: 0.41, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -150,12 +150,12 @@ TextureImporter:
       name: archer_5
       rect:
         serializedVersion: 2
-        x: 20
-        y: 18
-        width: 10
-        height: 9
+        x: 60
+        y: 0
+        width: 12
+        height: 10
       alignment: 9
-      pivot: {x: 0.4, y: 0}
+      pivot: {x: 0.41, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -163,12 +163,12 @@ TextureImporter:
       name: archer_6
       rect:
         serializedVersion: 2
-        x: 0
-        y: 9
-        width: 10
-        height: 9
+        x: 72
+        y: 0
+        width: 12
+        height: 10
       alignment: 9
-      pivot: {x: 0.4, y: 0}
+      pivot: {x: 0.41, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -176,12 +176,12 @@ TextureImporter:
       name: archer_7
       rect:
         serializedVersion: 2
-        x: 10
-        y: 9
-        width: 10
-        height: 9
+        x: 84
+        y: 0
+        width: 12
+        height: 10
       alignment: 9
-      pivot: {x: 0.4, y: 0}
+      pivot: {x: 0.41, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -189,12 +189,12 @@ TextureImporter:
       name: archer_8
       rect:
         serializedVersion: 2
-        x: 20
-        y: 9
-        width: 10
-        height: 9
+        x: 96
+        y: 0
+        width: 12
+        height: 10
       alignment: 9
-      pivot: {x: 0.4, y: 0}
+      pivot: {x: 0.41, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
@@ -202,38 +202,12 @@ TextureImporter:
       name: archer_9
       rect:
         serializedVersion: 2
-        x: 0
+        x: 108
         y: 0
-        width: 10
-        height: 9
+        width: 12
+        height: 10
       alignment: 9
-      pivot: {x: 0.4, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: archer_10
-      rect:
-        serializedVersion: 2
-        x: 10
-        y: 0
-        width: 10
-        height: 9
-      alignment: 9
-      pivot: {x: 0.4, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: archer_11
-      rect:
-        serializedVersion: 2
-        x: 20
-        y: 0
-        width: 10
-        height: 9
-      alignment: 9
-      pivot: {x: 0.4, y: 0}
+      pivot: {x: 0.41, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0

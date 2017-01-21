@@ -1,12 +1,15 @@
 fileFormatVersion: 2
-guid: bebb918d3b8a24a2dbecd7c92544ddb0
-timeCreated: 1484564767
+guid: 100795291ebce4c1fa24fc5623526099
+timeCreated: 1484960384
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: guy_0
-    21300002: guy_1
-    21300004: guy_2
+    21300000: swordsman_0
+    21300002: swordsman_1
+    21300004: swordsman_2
+    21300006: swordsman_3
+    21300008: swordsman_4
+    21300010: swordsman_5
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -73,41 +76,80 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: guy_0
+      name: swordsman_0
       rect:
         serializedVersion: 2
-        x: 3
-        y: 25
-        width: 8
-        height: 9
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: guy_1
-      rect:
-        serializedVersion: 2
-        x: 3
-        y: 13
-        width: 12
-        height: 9
-      alignment: 9
-      pivot: {x: 0.333, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: guy_2
-      rect:
-        serializedVersion: 2
-        x: 3
+        x: 0
         y: 1
-        width: 8
-        height: 9
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+        width: 15
+        height: 10
+      alignment: 9
+      pivot: {x: 0.4, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: swordsman_1
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 1
+        width: 15
+        height: 10
+      alignment: 9
+      pivot: {x: 0.4, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: swordsman_2
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 1
+        width: 15
+        height: 10
+      alignment: 9
+      pivot: {x: 0.4, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: swordsman_3
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 1
+        width: 15
+        height: 10
+      alignment: 9
+      pivot: {x: 0.4, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: swordsman_4
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 1
+        width: 15
+        height: 10
+      alignment: 9
+      pivot: {x: 0.4, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: swordsman_5
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 1
+        width: 15
+        height: 10
+      alignment: 9
+      pivot: {x: 0.4, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0

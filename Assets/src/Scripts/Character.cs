@@ -18,7 +18,7 @@ namespace AssemblyCSharp
 		public Vector2 centerLocation = new Vector2(0.0f, 0.5f);
 	}
 
-	public class Character : MonoBehaviour, IBlock {
+	public class Character : MonoBehaviour, IBlock, IDamagable {
 
 		public string characterName = "<unnamed>";
 
@@ -34,7 +34,7 @@ namespace AssemblyCSharp
 
 		public int maxPathFindingSteps = 32;
 
-		public float damage = 10.0f;
+		public Damage damage = new Damage();
 
 		public float vision = 5.0f;
 
@@ -62,6 +62,8 @@ namespace AssemblyCSharp
 		#endregion
 
 		public void Start() {
+			damage.sourceName = characterName;
+
 			var animator = GetComponentInChildren<Animator> ();
 			animator.SetAttackSpeed (animationInfo.attackSpeed);
 			animator.SetWalkSpeed (animationInfo.walkSpeed);
@@ -78,11 +80,6 @@ namespace AssemblyCSharp
 			if (hitPoints <= 0.0f) {
 				Destroy (gameObject);
 			}
-		}
-
-		public void Damage(Character character) {
-			character.hitPoints -= damage;
-			Debug.LogFormat ("{0} attacked {1} for {2} damage", this.characterName, character.characterName, damage);
 		}
 
 		public bool Placed {
@@ -110,6 +107,17 @@ namespace AssemblyCSharp
 			var location = animationInfo.centerLocation;
 			return gameObject.transform.position + billboard.transform.TransformDirection (location);
 		}
+
+		#region IDamagable implementation
+
+		public void ApplyDamage (Damage damage)
+		{
+			hitPoints -= damage.amount;
+
+			Debug.LogFormat ("{0} attacked {1} for {2} damage", this.characterName, damage.sourceName, damage);
+		}
+
+		#endregion
 	}
 	
 }

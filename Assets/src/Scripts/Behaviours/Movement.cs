@@ -53,7 +53,10 @@ namespace AssemblyCSharp
 
 			// Append path
 			currentPath.path.AddRange (p.path);
-			currentPath.isNextTo = nextTo;
+
+			currentPath.isNextTo = nextTo && 
+				currentPath.path.Count > 0 && 
+				currentPath.path[currentPath.path.Count - 1] == target.identifier;
 		}
 
 		public bool Done {
@@ -61,7 +64,7 @@ namespace AssemblyCSharp
 				return currentPath.path.Count == 0 || currentPath.path.Count == 1 && currentPath.isNextTo;
 			}
 		}
-
+			
 		public void StepPath() {
 			if (character.CurrentSurface != null) {
 				DebugUtil.DrawPath (character.CurrentSurface, currentPath);

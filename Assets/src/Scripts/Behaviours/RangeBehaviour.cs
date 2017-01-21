@@ -39,7 +39,7 @@ namespace AssemblyCSharp
 			movement.StepPath ();
 			animator.SetWalking (movement.Walking);
 
-			if (animationEvents.finishedAttack) {
+			if (animationEvents.exitAttack) {
 				hasFiredArrow = false;
 			}
 		}
@@ -59,7 +59,7 @@ namespace AssemblyCSharp
 			
 		public bool Attack (Character targetCharacter)
 		{
-			if (animationEvents.exitAttack && !hasFiredArrow) {
+			if (animationEvents.finishedAttack && !hasFiredArrow) {
 				hasFiredArrow = true;
 				var planet = Game.Instance.Planet;
 				var obj = Prefabs.Create (Prefabs.Objects.Arrow);
@@ -71,14 +71,19 @@ namespace AssemblyCSharp
 
 				arrow.gameObject.transform.position = a + (b - a).normalized * 0.5f;
 
+				var dis = (arrow.gameObject.transform.position - b).magnitude;
+				var speed = 20.0f;
+				arrow.timeToLive = dis / speed;
 				var dir = (b - a).normalized;
-
-				arrow.velocity = dir * 400.0f;
+				arrow.velocity = dir * speed;
+				arrow.target = targetCharacter;
 
 				return true;
 			}
 
-			animator.TriggerAttack ();
+			if (animationEvents.idle) {
+				animator.TriggerAttack ();
+			}
 
 			return false;
 		}
