@@ -97,10 +97,17 @@ public class Planet : MonoBehaviour {
 
 			var size = UnityEngine.Random.Range(0.1f, 1.0f);
 
-			var uv = new Vector2 (
-				         UnityEngine.Random.Range (-0.3f, 0.3f), 
-				         UnityEngine.Random.Range (-0.3f, 0.3f));
-			if (noise > min1 && noise2 > min2) {
+			var block = Terrian.GetVoxel (coord.x, coord.y, coord.z);
+			if (block.type == TerrianBlockType.Stone) {
+				noise2 -= 0.2f;
+			}
+
+			if (noise > min1 && 
+				noise2 > min2) {
+				var uv = new Vector2 (
+					UnityEngine.Random.Range (-0.3f, 0.3f), 
+					UnityEngine.Random.Range (-0.3f, 0.3f));
+				
 				Create (Prefabs.Objects.Trees.OfSize(size), new BlockCoord(surface, uv));
 			}
 		}
