@@ -24,7 +24,7 @@ namespace AssemblyCSharp
 			new Dictionary<TerrianBlockType, Color> {
 			{ TerrianBlockType.Grass, new Color (143 / 255.0f, 216 / 255.0f, 70 / 255.0f) },
 			{ TerrianBlockType.Stone, new Color (178 / 255.0f, 175 / 255.0f, 171 / 255.0f) },
-			{ TerrianBlockType.Water, Colors.hexToColor("#00B4C3") }
+			{ TerrianBlockType.Water, new Color (99 / 255.0f, 173 / 255.0f,255 / 255.0f, 0.1f) }
 		};
 
 		public TerrianBlock (Vector3i coord, TerrianBlockType type)

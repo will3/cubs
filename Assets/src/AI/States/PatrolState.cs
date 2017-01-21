@@ -5,7 +5,7 @@ namespace AssemblyCSharp
 
 	class PatrolState : ICharacterState {
 		ICharacterBehaviour behaviour;
-		private readonly Cooldown findTargetCooldown = new Cooldown(0.5f);
+		private readonly Cooldown findTargetCooldown = new Cooldown(0.1f);
 		private Character character;
 
 		public PatrolState(ICharacterBehaviour behaviour, Character character) {

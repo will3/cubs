@@ -23,6 +23,8 @@ namespace AssemblyCSharp
 			return point + uvVectors [0] * uv.x + uvVectors [1] * uv.y;
 		}
 
+		public bool isWater = false;
+
 		public IBlock block;
 
 		public readonly List<Connection> connections = new List<Connection>();

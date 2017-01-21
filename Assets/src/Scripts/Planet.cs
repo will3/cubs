@@ -6,8 +6,7 @@ using AssemblyCSharp;
 using System;
 
 public class Planet : MonoBehaviour {
-	public int size = 16;
-	public float heightDiff = 2.0f;
+	public int size = 24;
 	public float trees = 1.0f;
 
 	private Terrian _terrian;
@@ -39,7 +38,7 @@ public class Planet : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		_terrian = new Terrian (size, heightDiff);
+		_terrian = new Terrian (size);
 		Game.Instance.Planet = this;
 		Game.Instance.Terrian = _terrian;
 
@@ -77,14 +76,20 @@ public class Planet : MonoBehaviour {
 
 	private void generateTrees() {
 		var g1 = new Noise ();
-		g1.scale = 0.05f;
+		g1.frequency = 0.05f;
 		var g2 = new Noise ();
-		g2.scale = g1.scale * 2;
+		g2.frequency = g1.frequency * 2;
 		var g3 = new Noise ();
-		g3.scale = 2.0f;
+		g3.frequency = 2.0f;
 
 		foreach (var surface in Terrian.AllSurfaces.Values) {
 			var coord = surface.coord;
+			var block = Terrian.GetVoxel (coord.x, coord.y, coord.z);
+
+			if (block.type == TerrianBlockType.Water) {
+				continue;
+			}
+
 			var noise = 
 				g1.get (coord.x, coord.y, coord.z) +
 				g2.get (coord.x, coord.y, coord.z) * 0.5f;
@@ -92,22 +97,21 @@ public class Planet : MonoBehaviour {
 			
 			noise /= 1.5f;
 
-			var min1 = 0.5 / trees;
-			var min2 = 0.5 / trees;
+			var min1 = 0.3;
+			var min2 = 0.5;
 
-			var size = UnityEngine.Random.Range(0.1f, 1.0f);
-
-			var block = Terrian.GetVoxel (coord.x, coord.y, coord.z);
 			if (block.type == TerrianBlockType.Stone) {
-				noise2 -= 0.2f;
+				noise2 -= 0.5f;
 			}
 
 			if (noise > min1 && 
-				noise2 > min2) {
+				noise2 > min2 &&
+				UnityEngine.Random.Range(0.0f, 1.0f) < trees) {
+				var size = UnityEngine.Random.Range(0.1f, 1.0f);
 				var uv = new Vector2 (
 					UnityEngine.Random.Range (-0.3f, 0.3f), 
 					UnityEngine.Random.Range (-0.3f, 0.3f));
-				
+
 				Create (Prefabs.Objects.Trees.OfSize(size), new BlockCoord(surface, uv));
 			}
 		}
@@ -232,12 +236,17 @@ public class Planet : MonoBehaviour {
 		return surface.connections [index];	
 	}
 
+	// Ignores water tiles
 	public Surface RandomSurface(Surface surface, int num = 1) {
 		var identifier = surface.identifier;
 
 		for (var i = 0; i < num; i++) {
 			var connection = RandomConnection (identifier);
-			identifier = connection.OtherSurface (identifier).identifier;
+			var otherSurface = connection.OtherSurface (identifier);
+			if (Terrian.CostToEnter (otherSurface.identifier) > 0) {
+				continue;
+			}
+			identifier = otherSurface.identifier;
 		}
 
 		return _terrian.GetSurface (identifier);

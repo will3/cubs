@@ -6,11 +6,12 @@ using Dijkstras;
 
 namespace AssemblyCSharp
 {
-	public class Terrian : PathFindingHeruistics
+	public class Terrian : PathFindingContext
 	{
-		// Should prob be encapsulated
 		public readonly int size;
-		public readonly float heightDiff;
+		private float heightDiff = 4.0f;
+		private int seaLevel = 11;
+
 		public Dictionary<Vector3i, TerrianBlock> map = new Dictionary<Vector3i, TerrianBlock>();
 
 		public IDictionary<string, Connection> AllConnections {
@@ -32,10 +33,9 @@ namespace AssemblyCSharp
 
 		private Vector3 center;
 
-		public Terrian (int size, float heightDiff) {
+		public Terrian (int size) {
 			this.size = size;
-			this.heightDiff = heightDiff;
-			graph.herusitics = this;
+			graph.context = this;
 		}
 
 		public void SetVoxel(int i, int j, int k, TerrianBlock block) {
@@ -87,6 +87,7 @@ namespace AssemblyCSharp
 						continue;
 					}
 					var surface = block.AddSurface (dir);
+					surface.isWater = block.type == TerrianBlockType.Water;
 					surfaceLookUp [surface.identifier] = surface;
 				}
 			}
@@ -176,10 +177,13 @@ namespace AssemblyCSharp
 			for (var d = 0; d < 3; d++) {
 				foreach(var side in new [] {0, 1}) {
 					var g1 = new Noise ();
-					g1.scale = 1.0f / (float)size * 1.0f;
+					g1.frequency = 1.0f / (float)size * 1.0f;
 
 					var g2 = new Noise ();
-					g2.scale = 0.05f;
+					g2.frequency = 0.05f;
+
+					var g3 = new Noise ();
+					g3.frequency = 0.01f;
 
 					var dir = side == 0 ? 1 : -1;
 
@@ -188,8 +192,11 @@ namespace AssemblyCSharp
 
 					for (var i = 0; i < size; i++) {
 						for (var j = 0; j < size; j++) {
-							var noise = (g1.get (i, j, 0) + g2.get (i, j, 0));
-							var height = (int)Mathf.Floor(noise * heightDiff);
+							var n3 = g3.get (i, j, 0);
+							n3 = n3 > 0.5 ? n3 : 0.0f;
+
+							var noise = (g1.get (i, j, 0) + g2.get (i, j, 0)) / 2.0f + (n3 > 0 ? n3 : 0.0f) * 1.0f;
+							var height = (int)Mathf.Floor(noise * heightDiff) + 3;
 
 							var coord = new [] { 0, 0, 0 };
 							var startD = side * (size - 1);
@@ -200,7 +207,14 @@ namespace AssemblyCSharp
 							for (var k = 0; k < height; k++) {
 								coord [d] = startD + k * dir;
 							
-								SetVoxel (coord [0], coord [1], coord [2], null);
+								var dis = new Vector3(coord[0], coord[1], coord[2]) - center;
+								var max = Math.Max (Math.Abs(dis.x), Math.Max (Math.Abs(dis.y), Math.Abs(dis.z)));
+								if (max <= seaLevel) {
+									SetVoxel (coord [0], coord [1], coord [2], 
+										new TerrianBlock (new Vector3i(coord[0], coord[1], coord[2]), TerrianBlockType.Water));
+								}else {
+									SetVoxel (coord [0], coord [1], coord [2], null);
+								}
 							}
 						}
 					}
@@ -210,9 +224,9 @@ namespace AssemblyCSharp
 
 		private void generateBiomes() {
 			var g1 = new Noise ();
-			g1.scale = 0.05f;
+			g1.frequency = 0.05f;
 			var g2 = new Noise ();
-			g2.scale = g1.scale * 2;
+			g2.frequency = g1.frequency * 2;
 
 			for (var i = 0; i < size; i++) {
 				for (var j = 0; j < size; j++) {
@@ -334,7 +348,7 @@ namespace AssemblyCSharp
 		public float CostToEnter(string a) {
 			var surface1 = surfaceLookUp [a];
 
-			return (surface1.hasObject) ? maxDistanceBetweenSurfaces : 0;
+			return (surface1.hasObject || surface1.isWater) ? maxDistanceBetweenSurfaces : 0;
 		}
 
 		#endregion

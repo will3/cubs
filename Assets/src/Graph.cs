@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Dijkstras
 {
-	interface PathFindingHeruistics {
+	interface PathFindingContext {
 		float DistanceBetweenNodes(string a, string b);
 		float CostToEnter (string a);
 	}
@@ -24,7 +24,7 @@ namespace Dijkstras
 	{
 		Dictionary<string, Dictionary<string, float>> vertices = new Dictionary<string, Dictionary<string, float>>();
 
-		public PathFindingHeruistics herusitics;
+		public PathFindingContext context;
 		public float distanceFactor = 2.0f;
 
 		public void add_vertex(string name, Dictionary<string, float> edges)
@@ -125,8 +125,8 @@ namespace Dijkstras
 
 				foreach (var neighbor in vertices[smallest])
 				{
-					var distance = herusitics.DistanceBetweenNodes (smallest, finish) +
-					               (smallest == start ? 0 : herusitics.CostToEnter (smallest));
+					var distance = context.DistanceBetweenNodes (smallest, finish) +
+					               (smallest == start ? 0 : context.CostToEnter (smallest));
 					cache.setClosest (smallest, distance);
 					var alt = cache.getDistance(smallest) + neighbor.Value + distance * distanceFactor;
 					if (alt < cache.getDistance(neighbor.Key))
