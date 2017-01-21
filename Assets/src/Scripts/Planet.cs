@@ -8,6 +8,7 @@ using System;
 public class Planet : MonoBehaviour {
 	public int size = 16;
 	public float heightDiff = 2.0f;
+	public float trees = 1.0f;
 
 	private Terrian _terrian;
 	public Terrian Terrian {
@@ -25,11 +26,11 @@ public class Planet : MonoBehaviour {
 	public GameObject Create(string name, Surface surface) {
 		var obj = Prefabs.Create (name);
 		obj.transform.parent = gameObject.transform.parent;
-		var character = obj.GetComponent<Character> ();
+		var block = (IBlock)obj.GetComponent<Character> () ?? obj.GetComponent<Tree>();
 
-		SetSurface (obj, character, surface);
+		SetSurface (obj, block, surface);
 
-		character.CurrentSurface = surface;
+		block.blockCoord.currentSurface = surface;
 
 		return obj;
 	}
@@ -62,12 +63,41 @@ public class Planet : MonoBehaviour {
 		volume.data = data;
 
 		Terrian.Generate ();
+		generateTrees ();
 
 		loadData ();
 
 		var dragCamera = Camera.main.GetComponent<DragCamera> ();
 		if (dragCamera != null) {
 			dragCamera.distance = size * 1.3f;
+		}
+	}
+
+	private void generateTrees() {
+		var g1 = new Noise ();
+		g1.scale = 0.05f;
+		var g2 = new Noise ();
+		g2.scale = g1.scale * 2;
+		var g3 = new Noise ();
+		g3.scale = 2.0f;
+
+		foreach (var surface in Terrian.AllSurfaces.Values) {
+			var coord = surface.coord;
+			var noise = 
+				g1.get (coord.x, coord.y, coord.z) +
+				g2.get (coord.x, coord.y, coord.z) * 0.5f;
+			var noise2 = g3.get(coord.x, coord.y, coord.z);
+			
+			noise /= 1.5f;
+
+			var min1 = 0.5 / trees;
+			var min2 = 0.5 / trees;
+
+			var size = UnityEngine.Random.Range(0.1f, 1.0f);
+
+			if (noise > min1 && noise2 > min2) {
+				Create (Prefabs.Objects.Trees.OfSize(size), surface);
+			}
 		}
 	}
 
@@ -122,13 +152,13 @@ public class Planet : MonoBehaviour {
 			return false;
 		}
 
-		if (block.CurrentSurface != null) {
-			block.CurrentSurface.block = null;
+		if (block.blockCoord.currentSurface != null) {
+			block.blockCoord.currentSurface.block = null;
 		}
 
 		var position = gameObject.transform.TransformPoint (surface.point);
 		obj.transform.position = position;
-		block.CurrentSurface = surface;
+		block.blockCoord.currentSurface = surface;
 		surface.block = block;
 
 		obj.transform.localRotation = surface.rotation;
@@ -154,11 +184,11 @@ public class Planet : MonoBehaviour {
 		obj.transform.position = gameObject.transform.TransformPoint (position);
 
 		if (ratio == 1.0f) {
-			if (block.CurrentSurface != null) {
-				block.CurrentSurface.block = null;
+			if (block.blockCoord.currentSurface != null) {
+				block.blockCoord.currentSurface.block = null;
 			}
 
-			block.CurrentSurface = surface2;
+			block.blockCoord.currentSurface = surface2;
 		}
 
 		surface2.block = block;
@@ -173,9 +203,9 @@ public class Planet : MonoBehaviour {
 	}
 
 	public Connection RandomConnection(string surfaceIdentifier) {
-		var connections = Terrian.GetConnections (surfaceIdentifier);
-		var index = UnityEngine.Random.Range (0, connections.Count - 1);
-		return connections [index];	
+		var surface = Terrian.GetSurface (surfaceIdentifier);
+		var index = UnityEngine.Random.Range (0, surface.connections.Count - 1);
+		return surface.connections [index];	
 	}
 
 	public Surface RandomSurface(Surface surface, int num = 1) {

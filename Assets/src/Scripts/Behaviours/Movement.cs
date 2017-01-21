@@ -36,7 +36,7 @@ namespace AssemblyCSharp
 
 			var startPoint = currentPath.path.Count == 1 ? 
 				currentPath.path [0] : 
-				character.CurrentSurface.identifier;
+				character.blockCoord.currentSurface.identifier;
 
 			// Already at destination
 			if (startPoint == target.identifier) {
@@ -66,8 +66,8 @@ namespace AssemblyCSharp
 		}
 			
 		public void StepPath() {
-			if (character.CurrentSurface != null) {
-				DebugUtil.DrawPath (character.CurrentSurface, currentPath);
+			if (character.blockCoord.currentSurface != null) {
+				DebugUtil.DrawPath (character.blockCoord.currentSurface, currentPath);
 			}
 
 			if (Done) {
@@ -88,7 +88,7 @@ namespace AssemblyCSharp
 				return;
 			}
 
-			var currentSurface = character.CurrentSurface;
+			var currentSurface = character.blockCoord.currentSurface;
 
 			var distance = nextSurface.DistanceTo (currentSurface);
 			stepAmount += character.speed;
@@ -116,7 +116,7 @@ namespace AssemblyCSharp
 
 		public void Patrol() {
 			var planet = Game.Instance.Planet;
-			var currentSurface = character.CurrentSurface;
+			var currentSurface = character.blockCoord.currentSurface;
 
 			if (Done) {
 				var target = planet.RandomSurface (currentSurface, 4);

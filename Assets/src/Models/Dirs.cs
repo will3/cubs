@@ -48,6 +48,22 @@ namespace AssemblyCSharp
 			return zero;
 		}
 
+		// Given direction, return uv vectors for dir, only positive vectors are used
+		public static Vector3[] GetUV(Dir dir) {
+			switch (dir) {
+			case Dir.Up:
+			case Dir.Down:
+				return new []{ Vector3.right, Vector3.forward };
+			case Dir.Left:
+			case Dir.Right:
+				return new []{ Vector3.up, Vector3.forward };
+			case Dir.Forward:
+			case Dir.Back:
+				return new []{ Vector3.up, Vector3.right };
+			}
+			return new Vector3[]{ };
+		}
+
 		public static Dir GetDir(Vector3i unitVector) {
 			if (unitVector == up) {
 				return Dir.Up;

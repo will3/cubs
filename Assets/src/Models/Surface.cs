@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using Cubiquity;
+using System.Collections.Generic;
 
 namespace AssemblyCSharp
 {
@@ -16,7 +17,15 @@ namespace AssemblyCSharp
 
 		public readonly Quaternion rotation;
 
+		private readonly Vector3[] uvVectors;
+
+		public Vector3 pointWithUV(Vector2 uv) {
+			return point + uvVectors [0] * uv.x + uvVectors [1] * uv.y;
+		}
+
 		public IBlock block;
+
+		public readonly List<Connection> connections = new List<Connection>();
 
 		public bool hasObject { get { return block != null; } }
 
@@ -24,7 +33,7 @@ namespace AssemblyCSharp
 			this.coord = coord;
 			this.dir = dir;
 			var vector = DirUtils.GetUnitVector (dir);
-			normal = new Vector3(vector.x, vector.y, vector.z);
+			normal = vector.to_f ();
 			coordAbove = coord + vector;
 			identifier = coord.x + "," + coord.y + "," + coord.z + "," + dir;
 
@@ -32,6 +41,8 @@ namespace AssemblyCSharp
 			pointAbove = new Vector3 (coordAbove.x, coordAbove.y, coordAbove.z);
 
 			rotation = DirUtils.GetRotation (dir);
+
+			uvVectors = DirUtils.GetUV (dir);
 		}
 
 		public float DistanceTo(Surface surface2) {

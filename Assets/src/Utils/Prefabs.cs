@@ -12,6 +12,18 @@ namespace AssemblyCSharp
 		public static class Objects
 		{
 			public static string Arrow = "Objects/arrow/arrow";
+			public static class Trees
+			{
+				public static string OfSize(float size) {
+					if (size > 0.8) {
+						return "Objects/tree/tree_2";
+					} else if (size > 0.4) {
+						return "Objects/tree/tree_1";
+					} else {
+						return "Objects/tree/tree_0";
+					}
+				}
+			}
 		}
 
 		public static GameObject Create(string name) {

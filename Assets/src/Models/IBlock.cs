@@ -1,10 +1,11 @@
 ﻿using System;
+using UnityEngine;
 
 namespace AssemblyCSharp
 {
 	public interface IBlock
 	{
-		Surface CurrentSurface { get; set; }
+		BlockCoord blockCoord { get; }
 	}
 }
 

@@ -53,13 +53,13 @@ namespace AssemblyCSharp
 		{
 			var planet = Game.Instance.Planet;
 
-			var target = targetCharacter.CurrentSurface;
+			var target = targetCharacter.blockCoord.currentSurface;
 
 			movement.Move (target, true);
 
 			// If next to target
 			if (movement.Done) {
-				var connection = planet.Terrian.ConnectionBetween (character.CurrentSurface, target);
+				var connection = planet.Terrian.ConnectionBetween (character.blockCoord.currentSurface, target);
 			
 				if (connection != null) {
 					return true;

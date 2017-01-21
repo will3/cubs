@@ -25,8 +25,6 @@ namespace AssemblyCSharp
 			new Dictionary<string, Surface> ();
 		private readonly Dictionary<string, Connection> connectionLookUp = 
 			new Dictionary<string, Connection> ();
-		private readonly Dictionary<string, List<Connection>> connectionBySurfaceIdentifier = 
-			new Dictionary<string, List<Connection>> ();
 
 		private const float maxDistanceBetweenSurfaces = 1000.0f;
 
@@ -272,11 +270,7 @@ namespace AssemblyCSharp
 									connectionLookUp [connection.identifier] = connection;
 									surfaceConnections [surface2.identifier] = surface2.DistanceTo (surface1);
 
-									if (!connectionBySurfaceIdentifier.ContainsKey (surface1.identifier)) {
-										connectionBySurfaceIdentifier [surface1.identifier] = new List<Connection> ();
-									}
-
-									connectionBySurfaceIdentifier [surface1.identifier].Add (connection);
+									surface1.connections.Add (connection);
 								}
 							}
 						}
@@ -325,10 +319,6 @@ namespace AssemblyCSharp
 
 		public Surface GetSurface(string identifier) {
 			return surfaceLookUp [identifier];
-		}
-
-		public IList<Connection> GetConnections(string surfaceIdentifier) {
-			return connectionBySurfaceIdentifier [surfaceIdentifier];
 		}
 
 		#region PathFindingHeruistics implementation

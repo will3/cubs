@@ -22,9 +22,6 @@ namespace AssemblyCSharp
 			return GameObject
 				.FindObjectsOfType<Character> ()
 				.Where (u => {
-				if (!u.Placed) {
-					return false;
-				}
 				if (u == character) {
 					return false;
 				}

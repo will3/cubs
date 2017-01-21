@@ -23,6 +23,10 @@ public class PlaceBuilding : MonoBehaviour {
 			prefabType = Prefabs.Archer;
 		}
 
+		if (Input.GetKeyDown (KeyCode.R)) {
+			prefabType = Prefabs.Objects.Trees.OfSize(0.5f);
+		}
+
 		if (Input.GetKeyDown (KeyCode.Mouse0)) {
 			var planet = Game.Instance.Planet;
 			var surface = planet.GetSurface ();

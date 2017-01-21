@@ -20,10 +20,6 @@ namespace AssemblyCSharp
 		}
 
 		public void Update() {
-			if (!character.Placed) {
-				return;
-			}
-
 			currentState = currentState.Step ();
 		}
 	}

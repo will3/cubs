@@ -48,14 +48,11 @@ namespace AssemblyCSharp
 	
 		#region IBlock implementation
 
-		private Surface currentSurface;
+		private BlockCoord _blockCoord = new BlockCoord();
 
-		public Surface CurrentSurface {
+		public BlockCoord blockCoord {
 			get {
-				return currentSurface;
-			}
-			set {
-				currentSurface = value;
+				return _blockCoord;
 			}
 		}
 
@@ -73,18 +70,8 @@ namespace AssemblyCSharp
 		}
 
 		public void Update() {
-			if (!Placed) {
-				Destroy (gameObject);
-			}
-
 			if (hitPoints <= 0.0f) {
 				Destroy (gameObject);
-			}
-		}
-
-		public bool Placed {
-			get {
-				return currentSurface != null;
 			}
 		}
 

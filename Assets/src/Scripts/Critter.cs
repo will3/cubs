@@ -25,6 +25,10 @@ public class Critter : MonoBehaviour {
 		character = GetComponent<Character> ();
 		Debug.Assert (character != null);
 
+		if (character.blockCoord.currentSurface == null) {
+			Destroy (gameObject);
+		}
+
 		switch (character.behaviourType) {
 		case BehaviourType.Melee:
 			behaviour = gameObject.AddComponent<MeleeBehaviour> ();
