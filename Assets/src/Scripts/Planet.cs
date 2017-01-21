@@ -23,16 +23,18 @@ public class Planet : MonoBehaviour {
 	private ColoredCubesVolumeCollider volumeCollider;
 	private ColoredCubesVolumeRenderer volumeRenderer;
 
-	public GameObject Create(string name, Surface surface) {
+	public GameObject Create(string name, BlockCoord blockCoord) {
 		var obj = Prefabs.Create (name);
 		obj.transform.parent = gameObject.transform.parent;
 		var block = (IBlock)obj.GetComponent<Character> () ?? obj.GetComponent<Tree>();
 
-		SetSurface (obj, block, surface);
-
-		block.blockCoord.currentSurface = surface;
+		SetSurface (obj, block, blockCoord);
 
 		return obj;
+	}
+
+	public GameObject Create(string name, Surface surface) {
+		return Create (name, new BlockCoord (surface));
 	}
 
 	// Use this for initialization
@@ -95,8 +97,11 @@ public class Planet : MonoBehaviour {
 
 			var size = UnityEngine.Random.Range(0.1f, 1.0f);
 
+			var uv = new Vector2 (
+				         UnityEngine.Random.Range (-0.3f, 0.3f), 
+				         UnityEngine.Random.Range (-0.3f, 0.3f));
 			if (noise > min1 && noise2 > min2) {
-				Create (Prefabs.Objects.Trees.OfSize(size), surface);
+				Create (Prefabs.Objects.Trees.OfSize(size), new BlockCoord(surface, uv));
 			}
 		}
 	}
@@ -147,23 +152,32 @@ public class Planet : MonoBehaviour {
 		}
 	}
 
-	public bool SetSurface(GameObject obj, IBlock block, Surface surface) {
+	public bool SetSurface(GameObject obj, IBlock block, BlockCoord blockCoord) {
+		var surface = blockCoord.surface;
+
 		if (surface.hasObject) {
 			return false;
 		}
 
-		if (block.blockCoord.currentSurface != null) {
-			block.blockCoord.currentSurface.block = null;
+		if (block.blockCoord.surface != null) {
+			block.blockCoord.surface.block = null;
 		}
-
-		var position = gameObject.transform.TransformPoint (surface.point);
+			
+		var point = surface.pointWithUV (blockCoord.uv);
+		var position = gameObject.transform.TransformPoint (point);
 		obj.transform.position = position;
-		block.blockCoord.currentSurface = surface;
+		block.blockCoord.surface = surface;
 		surface.block = block;
 
 		obj.transform.localRotation = surface.rotation;
 
 		return true;
+	}
+
+	public bool SetSurface(GameObject obj, IBlock block, Surface surface) {
+		var blockCoord = new BlockCoord ();
+		blockCoord.surface = surface;
+		return SetSurface (obj, block, blockCoord);
 	}
 
 	// Ratio should be more than 0 and less than or equal to 1
@@ -184,11 +198,11 @@ public class Planet : MonoBehaviour {
 		obj.transform.position = gameObject.transform.TransformPoint (position);
 
 		if (ratio == 1.0f) {
-			if (block.blockCoord.currentSurface != null) {
-				block.blockCoord.currentSurface.block = null;
+			if (block.blockCoord.surface != null) {
+				block.blockCoord.surface.block = null;
 			}
 
-			block.blockCoord.currentSurface = surface2;
+			block.blockCoord.surface = surface2;
 		}
 
 		surface2.block = block;

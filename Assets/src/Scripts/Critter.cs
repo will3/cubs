@@ -25,7 +25,7 @@ public class Critter : MonoBehaviour {
 		character = GetComponent<Character> ();
 		Debug.Assert (character != null);
 
-		if (character.blockCoord.currentSurface == null) {
+		if (character.blockCoord.surface == null) {
 			Destroy (gameObject);
 		}
 

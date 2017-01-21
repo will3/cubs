@@ -14,7 +14,7 @@ public class Tree : MonoBehaviour, IBlock {
 	private Billboard billboard; 
 	// Use this for initialization
 	void Start () {
-		if (blockCoord.currentSurface == null) {
+		if (blockCoord.surface == null) {
 			Destroy (gameObject);
 		}
 		billboard = GetComponentInChildren<Billboard> ();
@@ -23,6 +23,6 @@ public class Tree : MonoBehaviour, IBlock {
 	
 	// Update is called once per frame
 	void Update () {
-		billboard.up = Game.Instance.Planet.gameObject.transform.TransformDirection (blockCoord.currentSurface.normal);
+		billboard.up = Game.Instance.Planet.gameObject.transform.TransformDirection (blockCoord.surface.normal);
 	}
 }
