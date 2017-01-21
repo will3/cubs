@@ -119,7 +119,7 @@ namespace AssemblyCSharp
 			var currentSurface = character.blockCoord.surface;
 
 			if (Done) {
-				var target = planet.RandomSurface (currentSurface, 4);
+				var target = planet.RandomSurface (currentSurface, character.patrolDis);
 
 				if (target.identifier.Equals (currentSurface.identifier)) {
 					return;

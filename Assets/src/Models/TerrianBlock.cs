@@ -5,7 +5,7 @@ using Cubiquity;
 
 namespace AssemblyCSharp
 {
-	public enum BlockType {
+	public enum TerrianBlockType {
 		Stone,
 		Grass,
 		Water
@@ -13,21 +13,21 @@ namespace AssemblyCSharp
 
 	public class TerrianBlock
 	{
-		public readonly BlockType type;
+		public readonly TerrianBlockType type;
 		public readonly Vector3i coord;
 
 		public readonly Dictionary<Dir, Surface> surfaceMap = new Dictionary<Dir, Surface>();
 
 		private Dir gravityMask;
 
-		private static Dictionary<BlockType, Color> colorMap = 
-			new Dictionary<BlockType, Color> {
-			{ BlockType.Grass, new Color (143 / 255.0f, 216 / 255.0f, 70 / 255.0f) },
-			{ BlockType.Stone, new Color (178 / 255.0f, 175 / 255.0f, 171 / 255.0f) },
-			{ BlockType.Water, Colors.hexToColor("#00B4C3") }
+		private static Dictionary<TerrianBlockType, Color> colorMap = 
+			new Dictionary<TerrianBlockType, Color> {
+			{ TerrianBlockType.Grass, new Color (143 / 255.0f, 216 / 255.0f, 70 / 255.0f) },
+			{ TerrianBlockType.Stone, new Color (178 / 255.0f, 175 / 255.0f, 171 / 255.0f) },
+			{ TerrianBlockType.Water, Colors.hexToColor("#00B4C3") }
 		};
 
-		public TerrianBlock (Vector3i coord, BlockType type)
+		public TerrianBlock (Vector3i coord, TerrianBlockType type)
 		{
 			this.coord = coord;
 			this.type = type;

@@ -126,6 +126,9 @@ public class Planet : MonoBehaviour {
 		if (drawNormals) {
 			foreach (var block in Terrian.map.Values) {
 				foreach (var surface in block.surfaceMap.Values) {
+					if (surface.hasObject) {
+						continue;
+					}
 					DebugUtil.DrawSurface (surface);
 				}
 			}

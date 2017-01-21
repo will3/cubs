@@ -166,7 +166,7 @@ namespace AssemblyCSharp
 				for (int j = 0; j < size; j++) {
 					for (int k = 0; k < size; k++) {
 						var coord = new Vector3i (i, j, k);
-						SetVoxel (i, j, k, new TerrianBlock (coord, BlockType.Grass));
+						SetVoxel (i, j, k, new TerrianBlock (coord, TerrianBlockType.Grass));
 					}
 				}
 			}
@@ -226,7 +226,7 @@ namespace AssemblyCSharp
 
 						if (noise > 0.5) {
 							var coord = new Vector3i (i, j, k);
-							SetVoxel (i, j, k, new TerrianBlock (coord, BlockType.Stone));
+							SetVoxel (i, j, k, new TerrianBlock (coord, TerrianBlockType.Stone));
 						}
 					}
 				}

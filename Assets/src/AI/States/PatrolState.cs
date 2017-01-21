@@ -5,18 +5,15 @@ namespace AssemblyCSharp
 
 	class PatrolState : ICharacterState {
 		ICharacterBehaviour behaviour;
-		private readonly Cooldown patrolDoneCooldown;
 		private readonly Cooldown findTargetCooldown = new Cooldown(0.5f);
 		private Character character;
 
 		public PatrolState(ICharacterBehaviour behaviour, Character character) {
 			this.character = character;
 			this.behaviour = behaviour;
-			patrolDoneCooldown = new Cooldown(character.patrolLength);
 		}
 
 		public ICharacterState Step() {
-			patrolDoneCooldown.Update ();
 			findTargetCooldown.Update ();
 
 			// Attack if there is target
@@ -28,14 +25,13 @@ namespace AssemblyCSharp
 				}
 			}
 
-			// Idle if patrol done
-			if (patrolDoneCooldown.Ready ()) {
-				return new IdleState (behaviour, character);	
+			// Keep patrolling
+			var finished = behaviour.Patrol ();
+			if (!finished) {
+				return this;
 			}
 
-			// Keep patrolling
-			behaviour.Patrol ();
-			return this;
+			return new IdleState (behaviour, character);
 		}
 
 		public string Name() {

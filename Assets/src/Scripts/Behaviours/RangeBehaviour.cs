@@ -47,9 +47,18 @@ namespace AssemblyCSharp
 		public void Idle ()
 		{ }
 
-		public void Patrol ()
+		private bool startedPatrol = false;
+
+		public bool Patrol ()
 		{
+			if (startedPatrol && movement.Done) {
+				startedPatrol = false;
+				return true;
+			}
+
 			movement.Patrol ();
+			startedPatrol = true;
+			return false;
 		}
 
 		public bool Chase (Character character)

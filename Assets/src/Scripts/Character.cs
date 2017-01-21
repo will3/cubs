@@ -24,7 +24,7 @@ namespace AssemblyCSharp
 
 		public float idleLength = 0.1f;
 
-		public float patrolLength = 10.0f;
+		public int patrolDis = 10;
 
 		public float speed = 0.04f;
 
@@ -101,7 +101,7 @@ namespace AssemblyCSharp
 		{
 			hitPoints -= damage.amount;
 
-			Debug.LogFormat ("{0} attacked {1} for {2} damage", this.characterName, damage.sourceName, damage);
+			Debug.LogFormat ("{0} attacked {1} for {2} damage", this.characterName, damage.sourceName, damage.amount);
 		}
 
 		#endregion

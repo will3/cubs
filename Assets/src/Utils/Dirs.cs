@@ -102,4 +102,3 @@ namespace AssemblyCSharp
 		public static readonly Dir[] Dirs = new [] { Dir.Up, Dir.Down, Dir.Left, Dir.Right, Dir.Forward, Dir.Back };
 	}
 }
-

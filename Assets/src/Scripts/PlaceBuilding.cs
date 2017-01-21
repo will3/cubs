@@ -4,7 +4,18 @@ using UnityEngine;
 using AssemblyCSharp;
 
 public class PlaceBuilding : MonoBehaviour {
-	private string prefabType;
+	
+	class Placement {
+		public static Placement Prefab(string prefabName) {
+			var placement = new Placement();
+			placement.prefabName = prefabName;
+			return placement;
+		}
+
+		public string prefabName;
+	}
+
+	private Placement placement;
 
 	void Start () {
 		
@@ -12,27 +23,29 @@ public class PlaceBuilding : MonoBehaviour {
 
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.Q)) {
-			prefabType = Prefabs.Swordsman;
+			placement = Placement.Prefab (Prefabs.Swordsman);
 		} 
 
 		if (Input.GetKeyDown (KeyCode.W)) {
-			prefabType = Prefabs.Spider;
+			placement = Placement.Prefab (Prefabs.Spider);
 		}
 
 		if (Input.GetKeyDown (KeyCode.E)) {
-			prefabType = Prefabs.Archer;
+			placement = Placement.Prefab (Prefabs.Archer);
 		}
 
 		if (Input.GetKeyDown (KeyCode.R)) {
-			prefabType = Prefabs.Objects.Trees.OfSize(0.5f);
+			placement = Placement.Prefab (Prefabs.Objects.Trees.OfSize (0.5f));
 		}
 
 		if (Input.GetKeyDown (KeyCode.Mouse0)) {
 			var planet = Game.Instance.Planet;
 			var surface = planet.GetSurface ();
 
-			if (prefabType != null && surface != null) {
-				planet.Create (prefabType, surface);
+			if (placement != null && surface != null) {
+				if (placement.prefabName != null) {
+					planet.Create (placement.prefabName, surface);
+				}
 			}
 		}
 	}
