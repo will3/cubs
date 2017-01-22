@@ -1,13 +1,32 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Cubiquity;
 
 namespace AssemblyCSharp
 {
+	public class Vertice {
+		public Vector3 vector;
+		public int index;
+		public int f;
+		public Vector3i coord;
+		public Vector2 uv;
+
+		// Used by water
+		public Mesh mesh;
+
+		public Vertice(Vector3 vector, int index, int f, Vector3i coord, Vector2 uv) {
+			this.vector = vector;
+			this.index = index;
+			this.f = f;
+			this.coord = coord;
+			this.uv = uv;
+		}
+	}
+
 	public class Mesher
 	{
-		public static Mesh Mesh(Chunk chunk, Chunks chunks, int tileRows, float tileSize) {
-
+		public static Mesh Mesh(Chunk chunk, Chunks chunks, int tileRows, float tileSize, List<Vertice> verticeList = null) {
 			var m = new Mesh ();
 			var vertices = new List<Vector3> ();
 			var uvs = new List<Vector2> ();
@@ -69,14 +88,31 @@ namespace AssemblyCSharp
 								vertices.Add (v3);
 								vertices.Add (v4);
 
-								f = d * 2 + ((a != null) ? 1 : 0);
+								f = d * 2 + ((a != null) ? 1 : 0);									
 								textureId = (a ?? b).textureIds[f];
 								uvOffset=  Tilesets.GetOffset (textureId, tileRows);
 				
-								uvs.Add (new Vector2 (uvOffset.x, uvOffset.y));
-								uvs.Add (new Vector2 (uvOffset.x + tileSize, uvOffset.y));
-								uvs.Add (new Vector2 (uvOffset.x + tileSize, uvOffset.y + tileSize));
-								uvs.Add (new Vector2 (uvOffset.x, uvOffset.y + tileSize));
+								var uv1 = new Vector2 (uvOffset.x, uvOffset.y);
+								var uv2 = new Vector2 (uvOffset.x + tileSize, uvOffset.y);
+								var uv3 = new Vector2 (uvOffset.x + tileSize, uvOffset.y + tileSize);
+								var uv4 = new Vector2 (uvOffset.x, uvOffset.y + tileSize);
+								
+								uvs.Add (uv1);
+								uvs.Add (uv2);
+								uvs.Add (uv3);
+								uvs.Add (uv4);
+
+								if (verticeList != null) {
+									var c = a != null ? a.coord : b.coord;
+									verticeList.Add (
+										new Vertice (v1, index, f, c, new Vector2 (0, 0)));
+									verticeList.Add (
+										new Vertice (v2, index + 1, f, c, new Vector2 (1, 0)));
+									verticeList.Add (
+										new Vertice (v3, index + 2, f, c, new Vector2 (1, 1)));
+									verticeList.Add (
+										new Vertice (v4, index + 3, f, c, new Vector2 (0, 1)));
+								}
 
 								if (a != null) {
 									triangles.AddRange (new [] { 0 + index, 1 + index, 2 + index, 0 + index, 2 + index, 3 + index });

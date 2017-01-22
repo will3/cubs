@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using System.Linq;
 
 namespace AssemblyCSharp
 {
@@ -10,28 +11,38 @@ namespace AssemblyCSharp
 		public Material material;
 		public Material transparentMaterial;
 		private Chunks chunks;
-		private Chunks transparentChunks;
+		private Chunks _waterChunks;
+
+		public Chunks waterChunks {
+			get {
+				return _waterChunks;
+			}
+		}
 
 		public void Set(int i, int j, int k, Voxel v) {
 			if (v.transparent) {
-				transparentChunks.Set (i, j, k, v);
+				waterChunks.Set (i, j, k, v);
 			} else {
 				chunks.Set (i, j, k, v);
 			}
 		}
 
 		public Voxel Get(int i, int j, int k) {
-			return chunks.Get (i, j, k) ?? transparentChunks.Get (i, j, k);
+			return chunks.Get (i, j, k) ?? waterChunks.Get (i, j, k);
+		}
+
+		public void UpdateMesh() {
+			chunks.UpdateMesh ();
+			waterChunks.UpdateMesh ();
 		}
 
 		void Start() {
 			chunks = new Chunks (gameObject, material, tileRows, tilePixelSize);
-			transparentChunks = new Chunks (gameObject, transparentMaterial, tileRows, tilePixelSize);
+			_waterChunks = new Chunks (gameObject, transparentMaterial, tileRows, tilePixelSize);
 		}
 
 		void Update() {
-			chunks.UpdateMesh ();
-			transparentChunks.UpdateMesh ();
+			UpdateMesh ();	
 		}
 	}
 }

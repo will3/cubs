@@ -8,7 +8,7 @@ namespace AssemblyCSharp
 	{
 		private float size = 16.0f;
 		private int size_i = 16;
-		private readonly Dictionary<string, Chunk> chunks = new Dictionary<string, Chunk>();
+		public readonly Dictionary<string, Chunk> chunks = new Dictionary<string, Chunk>();
 
 		public readonly Material material;
 		public readonly int tileRows = 8;
@@ -69,14 +69,16 @@ namespace AssemblyCSharp
 			}
 				
 			var tileSize = Tilesets.GetTileSize (tileRows, tilePixelSize);
-			var m = Mesher.Mesh (chunk, this, tileRows, tileSize);
+			var vertices = new List<Vertice> ();
+			var m = Mesher.Mesh (chunk, this, tileRows, tileSize, vertices);
+			chunk.vertices = vertices;
 
 			var obj = new GameObject("chunk_mesh", new [] { 
 				typeof(MeshRenderer), 
 				typeof(MeshFilter), 
 				typeof(MeshCollider) });
 			
-			obj.GetComponent<MeshFilter>().sharedMesh = m;
+			obj.GetComponent<MeshFilter> ().sharedMesh = m;
 
 			obj.GetComponent<MeshRenderer> ().material = material;
 
