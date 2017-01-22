@@ -19,7 +19,6 @@ public class Planet : MonoBehaviour {
 	private bool drawConnections = false;
 
 	private ColoredCubesVolume volume;
-
 	private ColoredCubesVolumeCollider volumeCollider;
 	private ColoredCubesVolumeRenderer volumeRenderer;
 

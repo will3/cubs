@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace AssemblyCSharp
 {
-	public class Chunks
+	public class Chunks : MonoBehaviour
 	{
 		private float size = 16.0f;
 		private int size_i = 16;
@@ -40,6 +40,10 @@ namespace AssemblyCSharp
 			};
 		}
 
+		void Update() {
+			UpdateMesh ();
+		}
+
 		public void UpdateMesh() {
 			foreach (var chunk in chunks.Values) {
 				if (chunk.dirty) {
@@ -61,11 +65,10 @@ namespace AssemblyCSharp
 				typeof(MeshFilter), 
 				typeof(MeshCollider) });
 			obj.GetComponent<MeshFilter>().mesh = m;
+
+			obj.transform.parent = gameObject.transform;
 		
 			chunk.obj = obj;
-
-			// TODO
-			//			obj.GetComponent<MeshRenderer> ().material = 
 		}
 	}
 }

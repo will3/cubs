@@ -9,7 +9,7 @@ namespace AssemblyCSharp
 		public bool dirty;
 		public GameObject obj;
 
-		int[] size;
+		public readonly int[] size;
 		int yz;
 		int z;
 		Voxel[] data;
