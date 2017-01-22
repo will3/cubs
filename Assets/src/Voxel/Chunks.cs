@@ -4,23 +4,17 @@ using UnityEngine;
 
 namespace AssemblyCSharp
 {
-	public class Chunks
+	public class Chunks : MonoBehaviour
 	{
 		private float size = 16.0f;
 		private int size_i = 16;
 		public readonly Dictionary<string, Chunk> chunks = new Dictionary<string, Chunk>();
 
-		public readonly Material material;
-		public readonly int tileRows = 8;
-		public readonly int tilePixelSize = 8;
-		public readonly GameObject gameObject;
+		public Material material;
+		public Material transparentMaterial;
 
-		public Chunks(GameObject gameObject, Material material, int tileRows, int tilePixelSize) {
-			this.gameObject = gameObject;
-			this.material = material;
-			this.tileRows = tileRows;
-			this.tilePixelSize = tilePixelSize;
-		}
+		public int tileRows = 8;
+		public int tilePixelSize = 8;
 
 		public Voxel Get(int i, int j, int k) {
 			var origin = GetOrigin (i, j, k);
@@ -54,41 +48,44 @@ namespace AssemblyCSharp
 			};
 		}
 
+		void Update() {
+			UpdateMesh ();
+		}
+
 		public void UpdateMesh() {
 			foreach (var chunk in chunks.Values) {
 				if (chunk.dirty) {
-					UpdateChunkMesh (chunk);
+					UpdateChunkMesh (chunk, false);
+					UpdateChunkMesh (chunk, true);
 					chunk.dirty = false;
 				}
 			}
 		}
 
-		private void UpdateChunkMesh(Chunk chunk) {
-			if (chunk.obj != null) {
-				GameObject.Destroy (chunk.obj);
+		private void UpdateChunkMesh(Chunk chunk, bool transparent) {
+			var chunkObject = transparent ? chunk.transparentObj : chunk.obj;
+			if (chunkObject.obj != null) {
+				GameObject.Destroy (chunkObject.obj);
 			}
 				
 			var tileSize = Tilesets.GetTileSize (tileRows, tilePixelSize);
 			var vertices = new List<Vertice> ();
-			var m = Mesher.Mesh (chunk, this, tileRows, tileSize, vertices);
-			chunk.vertices = vertices;
+			var m = Mesher.Mesh (chunk, this, tileRows, tileSize, vertices, transparent);
+			chunkObject.vertices = vertices;
 
-			var obj = new GameObject("chunk_mesh", new [] { 
+			var name = transparent ? "mesh_transparent" : "mesh";
+			var obj = new GameObject(name, new [] { 
 				typeof(MeshRenderer), 
 				typeof(MeshFilter), 
 				typeof(MeshCollider) });
 			
 			obj.GetComponent<MeshFilter> ().sharedMesh = m;
-
-			obj.GetComponent<MeshRenderer> ().material = material;
-
+			obj.GetComponent<MeshRenderer> ().material = transparent ? transparentMaterial : material;
 			obj.GetComponent<MeshCollider> ().sharedMesh = m;
-
 			obj.transform.parent = gameObject.transform;
-
 			obj.transform.localPosition = new Vector3 (chunk.origin [0], chunk.origin [1], chunk.origin [2]);
 		
-			chunk.obj = obj;
+			chunkObject.obj = obj;
 		}
 	}
 }

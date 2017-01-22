@@ -19,7 +19,7 @@ namespace AssemblyCSharp
 			this.waterChunk = waterChunk;
 			var terrian = Game.Instance.Terrian;
 			foreach (var chunk in waterChunk.chunks.Values) {
-				foreach (var vertice in chunk.vertices) {
+//				foreach (var vertice in chunk.vertices) {
 //					var coord = new Vector3i (vertice.coord [0], vertice.coord [1], vertice.coord [2]);
 //					var block = terrian.map [coord];
 //					var dir = (Dir)vertice.f;
@@ -32,22 +32,22 @@ namespace AssemblyCSharp
 //					}
 //					map [vertice.vector].Add (vertice);
 //					vertice.mesh = chunk.mesh;
-				}
+//				}
 			}
 		}
 
 		void Update() {
-			foreach (var chunk in waterChunk.chunks.Values) {
-				var mesh = chunk.mesh;
-
-				var vertices = mesh.vertices;
-
-				for (var i = 0; i < vertices.Length; i++) {
-					vertices [i] += UnityEngine.Random.insideUnitSphere;
-				}
-
-				mesh.vertices = vertices;
-			}
+//			foreach (var chunk in waterChunk.chunks.Values) {
+//				var mesh = chunk.mesh;
+//
+//				var vertices = mesh.vertices;
+//
+//				for (var i = 0; i < vertices.Length; i++) {
+//					vertices [i] += UnityEngine.Random.insideUnitSphere;
+//				}
+//
+//				mesh.vertices = vertices;
+//			}
 		}
 	}
 }

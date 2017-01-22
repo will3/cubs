@@ -5,27 +5,23 @@ using System.Collections.Generic;
 
 namespace AssemblyCSharp
 {
+	public class ChunkObject {
+		public IList<Vertice> vertices;
+		public GameObject obj;
+		public Mesh mesh;
+	}
+
 	public class Chunk
 	{
 		public bool dirty;
-		public GameObject obj;
-		public IList<Vertice> vertices;
+		public ChunkObject obj = new ChunkObject();
+		public ChunkObject transparentObj = new ChunkObject();
 
 		public int[] origin;
 		public readonly int size;
 		int yz;
 		int z;
 		Voxel[] data;
-
-		public Mesh mesh {
-			get {
-				if (obj == null) {
-					return null;
-				}
-				var meshFilter = obj.GetComponent<MeshFilter> ();
-				return meshFilter.sharedMesh;
-			}
-		}
 
 		public Chunk (int size)
 		{
