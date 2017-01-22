@@ -4,6 +4,7 @@ using UnityEngine;
 using Cubiquity;
 using AssemblyCSharp;
 using System;
+using System.Linq;
 
 public class Planet : MonoBehaviour {
 	public int size = 24;
@@ -25,7 +26,10 @@ public class Planet : MonoBehaviour {
 	public GameObject Create(string name, BlockCoord blockCoord) {
 		var obj = Prefabs.Create (name);
 		obj.transform.parent = gameObject.transform.parent;
-		var block = (IBlock)obj.GetComponent<Character> () ?? obj.GetComponent<Tree>();
+
+		var block = (IBlock)obj.GetComponent<Character> () ??
+		            (IBlock)obj.GetComponent<Tree> () ??
+		            (IBlock)obj.GetComponent<EvilGate> ();
 
 		SetSurface (obj, block, blockCoord);
 

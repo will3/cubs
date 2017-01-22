@@ -24,6 +24,7 @@ namespace AssemblyCSharp
 					}
 				}
 			}
+			public static string EvilGate = "Objects/evil_gate/evil_gate";
 		}
 
 		public static GameObject Create(string name) {

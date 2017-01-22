@@ -10,7 +10,7 @@ namespace AssemblyCSharp
 	{
 		public readonly int size;
 		private float heightDiff = 4.0f;
-		private int seaLevel = 11;
+		private int seaLevel = 10;
 
 		public Dictionary<Vector3i, TerrianBlock> map = new Dictionary<Vector3i, TerrianBlock>();
 
@@ -185,6 +185,9 @@ namespace AssemblyCSharp
 					var g3 = new Noise ();
 					g3.frequency = 0.01f;
 
+					var g4 = new Noise ();
+					g4.frequency = 0.02f;
+
 					var dir = side == 0 ? 1 : -1;
 
 					var u = (d + 1) % 3;
@@ -195,7 +198,7 @@ namespace AssemblyCSharp
 							var n3 = g3.get (i, j, 0);
 							n3 = n3 > 0.5 ? n3 : 0.0f;
 
-							var noise = (g1.get (i, j, 0) + g2.get (i, j, 0)) / 2.0f + (n3 > 0 ? n3 : 0.0f) * 1.0f;
+							var noise = (g1.get (i, j, 0) + g2.get (i, j, 0)) / 2.0f + n3 * 1.0f;
 							var height = (int)Mathf.Floor(noise * heightDiff) + 3;
 
 							var coord = new [] { 0, 0, 0 };
