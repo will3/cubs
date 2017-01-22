@@ -29,7 +29,8 @@ public class Planet : MonoBehaviour {
 
 		var block = (IBlock)obj.GetComponent<Character> () ??
 		            (IBlock)obj.GetComponent<Tree> () ??
-		            (IBlock)obj.GetComponent<EvilGate> ();
+		            (IBlock)obj.GetComponent<EvilGate> () ??
+		            (IBlock)obj.GetComponent<BlockComponent> ();
 
 		SetSurface (obj, block, blockCoord);
 

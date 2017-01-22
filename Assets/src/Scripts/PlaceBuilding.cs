@@ -31,6 +31,10 @@ public class PlaceBuilding : MonoBehaviour {
 			placement = Prefabs.Objects.EvilGate;
 		}
 
+		if (Input.GetKeyDown(KeyCode.Y)) {
+			placement = Prefabs.Objects.Campfire;
+		}
+
 		if (Input.GetKeyDown (KeyCode.Mouse0)) {
 			var planet = Game.Instance.Planet;
 			var surface = planet.GetSurface ();
