@@ -1,10 +1,14 @@
 ﻿using System;
 using Cubiquity;
+using UnityEngine;
 
 namespace AssemblyCSharp
 {
 	public class Chunk
 	{
+		public bool dirty;
+		public GameObject obj;
+
 		int[] size;
 		int yz;
 		int z;
@@ -31,9 +35,6 @@ namespace AssemblyCSharp
 
 		public Voxel Get(Vector3i coord) {
 			return Get (coord.x, coord.y, coord.z);
-		}
-
-		public void UpdateMesh() {
 		}
 	}
 }

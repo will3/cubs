@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace AssemblyCSharp
 {
@@ -37,6 +38,34 @@ namespace AssemblyCSharp
 				(int)Math.Floor(j / size),
 				(int)Math.Floor(k / size)
 			};
+		}
+
+		public void UpdateMesh() {
+			foreach (var chunk in chunks.Values) {
+				if (chunk.dirty) {
+					UpdateChunkMesh (chunk);
+					chunk.dirty = false;
+				}
+			}
+		}
+
+		private void UpdateChunkMesh(Chunk chunk) {
+			if (chunk.obj != null) {
+				GameObject.Destroy (chunk.obj);
+			}
+
+			var m = Mesher.Mesh (chunk);
+
+			var obj = new GameObject("chunk_mesh", new [] { 
+				typeof(MeshRenderer), 
+				typeof(MeshFilter), 
+				typeof(MeshCollider) });
+			obj.GetComponent<MeshFilter>().mesh = m;
+		
+			chunk.obj = obj;
+
+			// TODO
+			//			obj.GetComponent<MeshRenderer> ().material = 
 		}
 	}
 }
