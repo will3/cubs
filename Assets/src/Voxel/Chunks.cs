@@ -4,14 +4,23 @@ using UnityEngine;
 
 namespace AssemblyCSharp
 {
-	public class Chunks : MonoBehaviour
+	public class Chunks
 	{
 		private float size = 16.0f;
 		private int size_i = 16;
 		private readonly Dictionary<string, Chunk> chunks = new Dictionary<string, Chunk>();
-		public Material material;
-		public int tileRows = 8;
-		public int tilePixelSize = 8;
+
+		public readonly Material material;
+		public readonly int tileRows = 8;
+		public readonly int tilePixelSize = 8;
+		public readonly GameObject gameObject;
+
+		public Chunks(GameObject gameObject, Material material, int tileRows, int tilePixelSize) {
+			this.gameObject = gameObject;
+			this.material = material;
+			this.tileRows = tileRows;
+			this.tilePixelSize = tilePixelSize;
+		}
 
 		public Voxel Get(int i, int j, int k) {
 			var origin = GetOrigin (i, j, k);
@@ -45,14 +54,6 @@ namespace AssemblyCSharp
 			};
 		}
 
-		void Start() {
-			Debug.Assert (material != null);
-		}
-
-		void Update() {
-			UpdateMesh ();
-		}
-
 		public void UpdateMesh() {
 			foreach (var chunk in chunks.Values) {
 				if (chunk.dirty) {
@@ -75,7 +76,7 @@ namespace AssemblyCSharp
 				typeof(MeshFilter), 
 				typeof(MeshCollider) });
 			
-			obj.GetComponent<MeshFilter>().mesh = m;
+			obj.GetComponent<MeshFilter>().sharedMesh = m;
 
 			obj.GetComponent<MeshRenderer> ().material = material;
 

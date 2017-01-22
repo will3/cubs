@@ -78,8 +78,11 @@ namespace AssemblyCSharp
 								uvs.Add (new Vector2 (uvOffset.x + tileSize, uvOffset.y + tileSize));
 								uvs.Add (new Vector2 (uvOffset.x, uvOffset.y + tileSize));
 
-								triangles.AddRange (new [] { 0 + index, 2 + index, 1 + index, 0 + index, 3 + index, 2 + index });
-								triangles.AddRange (new [] { 0 + index, 1 + index, 2 + index, 0 + index, 2 + index, 3 + index });
+								if (a != null) {
+									triangles.AddRange (new [] { 0 + index, 1 + index, 2 + index, 0 + index, 2 + index, 3 + index });
+								} else {
+									triangles.AddRange (new [] { 0 + index, 2 + index, 1 + index, 0 + index, 3 + index, 2 + index });
+								}
 							}		
 						}
 					}

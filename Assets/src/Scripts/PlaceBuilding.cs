@@ -37,11 +37,13 @@ public class PlaceBuilding : MonoBehaviour {
 
 		if (Input.GetKeyDown (KeyCode.Mouse0)) {
 			var planet = Game.Instance.Planet;
-			var surface = planet.GetSurface ();
+			if (planet != null) {
+				var surface = planet.GetSurface ();
 
-			if (placement != null && surface != null) {
-				if (placement != null) {
-					planet.Create (placement, surface);
+				if (placement != null && surface != null) {
+					if (placement != null) {
+						planet.Create (placement, surface);
+					}
 				}
 			}
 		}

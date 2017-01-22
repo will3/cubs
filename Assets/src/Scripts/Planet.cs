@@ -18,7 +18,7 @@ public class Planet : MonoBehaviour {
 	private bool drawNormals = false;
 	private bool drawConnections = false;
 
-	public Chunks chunks;
+	private ChunkMesh chunkMesh;
 
 	public GameObject Create(string name, BlockCoord blockCoord) {
 		var obj = Prefabs.Create (name);
@@ -44,7 +44,8 @@ public class Planet : MonoBehaviour {
 		Game.Instance.Planet = this;
 		Game.Instance.Terrian = _terrian;
 			
-		Debug.Assert (chunks != null);
+		chunkMesh = GetComponent<ChunkMesh> ();
+		Debug.Assert (chunkMesh != null);
 
 		var center = new Vector3 (-size / 2, -size / 2, -size / 2) + (new Vector3() * 0.5f);
 		gameObject.transform.position = center;
@@ -107,7 +108,7 @@ public class Planet : MonoBehaviour {
 		foreach (var kv in Terrian.map) {
 			var coord = kv.Key;
 			var block = kv.Value;
-			chunks.Set (coord.x, coord.y, coord.z, new Voxel (coord, block.GetTextureId()));
+			chunkMesh.Set (coord.x, coord.y, coord.z, new Voxel (coord, block.GetTextureId(), block.transparent));
 		}
 	}
 

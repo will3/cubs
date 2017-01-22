@@ -33,6 +33,12 @@ namespace AssemblyCSharp
 			{ TerrianBlockType.Water, 2 }
 		};
 
+		public bool transparent {
+			get {
+				return type == TerrianBlockType.Water;
+			}
+		}
+
 		public TerrianBlock (Vector3i coord, TerrianBlockType type)
 		{
 			this.coord = coord;
