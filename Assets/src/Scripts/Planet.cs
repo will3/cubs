@@ -18,9 +18,7 @@ public class Planet : MonoBehaviour {
 	private bool drawNormals = false;
 	private bool drawConnections = false;
 
-	private ColoredCubesVolume volume;
-	private ColoredCubesVolumeCollider volumeCollider;
-	private ColoredCubesVolumeRenderer volumeRenderer;
+	public Chunks chunks;
 
 	public GameObject Create(string name, BlockCoord blockCoord) {
 		var obj = Prefabs.Create (name);
@@ -45,27 +43,11 @@ public class Planet : MonoBehaviour {
 		_terrian = new Terrian (size);
 		Game.Instance.Planet = this;
 		Game.Instance.Terrian = _terrian;
-
-		volume = gameObject.GetComponent<ColoredCubesVolume> ();
-		if (volume == null) {
-			Debug.LogError ("Component 'Planet' requires 'ColoredCubesVolume'");
-		}
-
-		volumeCollider = gameObject.GetComponent<ColoredCubesVolumeCollider> ();
-		if (volumeCollider == null) {
-			Debug.LogError ("Component 'Planet' requires 'ColoredCubesVolumeCollider'");
-		}
-
-		volumeRenderer = gameObject.GetComponent<ColoredCubesVolumeRenderer> ();
-		if (volumeRenderer == null) {
-			Debug.LogError ("Component 'Planet' requires 'ColoredCubesVolumeRenderer'");
-		}
+			
+		Debug.Assert (chunks != null);
 
 		var center = new Vector3 (-size / 2, -size / 2, -size / 2) + (new Vector3() * 0.5f);
 		gameObject.transform.position = center;
-
-		ColoredCubesVolumeData data = VolumeData.CreateEmptyVolumeData<ColoredCubesVolumeData>(new Region(0, 0, 0, size, size, size));
-		volume.data = data;
 
 		Terrian.Generate ();
 		generateTrees ();
@@ -122,18 +104,10 @@ public class Planet : MonoBehaviour {
 	}
 
 	private void loadData() {
-		var data = volume.data;
-
 		foreach (var kv in Terrian.map) {
 			var coord = kv.Key;
 			var block = kv.Value;
-			var color = block.GetColor ();
-			data.SetVoxel (coord.x, coord.y, coord.z, new QuantizedColor (
-				(byte)(color.r * 255), 
-				(byte)(color.g * 255), 
-				(byte)(color.b * 255), 
-				(byte)(color.a * 255)
-			));
+			chunks.Set (coord.x, coord.y, coord.z, new Voxel (coord, block.GetTextureId()));
 		}
 	}
 
@@ -155,10 +129,6 @@ public class Planet : MonoBehaviour {
 				var point2 = gameObject.transform.TransformPoint (connection.b.pointAbove);
 				Debug.DrawLine (point1, point2, Color.red);
 			}
-		}
-
-		if (Input.GetKeyDown (KeyCode.BackQuote)) {
-			volumeRenderer.enabled = !volumeRenderer.enabled;
 		}
 
 		if (Input.GetKeyDown (KeyCode.Alpha1)) {

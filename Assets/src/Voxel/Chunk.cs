@@ -9,18 +9,19 @@ namespace AssemblyCSharp
 		public bool dirty;
 		public GameObject obj;
 
-		public readonly int[] size;
+		public int[] origin;
+		public readonly int size;
 		int yz;
 		int z;
 		Voxel[] data;
 
-		public Chunk (int[] size)
+		public Chunk (int size)
 		{
 			this.size = size;
-			this.yz = this.size [1] * this.size [2];
-			this.z = this.size [2];
+			this.yz = this.size * this.size;
+			this.z = this.size;
 			// TODO fix with size 
-			this.data = new Voxel[]{ };
+			this.data = new Voxel[this.size * this.size * this.size];
 		}
 
 		public void Set(int i, int j, int k, Voxel v) {

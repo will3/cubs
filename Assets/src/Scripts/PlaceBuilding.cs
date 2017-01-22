@@ -24,7 +24,7 @@ public class PlaceBuilding : MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown (KeyCode.R)) {
-			placement = Prefabs.Objects.Trees.OfSize (0.5f);
+			placement = Prefabs.Objects.Trees.OfSize (Random.Range(0.0f, 1.0f));
 		}
 
 		if (Input.GetKeyDown (KeyCode.T)) {

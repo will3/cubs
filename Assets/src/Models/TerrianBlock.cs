@@ -27,6 +27,12 @@ namespace AssemblyCSharp
 			{ TerrianBlockType.Water, new Color (99 / 255.0f, 173 / 255.0f,255 / 255.0f, 0.1f) }
 		};
 
+		private static Dictionary<TerrianBlockType, int> textureIds = new Dictionary<TerrianBlockType, int> {
+			{ TerrianBlockType.Grass, 0 },
+			{ TerrianBlockType.Stone, 1 },
+			{ TerrianBlockType.Water, 2 }
+		};
+
 		public TerrianBlock (Vector3i coord, TerrianBlockType type)
 		{
 			this.coord = coord;
@@ -35,6 +41,10 @@ namespace AssemblyCSharp
 
 		public Color GetColor() {
 			return colorMap [type];
+		}
+
+		public int GetTextureId() {
+			return textureIds [type];
 		}
 
 		public void SetGravity(Dir dir) {
