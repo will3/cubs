@@ -143,7 +143,7 @@ namespace AssemblyCSharp
 			return dirs;
 		}
 
-		public Vector3 GetGravity(Vector3 position) {
+		public Vector3 GetGravityDir(Vector3 position) {
 			var dirs = GetGravities (position);
 			if (dirs.Count == 0) {
 				return new Vector3 ();
@@ -154,8 +154,8 @@ namespace AssemblyCSharp
 				v += DirUtils.GetUnitVector (dir).to_f ();
 			}
 
-			return v.normalized * -300f;
-		}
+			return v.normalized;
+		}			
 
 		private bool isWithinRatio(float a, float b, float ratio1, float ratio2) {
 			var ratio = a / b;

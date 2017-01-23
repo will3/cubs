@@ -3,50 +3,79 @@ using UnityEngine;
 using Cubiquity;
 using System.Collections.Generic;
 
-namespace AssemblyCSharp
-{
+namespace AssemblyCSharp {
 	public class WaterPoint {
-		
+		public readonly Vector3 worldPosition;
+		public readonly Vector3 normal;
+		public readonly List<Vertice> vertices = new List<Vertice>();
+
+		public WaterPoint(Vector3 worldPosition, Vector3 normal) {
+			this.worldPosition = worldPosition;
+			this.normal = normal;
+		}
+	}
+
+	public class WaterMap {
+		public readonly Dictionary<Vector3, WaterPoint> points = new Dictionary<Vector3, WaterPoint>();
+
+		public void AddVertice(Chunk chunk, Vertice vertice) {
+			var terrian = Game.Instance.Terrian;
+			var objPosition = chunk.transparentObj.obj.transform.position;
+			var worldPosition = chunk.transparentObj.obj.transform
+				.TransformPoint (vertice.position);
+
+			if (!points.ContainsKey (worldPosition)) {
+				var gravity = terrian.GetGravityDir (worldPosition);
+				points [worldPosition] = new WaterPoint (worldPosition, gravity);
+			}
+
+			points [worldPosition].vertices.Add (vertice);
+		}
 	}
 
 	public class Water : MonoBehaviour
 	{
-		private Dictionary<Vector3, List<Vertice>> map = new Dictionary<Vector3, List<Vertice>>();
+		private WaterMap waterMap = new WaterMap();
 
-		private Chunks waterChunk;
+		private Chunks chunks;
 
-		public void Load(Chunks waterChunk) {
-			this.waterChunk = waterChunk;
-			var terrian = Game.Instance.Terrian;
-			foreach (var chunk in waterChunk.chunks.Values) {
-//				foreach (var vertice in chunk.vertices) {
-//					var coord = new Vector3i (vertice.coord [0], vertice.coord [1], vertice.coord [2]);
-//					var block = terrian.map [coord];
-//					var dir = (Dir)vertice.f;
-//					if (!block.surfaceMap.ContainsKey (dir)) {
-//						continue;
-//					}
-//						
-//					if (!map.ContainsKey (vertice.vector)) {
-//						map [vertice.vector] = new List<Vertice> ();
-//					}
-//					map [vertice.vector].Add (vertice);
-//					vertice.mesh = chunk.mesh;
-//				}
+		public void Load(Chunks chunks) {
+			foreach (var chunk in chunks.chunks.Values) {
+				foreach (var vertice in chunk.transparentObj.vertices) {
+					waterMap.AddVertice (chunk, vertice);
+				}
 			}
+			this.chunks = chunks;
 		}
 
 		void Update() {
-//			foreach (var chunk in waterChunk.chunks.Values) {
-//				var mesh = chunk.mesh;
+			var mag = 0.5f;
+			var uniform = -0.5f;
+			var verticesByChunksId = new Dictionary<string, Vector3[]> ();
+			foreach (var chunk in chunks.chunks.Values) {
+				verticesByChunksId [chunk.id] = chunk.transparentObj.obj.GetComponent<MeshFilter> ().mesh.vertices;
+			}
+
+			foreach (var point in waterMap.points.Values) {
+				var amount = Mathf.Sin (Time.time * 2.0f + point.worldPosition.x + point.worldPosition.y + point.worldPosition.z) * mag + uniform;
+				var offset = point.normal * amount;
+
+				foreach (var vertice in point.vertices) {
+					var vertices = verticesByChunksId [vertice.chunkId];
+					var nextPosition = vertice.position + offset;
+					vertices [vertice.index] = nextPosition;
+				}
+			}
+
+			foreach (var chunk in chunks.chunks.Values) {
+				chunk.transparentObj.obj.GetComponent<MeshFilter> ().mesh.vertices = verticesByChunksId [chunk.id];
+			}
+
+//			foreach (var point in waterMap.points.Values) {
+//				var a = Game.Instance.planetController.gameObject.transform.TransformPoint (point.worldPosition);
+//				var b = Game.Instance.planetController.gameObject.transform.TransformPoint (point.worldPosition + point.normal * 0.5f);
 //
-//				var vertices = mesh.vertices;
-//
-//				for (var i = 0; i < vertices.Length; i++) {
-//					vertices [i] += UnityEngine.Random.insideUnitSphere;
-//				}
-//
-//				mesh.vertices = vertices;
+//				Debug.DrawLine (a, b);
 //			}
 		}
 	}

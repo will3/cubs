@@ -60,7 +60,8 @@ public class Planet : MonoBehaviour {
 
 		loadData ();
 
-//		water.Load (chunkMesh.waterChunks);
+		chunks.UpdateMesh ();
+		water.Load (chunks);
 
 		var dragCamera = Camera.main.GetComponent<DragCamera> ();
 		if (dragCamera != null) {

@@ -17,7 +17,19 @@ namespace AssemblyCSharp
 		public ChunkObject obj = new ChunkObject();
 		public ChunkObject transparentObj = new ChunkObject();
 
-		public int[] origin;
+		public int[] _origin;
+		public string id;
+
+		public int[] origin {
+			get {
+				return _origin;
+			}
+			set {
+				_origin = value;
+				id = _origin [0] + "," + _origin [1] + "," + _origin [2];
+			}
+		}
+
 		public readonly int size;
 		int yz;
 		int z;

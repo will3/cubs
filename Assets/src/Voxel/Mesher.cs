@@ -6,21 +6,23 @@ using Cubiquity;
 namespace AssemblyCSharp
 {
 	public class Vertice {
-		public Vector3 vector;
-		public int index;
-		public int f;
-		public Vector3i coord;
-		public Vector2 uv;
+		public readonly Vector3 position;
+		public readonly int index;
+		public readonly int f;
+		public readonly Vector3i coord;
+		public readonly Vector2 uv;
+		public readonly string chunkId;
 
 		// Used by water
 		public Mesh mesh;
 
-		public Vertice(Vector3 vector, int index, int f, Vector3i coord, Vector2 uv) {
-			this.vector = vector;
+		public Vertice(Vector3 vector, int index, int f, Vector3i coord, Vector2 uv, string chunkId) {
+			this.position = vector;
 			this.index = index;
 			this.f = f;
 			this.coord = coord;
 			this.uv = uv;
+			this.chunkId = chunkId;
 		}
 	}
 
@@ -119,13 +121,13 @@ namespace AssemblyCSharp
 							if (verticeList != null) {
 								var c = front ? a.coord : b.coord;
 								verticeList.Add (
-									new Vertice (v1, index, f, c, new Vector2 (0, 0)));
+									new Vertice (v1, index, f, c, new Vector2 (0, 0), chunk.id));
 								verticeList.Add (
-									new Vertice (v2, index + 1, f, c, new Vector2 (1, 0)));
+									new Vertice (v2, index + 1, f, c, new Vector2 (1, 0), chunk.id));
 								verticeList.Add (
-									new Vertice (v3, index + 2, f, c, new Vector2 (1, 1)));
+									new Vertice (v3, index + 2, f, c, new Vector2 (1, 1), chunk.id));
 								verticeList.Add (
-									new Vertice (v4, index + 3, f, c, new Vector2 (0, 1)));
+									new Vertice (v4, index + 3, f, c, new Vector2 (0, 1), chunk.id));
 							}
 
 							if (front) {

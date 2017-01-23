@@ -1,10 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using AssemblyCSharp;
 
 public class PlanetController : MonoBehaviour {
 
 	private Quaternion nextQuaternion;
+
+	void Awake() {
+		Game.Instance.planetController = this;
+	}
 
 	// Use this for initialization
 	void Start () {
