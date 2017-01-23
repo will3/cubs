@@ -2,6 +2,7 @@
 using Dijkstras;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace AssemblyCSharp
 {
@@ -65,6 +66,9 @@ namespace AssemblyCSharp
 				return currentPath.path.Count == 0 || currentPath.path.Count == 1 && currentPath.isNextTo;
 			}
 		}
+
+		float blockedTimeout = 0;
+		float waitTime = 1;
 			
 		public void StepPath() {
 			if (character.blockCoord.surface != null) {
@@ -85,9 +89,19 @@ namespace AssemblyCSharp
 			if (stepRatio == 0.0f && 
 				nextSurface.hasObject) {
 				walking = false;
-//				currentPath.path.Clear ();
+
+				if (blockedTimeout == 0) {
+					blockedTimeout = Time.time + waitTime;
+				}
+
+				if (Time.time > blockedTimeout) {
+					currentPath.path.Clear ();
+				} 
+
 				return;
 			}
+
+			blockedTimeout = 0;
 
 			var currentSurface = character.blockCoord.surface;
 
@@ -116,13 +130,16 @@ namespace AssemblyCSharp
 		}
 
 		public void Patrol() {
-			var terrian = Game.Instance.Terrian;
 			var currentSurface = character.blockCoord.surface;
 
 			if (Done) {
-				var surfaces = terrian.FindSurfaces (currentSurface, character.patrolDis);
-				var index = UnityEngine.Random.Range (0, surfaces.Count - 1);
-				Move (surfaces[index]);
+				var keys = currentSurface.connectionMap.Keys;
+				if (keys.Count > 0) {
+					var index = UnityEngine.Random.Range (0, keys.Count - 1);
+					var next = keys.ToList () [index];
+
+					currentPath.path.Add (next);
+				}
 			}
 		}
 	}

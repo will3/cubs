@@ -26,8 +26,6 @@ namespace AssemblyCSharp
 
 		public float idleLength = 0.1f;
 
-		public int patrolDis = 10;
-
 		public float speed = 0.04f;
 
 		public float hitPoints = 100.0f;

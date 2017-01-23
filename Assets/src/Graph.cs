@@ -9,6 +9,7 @@ namespace Dijkstras
 		float CostToEnter (string a);
 	}
 
+	// TODO update destination
 	public class Path {
 		public readonly List<string> path;
 		public bool isNextTo = false;
