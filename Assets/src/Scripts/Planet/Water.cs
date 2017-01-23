@@ -39,6 +39,8 @@ namespace AssemblyCSharp {
 
 		private Chunks chunks;
 
+		private Cooldown updateCooldown = new Cooldown (0.1f);
+
 		public void Load(Chunks chunks) {
 			foreach (var chunk in chunks.chunks.Values) {
 				foreach (var vertice in chunk.transparentObj.vertices) {
@@ -49,28 +51,32 @@ namespace AssemblyCSharp {
 		}
 
 		void Update() {
-			var mag = 0.5f;
-			var uniform = -0.5f;
-			var verticesByChunksId = new Dictionary<string, Vector3[]> ();
-			foreach (var chunk in chunks.chunks.Values) {
-				verticesByChunksId [chunk.id] = chunk.transparentObj.obj.GetComponent<MeshFilter> ().mesh.vertices;
-			}
+			updateCooldown.Update ();
 
-			foreach (var point in waterMap.points.Values) {
-				var amount = Mathf.Sin (Time.time * 2.0f + point.worldPosition.x + point.worldPosition.y + point.worldPosition.z) * mag + uniform;
-				var offset = point.normal * amount;
+			if (updateCooldown.Ready ()) {
+				var mag = 0.5f;
+				var uniform = -0.5f;
+				var verticesByChunksId = new Dictionary<string, Vector3[]> ();
+				foreach (var chunk in chunks.chunks.Values) {
+					verticesByChunksId [chunk.id] = chunk.transparentObj.obj.GetComponent<MeshFilter> ().mesh.vertices;
+				}
 
-				foreach (var vertice in point.vertices) {
-					var vertices = verticesByChunksId [vertice.chunkId];
-					var nextPosition = vertice.position + offset;
-					vertices [vertice.index] = nextPosition;
+				foreach (var point in waterMap.points.Values) {
+					var amount = Mathf.Sin (Time.time * 2.0f + point.worldPosition.x + point.worldPosition.y + point.worldPosition.z) * mag + uniform;
+					var offset = point.normal * amount;
+
+					foreach (var vertice in point.vertices) {
+						var vertices = verticesByChunksId [vertice.chunkId];
+						var nextPosition = vertice.position + offset;
+						vertices [vertice.index] = nextPosition;
+					}
+				}
+
+				foreach (var chunk in chunks.chunks.Values) {
+					chunk.transparentObj.obj.GetComponent<MeshFilter> ().mesh.vertices = verticesByChunksId [chunk.id];
 				}
 			}
-
-			foreach (var chunk in chunks.chunks.Values) {
-				chunk.transparentObj.obj.GetComponent<MeshFilter> ().mesh.vertices = verticesByChunksId [chunk.id];
-			}
-
+				
 //			foreach (var point in waterMap.points.Values) {
 //				var a = Game.Instance.planetController.gameObject.transform.TransformPoint (point.worldPosition);
 //				var b = Game.Instance.planetController.gameObject.transform.TransformPoint (point.worldPosition + point.normal * 0.5f);
