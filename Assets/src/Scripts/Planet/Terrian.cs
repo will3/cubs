@@ -107,7 +107,7 @@ namespace AssemblyCSharp
 			}
 		}
 			
-		public IList<Dir> GetGravities(Vector3 position) {
+		public IList<Dir> GetGravities(Vector3 position, float tolerance = 1.5f) {
 			var max = Math.Max (Math.Abs(position.x), 
 				Math.Max(Math.Abs(position.y), Math.Abs(position.z)));
 
@@ -117,8 +117,8 @@ namespace AssemblyCSharp
 				return dirs;
 			}
 
-			var ratio1 = 1 / 1.5f;
-			var ratio2 = 1.5f;
+			var ratio1 = 1 / tolerance;
+			var ratio2 = tolerance;
 
 			if (isWithinRatio(position.x, max, ratio1, ratio2)) { 
 				dirs.Add (Dir.Right);
@@ -144,8 +144,8 @@ namespace AssemblyCSharp
 			return dirs;
 		}
 
-		public Vector3 GetGravityDir(Vector3 position) {
-			var dirs = GetGravities (position);
+		public Vector3 GetGravityDir(Vector3 position, float tolerance = 1.5f) {
+			var dirs = GetGravities (position, tolerance);
 			if (dirs.Count == 0) {
 				return new Vector3 ();
 			}
@@ -160,7 +160,7 @@ namespace AssemblyCSharp
 
 		private bool isWithinRatio(float a, float b, float ratio1, float ratio2) {
 			var ratio = a / b;
-			return ratio > ratio1 && ratio < ratio2;
+			return ratio >= ratio1 && ratio <= ratio2;
 		}
 
 		private void initBlocks() {

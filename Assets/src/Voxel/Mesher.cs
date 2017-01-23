@@ -105,7 +105,7 @@ namespace AssemblyCSharp
 							vertices.Add (v4);
 
 							f = d * 2 + (front ? 1 : 0);									
-							textureId = (a ?? b).textureIds[f];
+							textureId = (front ? a : b).textureIds[f];
 							uvOffset=  Tilesets.GetOffset (textureId, tileRows);
 
 							var uv1 = new Vector2 (uvOffset.x, uvOffset.y);

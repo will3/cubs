@@ -25,7 +25,7 @@ namespace AssemblyCSharp {
 				.TransformPoint (vertice.position);
 
 			if (!points.ContainsKey (worldPosition)) {
-				var gravity = terrian.GetGravityDir (worldPosition);
+				var gravity = terrian.GetGravityDir (worldPosition, 1.0f);
 				points [worldPosition] = new WaterPoint (worldPosition, gravity);
 			}
 
@@ -35,6 +35,10 @@ namespace AssemblyCSharp {
 
 	public class Water : MonoBehaviour
 	{
+		public bool showWaterNormals = false;
+		public float waveMag = 0.2f;
+		public float waveOffset = -0.2f;
+
 		private WaterMap waterMap = new WaterMap();
 
 		private Chunks chunks;
@@ -54,16 +58,13 @@ namespace AssemblyCSharp {
 			updateCooldown.Update ();
 
 			if (updateCooldown.Ready ()) {
-				
-				var mag = 0.5f;
-				var uniform = -0.5f;
 				var verticesByChunksId = new Dictionary<string, Vector3[]> ();
 				foreach (var chunk in chunks.chunks.Values) {
 					verticesByChunksId [chunk.id] = chunk.transparentObj.obj.GetComponent<MeshFilter> ().mesh.vertices;
 				}
 
 				foreach (var point in waterMap.points.Values) {
-					var amount = Mathf.Sin (Time.time * 2.0f + point.worldPosition.x + point.worldPosition.y + point.worldPosition.z) * mag + uniform;
+					var amount = Mathf.Sin (Time.time * 2.0f + point.worldPosition.x + point.worldPosition.y + point.worldPosition.z) * waveMag + waveOffset;
 					var offset = point.normal * amount;
 
 					foreach (var vertice in point.vertices) {
@@ -78,12 +79,14 @@ namespace AssemblyCSharp {
 				}
 			}
 				
-//			foreach (var point in waterMap.points.Values) {
-//				var a = Game.Instance.planetController.gameObject.transform.TransformPoint (point.worldPosition);
-//				var b = Game.Instance.planetController.gameObject.transform.TransformPoint (point.worldPosition + point.normal * 0.5f);
-//
-//				Debug.DrawLine (a, b);
-//			}
+			if (showWaterNormals) {
+				foreach (var point in waterMap.points.Values) {
+					var a = Game.Instance.planetController.gameObject.transform.TransformPoint (point.worldPosition);
+					var b = Game.Instance.planetController.gameObject.transform.TransformPoint (point.worldPosition + point.normal * 0.5f);
+
+					Debug.DrawLine (a, b);
+				}
+			}
 		}
 	}
 }
