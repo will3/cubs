@@ -158,6 +158,15 @@ namespace AssemblyCSharp
 			return v.normalized;
 		}			
 
+		public void ReloadConnectionsAround(Vector3i coord) {
+			reloadConnections (coord);
+			var coords = coordsAround (coord);
+
+			foreach (var coord2 in coords) {
+				reloadConnections (coord2);
+			}
+		}
+
 		private bool isWithinRatio(float a, float b, float ratio1, float ratio2) {
 			var ratio = a / b;
 			return ratio >= ratio1 && ratio <= ratio2;
@@ -253,47 +262,84 @@ namespace AssemblyCSharp
 
 		private void initConnections() {
 			foreach (var coord in map.Keys) {
-				var block1 = map [coord];
+				initConnections (coord);
+			}
+		}
 
-				foreach(var surface1 in block1.surfaceMap.Values) {
-					var surfaceConnections = new Dictionary<string, float> ();
+		private void reloadConnections(Vector3i coord) {
+			clearConnections (coord);
+			initConnections (coord);
+		}
 
-					for (var i = -1; i <= 1; i++) {
-						for (var j = -1; j <= 1; j++) {
-							for (var k = -1; k <= 1; k++) {
-								
-								var coord2 = coord + new Vector3i (i, j, k);
-								if (!map.ContainsKey (coord2)) {
-									continue;
-								}
-								var block2 = map [coord2];
+		private void clearConnections(Vector3i coord) {
+			var block1 = map [coord];
+			foreach (var surface1 in block1.surfaceMap.Values) {
+				graph.remove_vertex (surface1.identifier);
 
-								foreach (var surface2 in block2.surfaceMap.Values) {
-									if (surface1 == surface2) {
-										continue;
-									}
-
-									var distance = Vector3.Distance(surface1.pointAbove, surface2.pointAbove);
-
-									if (surface1.dir != surface2.dir &&
-										coord != coord2) {
-										continue;
-									}
-
-									if (distance >= 1.7) {
-										continue;
-									}
-										
-									var connection = new Connection (surface1, surface2, distance);
-									connectionLookUp [connection.identifier] = connection;
-									surface1.AddConnection (surface2.identifier, connection);
-									surfaceConnections [surface2.identifier] = distance;
-								}
-							}
-						}
-					}
-					graph.add_vertex (surface1.identifier, surfaceConnections);
+				foreach (var connection in surface1.connectionMap.Values) {
+					connectionLookUp.Remove (connection.identifier);
+					surface1.ClearConnections ();
 				}
+			}
+		}
+
+		private IList<Vector3i> coordsAround(Vector3i coord) {
+			var list = new List<Vector3i> ();
+
+			for (var i = -1; i <= 1; i++) {
+				for (var j = -1; j <= 1; j++) {
+					for (var k = -1; k <= 1; k++) {
+						if (i == 0 && j == 0 && k == 0) {
+							continue;
+						}
+
+						var coord2 = coord + new Vector3i (i, j, k);
+						list.Add (coord2);
+					}
+				}
+			}
+
+			return list;
+		}
+
+		private void initConnections(Vector3i coord) {
+			var block1 = map [coord];
+
+			foreach(var surface1 in block1.surfaceMap.Values) {
+				var surfaceConnections = new Dictionary<string, float> ();
+
+				var coords = coordsAround (coord);
+
+				foreach (var coord2 in coords) {
+					if (!map.ContainsKey (coord2)) {
+						continue;
+					}
+					var block2 = map [coord2];
+
+					foreach (var surface2 in block2.surfaceMap.Values) {
+						if (surface1 == surface2) {
+							continue;
+						}
+
+						var distance = Vector3.Distance(surface1.pointAbove, surface2.pointAbove);
+
+						if (surface1.dir != surface2.dir &&
+							coord != coord2) {
+							continue;
+						}
+
+						if (distance >= 1.7) {
+							continue;
+						}
+
+						var connection = new Connection (surface1, surface2, distance);
+
+						connectionLookUp [connection.identifier] = connection;
+						surface1.AddConnection (surface2.identifier, connection);
+						surfaceConnections [surface2.identifier] = distance;
+					}
+				}
+				graph.add_vertex (surface1.identifier, surfaceConnections);
 			}
 		}
 

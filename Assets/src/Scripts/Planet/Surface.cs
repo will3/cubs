@@ -79,6 +79,10 @@ namespace AssemblyCSharp
 		public void AddConnection(string surfaceIdentifier, Connection connection) {
 			_connectionMap [surfaceIdentifier] = connection;
 		}
+
+		public void ClearConnections() {
+			_connectionMap.Clear ();
+		}
 	}
 }
 

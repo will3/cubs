@@ -33,6 +33,10 @@ namespace Dijkstras
 			vertices[name] = edges;
 		}
 
+		public void remove_vertex(string name) {
+			vertices.Remove (name);
+		}
+
 		class PathFindingCache {
 			internal Dictionary<string, string> previous = new Dictionary<string, string>();
 			Dictionary<string, float> distances = new Dictionary<string, float>();

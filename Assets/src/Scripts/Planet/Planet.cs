@@ -38,6 +38,8 @@ public class Planet : MonoBehaviour {
 
 	public void AddBlock(Vector3i coord, TerrianBlock block) {
 		chunks.Set (coord.x, coord.y, coord.z, block.ToVoxel());
+
+		Terrian.ReloadConnectionsAround (coord);
 	}
 
 	public GameObject Create(string name, Surface surface) {
