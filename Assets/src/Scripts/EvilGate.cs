@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using System.Linq;
 
 namespace AssemblyCSharp
 {
@@ -34,11 +35,11 @@ namespace AssemblyCSharp
 			billboard.up = Game.Instance.Planet.gameObject.transform.TransformDirection (blockCoord.surface.normal);
 
 			var planet = Game.Instance.Planet;
-			var connections = blockCoord.surface.connections;
-			if (connections.Count > 0) {
-				var index = (int)Math.Floor (UnityEngine.Random.Range (0.0f, connections.Count));
-				var randomConnection = connections [index];
-				var otherSurface = randomConnection.OtherSurface (blockCoord.surface);
+			var connectionMap = blockCoord.surface.connectionMap;
+			if (connectionMap.Count > 0) {
+				var index = (int)Math.Floor (UnityEngine.Random.Range (0.0f, connectionMap.Count));
+				var key = connectionMap.Keys.ToList () [index];
+				var otherSurface = planet.Terrian.AllSurfaces [key];
 				if (spawnCooldown.Ready ()) {
 					planet.Create (Prefabs.Spider, otherSurface);
 				}

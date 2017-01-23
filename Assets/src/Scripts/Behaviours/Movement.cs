@@ -115,17 +115,13 @@ namespace AssemblyCSharp
 		}
 
 		public void Patrol() {
-			var planet = Game.Instance.Planet;
+			var terrian = Game.Instance.Terrian;
 			var currentSurface = character.blockCoord.surface;
 
 			if (Done) {
-				var target = planet.RandomSurface (currentSurface, character.patrolDis);
-
-				if (target.identifier.Equals (currentSurface.identifier)) {
-					return;
-				}
-
-				Move (target);
+				var surfaces = terrian.FindSurfaces (currentSurface, character.patrolDis);
+				var index = UnityEngine.Random.Range (0, surfaces.Count - 1);
+				Move (surfaces[index]);
 			}
 		}
 	}

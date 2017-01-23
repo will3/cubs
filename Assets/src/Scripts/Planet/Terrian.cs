@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cubiquity;
 using Dijkstras;
+using System.Linq;
 
 namespace AssemblyCSharp
 {
@@ -116,8 +117,8 @@ namespace AssemblyCSharp
 				return dirs;
 			}
 
-			var ratio1 = 1 / 1.2f;
-			var ratio2 = 1.2f;
+			var ratio1 = 1 / 1.5f;
+			var ratio2 = 1.5f;
 
 			if (isWithinRatio(position.x, max, ratio1, ratio2)) { 
 				dirs.Add (Dir.Right);
@@ -279,15 +280,15 @@ namespace AssemblyCSharp
 										continue;
 									}
 
-									if (distance >= 2) {
+									if (distance >= 1.7) {
 										continue;
 									}
-
-									var connection = new Connection (surface1, surface2);
+										
+									var connection = new Connection (surface1, surface2, distance);
 									connectionLookUp [connection.identifier] = connection;
 									surfaceConnections [surface2.identifier] = surface2.DistanceTo (surface1);
 
-									surface1.connections.Add (connection);
+									surface1.connectionMap [surface2.identifier] = connection;
 								}
 							}
 						}
@@ -336,6 +337,33 @@ namespace AssemblyCSharp
 
 		public Surface GetSurface(string identifier) {
 			return surfaceLookUp [identifier];
+		}
+
+		public IList<Surface> FindSurfaces(Surface a, float maxDis) {
+			var nodes = new Dictionary<string, float> ();
+			nodes [a.identifier] = 0;
+			var surfaces = new List<Surface> ();
+			_FindSurfaces (a, maxDis, nodes, surfaces);
+			return surfaces;
+		}
+
+		private void _FindSurfaces(Surface a, float maxDis, Dictionary<string, float> nodes, List<Surface> surfaces) {
+			foreach (var kv in a.connectionMap) {
+				var b = kv.Key;
+				var connection = kv.Value;
+				var distance = nodes [a.identifier] + connection.distance;
+
+				if (nodes.ContainsKey (b) && nodes [b] < distance) {
+					continue;
+				}
+
+				nodes [b] = distance;
+
+				if (distance < maxDis) {
+					surfaces.Add (AllSurfaces [b]);
+					_FindSurfaces (AllSurfaces [b], maxDis, nodes, surfaces);
+				}
+			}
 		}
 
 		#region PathFindingHeruistics implementation

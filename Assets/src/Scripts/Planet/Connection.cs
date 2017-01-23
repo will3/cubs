@@ -7,10 +7,13 @@ namespace AssemblyCSharp
 		public readonly Surface a;
 		public readonly Surface b;
 		public readonly String identifier;
-		public Connection (Surface a, Surface b)
+		public readonly float distance;
+
+		public Connection (Surface a, Surface b, float distance)
 		{
 			this.a = a;
 			this.b = b;
+			this.distance = distance;
 			identifier = IdentifierForSurfaces (a, b);
 		}
 

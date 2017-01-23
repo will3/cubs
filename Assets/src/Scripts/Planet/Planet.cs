@@ -218,28 +218,6 @@ public class Planet : MonoBehaviour {
 		return true;
 	}
 
-	public Connection RandomConnection(string surfaceIdentifier) {
-		var surface = Terrian.GetSurface (surfaceIdentifier);
-		var index = UnityEngine.Random.Range (0, surface.connections.Count - 1);
-		return surface.connections [index];	
-	}
-
-	// Ignores water tiles
-	public Surface RandomSurface(Surface surface, int num = 1) {
-		var identifier = surface.identifier;
-
-		for (var i = 0; i < num; i++) {
-			var connection = RandomConnection (identifier);
-			var otherSurface = connection.OtherSurface (identifier);
-			if (Terrian.CostToEnter (otherSurface.identifier) > 0) {
-				continue;
-			}
-			identifier = otherSurface.identifier;
-		}
-
-		return _terrian.GetSurface (identifier);
-	}
-
 	public Surface GetSurface() {
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		return GetSurface (ray);

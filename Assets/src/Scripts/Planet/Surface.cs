@@ -27,7 +27,7 @@ namespace AssemblyCSharp
 
 		public IBlock block;
 
-		public readonly List<Connection> connections = new List<Connection>();
+		public readonly Dictionary<string, Connection> connectionMap = new Dictionary<string, Connection> ();
 
 		public bool hasObject { get { return block != null; } }
 
