@@ -8,7 +8,7 @@ using System.Linq;
 
 public class Planet : MonoBehaviour {
 	public int size = 24;
-	public float trees = 1.0f;
+	public float treesNum = 1.0f;
 
 	private Terrian _terrian;
 	public Terrian Terrian {
@@ -22,31 +22,39 @@ public class Planet : MonoBehaviour {
 
 	private Water water;
 
+	private Trees trees;
+
+	/// <summary>
+	/// Create and place a block component 
+	/// </summary>
+	/// <param name="name">Name.</param>
+	/// <param name="blockCoord">Block coordinate.</param>
 	public GameObject Create(string name, BlockCoord blockCoord) {
 		var obj = Prefabs.Create (name);
 		obj.transform.parent = gameObject.transform.parent;
 
-		var block = (IBlock)obj.GetComponent<Character> () ??
-		            (IBlock)obj.GetComponent<Tree> () ??
-		            (IBlock)obj.GetComponent<EvilGate> () ??
-		            (IBlock)obj.GetComponent<BlockComponent> ();
+		var block = (IBlock)obj.GetComponent<BlockComponent> ();
 
 		SetSurface (obj, block, blockCoord);
 
 		return obj;
 	}
 
+	public GameObject Create(string name, Surface surface) {
+		return Create (name, new BlockCoord (surface));
+	}
+
+	/// <summary>
+	/// Add block to terrian
+	/// </summary>
+	/// <param name="coord">Coordinate.</param>
+	/// <param name="block">Block.</param>
 	public void AddBlock(Vector3i coord, TerrianBlock block) {
 		chunks.Set (coord.x, coord.y, coord.z, block.ToVoxel());
 
 		Terrian.ReloadConnectionsAround (coord);
 	}
-
-	public GameObject Create(string name, Surface surface) {
-		return Create (name, new BlockCoord (surface));
-	}
-
-	// Use this for initialization
+		
 	void Start () {
 		_terrian = new Terrian (size);
 		Game.Instance.Planet = this;
@@ -62,7 +70,10 @@ public class Planet : MonoBehaviour {
 		gameObject.transform.position = center;
 
 		Terrian.Generate ();
-		generateTrees ();
+
+		trees = new Trees (this, _terrian);
+		trees.treesNum = treesNum;
+		trees.Generate ();
 
 		loadData ();
 
@@ -72,57 +83,6 @@ public class Planet : MonoBehaviour {
 		var dragCamera = Camera.main.GetComponent<DragCamera> ();
 		if (dragCamera != null) {
 			dragCamera.distance = size * 1.3f;
-		}
-	}
-
-	private void generateTrees() {
-		var g1 = new Noise ();
-		g1.frequency = 0.05f;
-		var g2 = new Noise ();
-		g2.frequency = g1.frequency * 2;
-		var g3 = new Noise ();
-		g3.frequency = 2.0f;
-
-		foreach (var surface in Terrian.AllSurfaces.Values) {
-			var coord = surface.coord;
-			var block = Terrian.GetVoxel (coord.x, coord.y, coord.z);
-
-			if (block.type == TerrianBlockType.Water) {
-				continue;
-			}
-
-			var noise = 
-				g1.get (coord.x, coord.y, coord.z) +
-				g2.get (coord.x, coord.y, coord.z) * 0.5f;
-			var noise2 = g3.get(coord.x, coord.y, coord.z);
-			
-			noise /= 1.5f;
-
-			var min1 = 0.3;
-			var min2 = 0.5;
-
-			if (block.type == TerrianBlockType.Stone) {
-				noise2 -= 0.5f;
-			}
-
-			if (noise > min1 && 
-				noise2 > min2 &&
-				UnityEngine.Random.Range(0.0f, 1.0f) < trees) {
-				var size = UnityEngine.Random.Range(0.1f, 1.0f);
-				var uv = new Vector2 (
-					UnityEngine.Random.Range (-0.3f, 0.3f), 
-					UnityEngine.Random.Range (-0.3f, 0.3f));
-
-				Create (Prefabs.Objects.Trees.OfSize(size), new BlockCoord(surface, uv));
-			}
-		}
-	}
-
-	private void loadData() {
-		foreach (var kv in Terrian.map) {
-			var coord = kv.Key;
-			var block = kv.Value;
-			chunks.Set (coord.x, coord.y, coord.z, block.ToVoxel());
 		}
 	}
 
@@ -210,7 +170,7 @@ public class Planet : MonoBehaviour {
 
 		return true;
 	}
-
+		
 	public Surface GetSurface() {
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		return GetSurface (ray);
@@ -241,5 +201,13 @@ public class Planet : MonoBehaviour {
 		}
 
 		return null;
+	}
+
+	private void loadData() {
+		foreach (var kv in Terrian.map) {
+			var coord = kv.Key;
+			var block = kv.Value;
+			chunks.Set (coord.x, coord.y, coord.z, block.ToVoxel());
+		}
 	}
 }

@@ -8,6 +8,8 @@ namespace AssemblyCSharp
 	{
 		private Character character;
 
+		private BlockComponent blockComponent;
+
 		private Movement movement;
 
 		private Targeting targeting;
@@ -27,8 +29,10 @@ namespace AssemblyCSharp
 			Debug.Assert (animator != null);
 			billboard = GetComponentInChildren<Billboard> ();
 			Debug.Assert (billboard != null);
+			blockComponent = GetComponent<BlockComponent> ();
+			Debug.Assert (blockComponent != null);
 
-			movement = new Movement (character);
+			movement = new Movement (character, blockComponent);
 			targeting = new Targeting (character);
 
 			animationEvents = animator.GetBehaviour<CritterAnimationEvents> ();
@@ -112,9 +116,9 @@ namespace AssemblyCSharp
 
 		private bool HasVision(Character target) {
 			var planet = Game.Instance.Planet;
-			var a = planet.gameObject.transform.TransformPoint (character.blockCoord.surface.pointAbove);
+			var a = planet.gameObject.transform.TransformPoint (blockComponent.blockCoord.surface.pointAbove);
 			var b = target.transform.position + 
-				planet.gameObject.transform.TransformDirection(target.blockCoord.surface.normal) * 0.5f;
+				planet.gameObject.transform.TransformDirection(target.blockComponent.blockCoord.surface.normal) * 0.5f;
 			var dis = Vector3.Distance (a, b);
 
 			var ray = new Ray (a, (b - a).normalized);

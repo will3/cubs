@@ -15,6 +15,7 @@ namespace AssemblyCSharp
 			
 		void Start() {
 			if (blockCoord.surface == null) {
+				gameObject.SetActive (false);
 				Destroy (gameObject);
 			}
 		}

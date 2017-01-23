@@ -3,26 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using AssemblyCSharp;
 
-public class Tree : MonoBehaviour, IBlock {
+public class Tree : MonoBehaviour {
 
-	private BlockCoord _blockCoord = new BlockCoord();
-
-	public BlockCoord blockCoord {
-		get { return _blockCoord; }
-	}
+	private BlockComponent blockComponent;
 
 	private Billboard billboard; 
 	// Use this for initialization
 	void Start () {
-		if (blockCoord.surface == null) {
-			Destroy (gameObject);
-		}
+		blockComponent = GetComponent<BlockComponent> ();
+		Debug.Assert (blockComponent);
 		billboard = GetComponentInChildren<Billboard> ();
 		Debug.Assert (billboard != null);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		billboard.up = Game.Instance.Planet.gameObject.transform.TransformDirection (blockCoord.surface.normal);
+		billboard.up = Game.Instance.Planet.gameObject.transform.TransformDirection (blockComponent.blockCoord.surface.normal);
 	}
 }

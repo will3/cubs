@@ -12,14 +12,16 @@ namespace AssemblyCSharp
 		private float stepRatio;
 		private readonly Path currentPath = new Path(new List<string>(), "");
 		private readonly Character character;
+		private readonly BlockComponent blockComponent;
 		private bool walking;
 
 		public bool Walking {
 			get { return walking; }
 		}
 
-		public Movement(Character character) {
+		public Movement(Character character, BlockComponent blockComponent) {
 			this.character = character;
+			this.blockComponent = blockComponent;
 		}
 
 		// Update route
@@ -38,7 +40,7 @@ namespace AssemblyCSharp
 
 			var startPoint = currentPath.path.Count == 1 ? 
 				currentPath.path [0] : 
-				character.blockCoord.surface.identifier;
+				character.blockComponent.blockCoord.surface.identifier;
 
 			// Already at destination
 			if (startPoint == target.identifier) {
@@ -71,8 +73,8 @@ namespace AssemblyCSharp
 		float waitTime = 1;
 			
 		public void StepPath() {
-			if (character.blockCoord.surface != null) {
-				DebugUtil.DrawPath (character.blockCoord.surface, currentPath);
+			if (character.blockComponent.blockCoord.surface != null) {
+				DebugUtil.DrawPath (character.blockComponent.blockCoord.surface, currentPath);
 			}
 
 			if (Done) {
@@ -103,7 +105,7 @@ namespace AssemblyCSharp
 
 			blockedTimeout = 0;
 
-			var currentSurface = character.blockCoord.surface;
+			var currentSurface = blockComponent.blockCoord.surface;
 
 			var distance = nextSurface.GetConnection (currentSurface.identifier).distance;
 			stepAmount += character.speed;
@@ -116,7 +118,7 @@ namespace AssemblyCSharp
 			}
 
 			var a = character.transform.position;
-			planet.LerpSurface (character, character.gameObject, currentSurface, nextSurface, ratio);
+			planet.LerpSurface (character.blockComponent, character.gameObject, currentSurface, nextSurface, ratio);
 			var b = character.transform.position;
 
 			character.moveDirection = (b - a).normalized;
@@ -130,7 +132,7 @@ namespace AssemblyCSharp
 		}
 
 		public void Patrol() {
-			var currentSurface = character.blockCoord.surface;
+			var currentSurface = blockComponent.blockCoord.surface;
 
 			if (Done) {
 				var next = currentSurface.RandomConnectedSurfaceIdentifier;

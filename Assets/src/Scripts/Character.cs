@@ -20,7 +20,7 @@ namespace AssemblyCSharp
 		public Vector2 centerLocation = new Vector2(0.0f, 0.5f);
 	}
 
-	public class Character : MonoBehaviour, IBlock, IDamagable {
+	public class Character : MonoBehaviour, IDamagable {
 
 		public string characterName = "<unnamed>";
 
@@ -46,19 +46,18 @@ namespace AssemblyCSharp
 
 		private Billboard billboard;
 	
-		#region IBlock implementation
-
-		private BlockCoord _blockCoord = new BlockCoord();
+		private BlockComponent blockComponent;
 
 		public BlockCoord blockCoord {
 			get {
-				return _blockCoord;
+				return blockComponent.blockCoord;
 			}
 		}
 
-		#endregion
-
 		public void Start() {
+			blockComponent = GetComponent<BlockComponent> ();
+			Debug.Assert (blockComponent != null);
+
 			damage.sourceName = characterName;
 
 			var animator = GetComponentInChildren<Animator> ();

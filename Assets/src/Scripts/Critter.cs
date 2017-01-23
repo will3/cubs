@@ -17,6 +17,8 @@ public class Critter : MonoBehaviour {
 
 	private Animator animator;
 
+	private BlockComponent blockComponent;
+
 	// Use this for initialization
 	void Start () {
 		billBoard = GetComponentInChildren<Billboard> ();
@@ -25,7 +27,10 @@ public class Critter : MonoBehaviour {
 		character = GetComponent<Character> ();
 		Debug.Assert (character != null);
 
-		if (character.blockCoord.surface == null) {
+		blockComponent = GetComponent<BlockComponent> ();
+		Debug.Assert (blockComponent != null);
+
+		if (blockComponent.blockCoord.surface == null) {
 			Destroy (gameObject);
 		}
 
