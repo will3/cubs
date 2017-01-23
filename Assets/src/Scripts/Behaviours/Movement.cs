@@ -105,7 +105,7 @@ namespace AssemblyCSharp
 
 			var currentSurface = character.blockCoord.surface;
 
-			var distance = nextSurface.GetConnection (currentSurface).distance;
+			var distance = nextSurface.GetConnection (currentSurface.identifier).distance;
 			stepAmount += character.speed;
 
 			var ratio = stepAmount / distance;
@@ -133,11 +133,8 @@ namespace AssemblyCSharp
 			var currentSurface = character.blockCoord.surface;
 
 			if (Done) {
-				var keys = currentSurface.connectionMap.Keys;
-				if (keys.Count > 0) {
-					var index = UnityEngine.Random.Range (0, keys.Count - 1);
-					var next = keys.ToList () [index];
-
+				var next = currentSurface.RandomConnectedSurfaceIdentifier;
+				if (next != null) {
 					currentPath.path.Add (next);
 				}
 			}

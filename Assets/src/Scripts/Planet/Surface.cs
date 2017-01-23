@@ -2,6 +2,7 @@
 using UnityEngine;
 using Cubiquity;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AssemblyCSharp
 {
@@ -27,7 +28,11 @@ namespace AssemblyCSharp
 
 		public IBlock block;
 
-		public readonly Dictionary<string, Connection> connectionMap = new Dictionary<string, Connection> ();
+		private readonly Dictionary<string, Connection> _connectionMap = new Dictionary<string, Connection> ();
+
+		public IDictionary<string, Connection> connectionMap {
+			get { return _connectionMap; }
+		}
 
 		public bool hasObject { get { return block != null; } }
 
@@ -47,8 +52,32 @@ namespace AssemblyCSharp
 			uvVectors = DirUtils.GetUV (dir);
 		}
 			
-		public Connection GetConnection(Surface surface2) {
-			return connectionMap [surface2.identifier];
+		public Connection GetConnection(string surfaceIdentifier) {
+			if (!_connectionMap.ContainsKey (surfaceIdentifier)) {
+				return null;
+			}
+			return _connectionMap [surfaceIdentifier];
+		}
+
+		public IList<string> ConnectedSurfaceIdentifiers {
+			get {
+				return _connectionMap.Keys.ToList ();
+			}
+		}
+
+		public string RandomConnectedSurfaceIdentifier {
+			get {
+				var keys = _connectionMap.Keys.ToList ();
+				if (keys.Count == 0) {
+					return null;
+				}
+				var index = UnityEngine.Random.Range (0, keys.Count - 1);
+				return keys [index];
+			}
+		}
+
+		public void AddConnection(string surfaceIdentifier, Connection connection) {
+			_connectionMap [surfaceIdentifier] = connection;
 		}
 	}
 }

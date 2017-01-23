@@ -89,7 +89,7 @@ public class PlaceBuilding : MonoBehaviour {
 		if (placement.type.HasValue) {
 			var coord = surface.coordAbove;
 			var block = new TerrianBlock (coord, placement.type.Value);
-			planet.chunks.Set (coord [0], coord [1], coord [2], block.ToVoxel());
+			planet.AddBlock (coord, block);
 		}
 	}
 }

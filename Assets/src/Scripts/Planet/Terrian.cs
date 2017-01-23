@@ -44,7 +44,7 @@ namespace AssemblyCSharp
 			if (block == null) {
 				map.Remove (coord);
 			} else {
-				map [coord] = block;
+				map [coord] =	 block;
 			}
 		}
 
@@ -286,13 +286,12 @@ namespace AssemblyCSharp
 										
 									var connection = new Connection (surface1, surface2, distance);
 									connectionLookUp [connection.identifier] = connection;
-									surface1.connectionMap [surface2.identifier] = connection;
+									surface1.AddConnection (surface2.identifier, connection);
 									surfaceConnections [surface2.identifier] = distance;
 								}
 							}
 						}
 					}
-
 					graph.add_vertex (surface1.identifier, surfaceConnections);
 				}
 			}
@@ -386,7 +385,7 @@ namespace AssemblyCSharp
 
 			return (surface1.hasObject || surface1.isWater) ? maxDistanceBetweenSurfaces : 0;
 		}
-
+			
 		#endregion
 	}
 }

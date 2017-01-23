@@ -35,13 +35,13 @@ namespace AssemblyCSharp
 			billboard.up = Game.Instance.Planet.gameObject.transform.TransformDirection (blockCoord.surface.normal);
 
 			var planet = Game.Instance.Planet;
-			var connectionMap = blockCoord.surface.connectionMap;
-			if (connectionMap.Count > 0) {
-				var index = (int)Math.Floor (UnityEngine.Random.Range (0.0f, connectionMap.Count));
-				var key = connectionMap.Keys.ToList () [index];
-				var otherSurface = planet.Terrian.AllSurfaces [key];
+
+			var next = blockCoord.surface.RandomConnectedSurfaceIdentifier;
+
+			if (next != null) {
+				var nextSurface = planet.Terrian.GetSurface (next);
 				if (spawnCooldown.Ready ()) {
-					planet.Create (Prefabs.Spider, otherSurface);
+					planet.Create (Prefabs.Spider, nextSurface);
 				}
 			}
 		}

@@ -15,16 +15,10 @@ public class Planet : MonoBehaviour {
 		get { return _terrian; }
 	}
 
-	private bool drawNormals = false;
-	private bool drawConnections = false;
+	public bool drawNormals = false;
+	public bool drawConnections = false;
 
-	private Chunks _chunks;
-
-	public Chunks chunks {
-		get {
-			return _chunks;
-		}
-	}
+	private Chunks chunks;
 
 	private Water water;
 
@@ -42,6 +36,10 @@ public class Planet : MonoBehaviour {
 		return obj;
 	}
 
+	public void AddBlock(Vector3i coord, TerrianBlock block) {
+		chunks.Set (coord.x, coord.y, coord.z, block.ToVoxel());
+	}
+
 	public GameObject Create(string name, Surface surface) {
 		return Create (name, new BlockCoord (surface));
 	}
@@ -52,8 +50,8 @@ public class Planet : MonoBehaviour {
 		Game.Instance.Planet = this;
 		Game.Instance.Terrian = _terrian;
 			
-		_chunks = GetComponent<Chunks> ();
-		Debug.Assert (_chunks != null);
+		chunks = GetComponent<Chunks> ();
+		Debug.Assert (chunks != null);
 
 		water = GetComponent<Water> ();
 		Debug.Assert (water != null);
@@ -66,8 +64,8 @@ public class Planet : MonoBehaviour {
 
 		loadData ();
 
-		_chunks.UpdateMesh ();
-		water.Load (_chunks);
+		chunks.UpdateMesh ();
+		water.Load (chunks);
 
 		var dragCamera = Camera.main.GetComponent<DragCamera> ();
 		if (dragCamera != null) {
@@ -122,7 +120,7 @@ public class Planet : MonoBehaviour {
 		foreach (var kv in Terrian.map) {
 			var coord = kv.Key;
 			var block = kv.Value;
-			_chunks.Set (coord.x, coord.y, coord.z, block.ToVoxel());
+			chunks.Set (coord.x, coord.y, coord.z, block.ToVoxel());
 		}
 	}
 
@@ -144,14 +142,6 @@ public class Planet : MonoBehaviour {
 				var point2 = gameObject.transform.TransformPoint (connection.b.pointAbove);
 				Debug.DrawLine (point1, point2, Color.red);
 			}
-		}
-
-		if (Input.GetKeyDown (KeyCode.Alpha1)) {
-			drawNormals = !drawNormals;
-		}
-
-		if (Input.GetKeyDown (KeyCode.Alpha2)) {
-			drawConnections = !drawConnections;
 		}
 	}
 
