@@ -331,7 +331,8 @@ namespace AssemblyCSharp
 		}
 
 		public Path GetPath(string a, string b, int maxStep) {
-			return graph.shortest_path (a, b, maxStep);
+			var path = graph.shortest_path (a, b, maxStep);
+			return path;
 		}
 
 		public Surface GetSurface(string identifier) {
@@ -377,7 +378,7 @@ namespace AssemblyCSharp
 			var surface1 = surfaceLookUp [a];
 			var surface2 = surfaceLookUp [b];
 
-			return Vector3.Distance (surface1.pointAbove, surface2.pointAbove);
+			return (surface1.pointAbove - surface2.pointAbove).sqrMagnitude;
 		}
 
 		public float CostToEnter(string a) {

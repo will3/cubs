@@ -58,13 +58,6 @@ namespace Dijkstras
 				}
 				return int.MaxValue;
 			}
-
-			internal void sort() {
-				nodes.Sort((x, y) => {
-					return	
-						getDistance(x).CompareTo(getDistance(y));
-				});
-			}
 		}
 
 		public Path shortest_path(string start, string finish, int maxStep)
