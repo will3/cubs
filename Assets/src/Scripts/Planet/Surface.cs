@@ -46,9 +46,9 @@ namespace AssemblyCSharp
 
 			uvVectors = DirUtils.GetUV (dir);
 		}
-
-		public float DistanceTo(Surface surface2) {
-			return Vector3.Distance (pointAbove, surface2.pointAbove);
+			
+		public Connection GetConnection(Surface surface2) {
+			return connectionMap [surface2.identifier];
 		}
 	}
 }

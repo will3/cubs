@@ -286,9 +286,8 @@ namespace AssemblyCSharp
 										
 									var connection = new Connection (surface1, surface2, distance);
 									connectionLookUp [connection.identifier] = connection;
-									surfaceConnections [surface2.identifier] = surface2.DistanceTo (surface1);
-
 									surface1.connectionMap [surface2.identifier] = connection;
+									surfaceConnections [surface2.identifier] = distance;
 								}
 							}
 						}
@@ -350,6 +349,11 @@ namespace AssemblyCSharp
 		private void _FindSurfaces(Surface a, float maxDis, Dictionary<string, float> nodes, List<Surface> surfaces) {
 			foreach (var kv in a.connectionMap) {
 				var b = kv.Key;
+				var bSurface = AllSurfaces [b];
+				if (bSurface.hasObject && bSurface.isWater) {
+					continue;
+				}
+
 				var connection = kv.Value;
 				var distance = nodes [a.identifier] + connection.distance;
 
@@ -360,8 +364,8 @@ namespace AssemblyCSharp
 				nodes [b] = distance;
 
 				if (distance < maxDis) {
-					surfaces.Add (AllSurfaces [b]);
-					_FindSurfaces (AllSurfaces [b], maxDis, nodes, surfaces);
+					surfaces.Add (bSurface);
+					_FindSurfaces (bSurface, maxDis, nodes, surfaces);
 				}
 			}
 		}
@@ -373,7 +377,7 @@ namespace AssemblyCSharp
 			var surface1 = surfaceLookUp [a];
 			var surface2 = surfaceLookUp [b];
 
-			return surface1.DistanceTo (surface2);
+			return Vector3.Distance (surface1.pointAbove, surface2.pointAbove);
 		}
 
 		public float CostToEnter(string a) {

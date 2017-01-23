@@ -54,6 +54,7 @@ namespace AssemblyCSharp {
 			updateCooldown.Update ();
 
 			if (updateCooldown.Ready ()) {
+				
 				var mag = 0.5f;
 				var uniform = -0.5f;
 				var verticesByChunksId = new Dictionary<string, Vector3[]> ();

@@ -12,6 +12,7 @@ namespace AssemblyCSharp
 		private readonly Path currentPath = new Path(new List<string>(), "");
 		private readonly Character character;
 		private bool walking;
+
 		public bool Walking {
 			get { return walking; }
 		}
@@ -80,17 +81,17 @@ namespace AssemblyCSharp
 			var planet = Game.Instance.Planet;
 			var nextSurface = planet.Terrian.GetSurface (currentPath.path[0]);
 
-			// If next surface has object, reset path
+			// If next surface has object, pause
 			if (stepRatio == 0.0f && 
 				nextSurface.hasObject) {
 				walking = false;
-				currentPath.path.Clear ();
+//				currentPath.path.Clear ();
 				return;
 			}
 
 			var currentSurface = character.blockCoord.surface;
 
-			var distance = nextSurface.DistanceTo (currentSurface);
+			var distance = nextSurface.GetConnection (currentSurface).distance;
 			stepAmount += character.speed;
 
 			var ratio = stepAmount / distance;
