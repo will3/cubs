@@ -8,7 +8,8 @@ namespace AssemblyCSharp
 	public enum TerrianBlockType {
 		Stone,
 		Grass,
-		Water
+		Water,
+		StoneWall
 	}
 
 	public class TerrianBlock
@@ -20,17 +21,11 @@ namespace AssemblyCSharp
 
 		private Dir gravityMask;
 
-		private static Dictionary<TerrianBlockType, Color> colorMap = 
-			new Dictionary<TerrianBlockType, Color> {
-			{ TerrianBlockType.Grass, new Color (143 / 255.0f, 216 / 255.0f, 70 / 255.0f) },
-			{ TerrianBlockType.Stone, new Color (178 / 255.0f, 175 / 255.0f, 171 / 255.0f) },
-			{ TerrianBlockType.Water, new Color (99 / 255.0f, 173 / 255.0f,255 / 255.0f, 0.1f) }
-		};
-
 		private static Dictionary<TerrianBlockType, int> textureIds = new Dictionary<TerrianBlockType, int> {
 			{ TerrianBlockType.Grass, 0 },
 			{ TerrianBlockType.Stone, 1 },
-			{ TerrianBlockType.Water, 2 }
+			{ TerrianBlockType.Water, 2 },
+			{ TerrianBlockType.StoneWall, 8 }
 		};
 
 		public bool transparent {
@@ -43,10 +38,6 @@ namespace AssemblyCSharp
 		{
 			this.coord = coord;
 			this.type = type;
-		}
-
-		public Color GetColor() {
-			return colorMap [type];
 		}
 
 		public int GetTextureId() {
@@ -74,6 +65,14 @@ namespace AssemblyCSharp
 				return surfaceMap [dir];
 			}
 			return null;
+		}
+
+		public Voxel ToVoxel() {
+			return new Voxel (
+				coord, 
+				GetTextureId (), 
+				transparent, 
+				type == TerrianBlockType.Water);
 		}
 	}
 }

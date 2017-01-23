@@ -64,8 +64,17 @@ namespace AssemblyCSharp
 
 		private void UpdateChunkMesh(Chunk chunk, bool transparent) {
 			var chunkObject = transparent ? chunk.transparentObj : chunk.obj;
-			if (chunkObject.obj != null) {
-				GameObject.Destroy (chunkObject.obj);
+			if (chunkObject.obj == null) {
+				var name = transparent ? "mesh_transparent" : "mesh";
+				var obj = new GameObject(name, new [] { 
+					typeof(MeshRenderer), 
+					typeof(MeshFilter), 
+					typeof(MeshCollider) });
+
+				obj.GetComponent<MeshRenderer> ().material = transparent ? transparentMaterial : material;
+				obj.transform.parent = gameObject.transform;
+				obj.transform.localPosition = new Vector3 (chunk.origin [0], chunk.origin [1], chunk.origin [2]);
+				chunkObject.obj = obj;
 			}
 				
 			var tileSize = Tilesets.GetTileSize (tileRows, tilePixelSize);
@@ -73,19 +82,8 @@ namespace AssemblyCSharp
 			var m = Mesher.Mesh (chunk, this, tileRows, tileSize, vertices, transparent);
 			chunkObject.vertices = vertices;
 
-			var name = transparent ? "mesh_transparent" : "mesh";
-			var obj = new GameObject(name, new [] { 
-				typeof(MeshRenderer), 
-				typeof(MeshFilter), 
-				typeof(MeshCollider) });
-			
-			obj.GetComponent<MeshFilter> ().sharedMesh = m;
-			obj.GetComponent<MeshRenderer> ().material = transparent ? transparentMaterial : material;
-			obj.GetComponent<MeshCollider> ().sharedMesh = m;
-			obj.transform.parent = gameObject.transform;
-			obj.transform.localPosition = new Vector3 (chunk.origin [0], chunk.origin [1], chunk.origin [2]);
-		
-			chunkObject.obj = obj;
+			chunkObject.obj.GetComponent<MeshFilter> ().sharedMesh = m;
+			chunkObject.obj.GetComponent<MeshCollider> ().sharedMesh = m;
 		}
 	}
 }

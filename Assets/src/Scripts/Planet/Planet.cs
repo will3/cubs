@@ -18,7 +18,13 @@ public class Planet : MonoBehaviour {
 	private bool drawNormals = false;
 	private bool drawConnections = false;
 
-	private Chunks chunks;
+	private Chunks _chunks;
+
+	public Chunks chunks {
+		get {
+			return _chunks;
+		}
+	}
 
 	private Water water;
 
@@ -46,8 +52,8 @@ public class Planet : MonoBehaviour {
 		Game.Instance.Planet = this;
 		Game.Instance.Terrian = _terrian;
 			
-		chunks = GetComponent<Chunks> ();
-		Debug.Assert (chunks != null);
+		_chunks = GetComponent<Chunks> ();
+		Debug.Assert (_chunks != null);
 
 		water = GetComponent<Water> ();
 		Debug.Assert (water != null);
@@ -60,8 +66,8 @@ public class Planet : MonoBehaviour {
 
 		loadData ();
 
-		chunks.UpdateMesh ();
-		water.Load (chunks);
+		_chunks.UpdateMesh ();
+		water.Load (_chunks);
 
 		var dragCamera = Camera.main.GetComponent<DragCamera> ();
 		if (dragCamera != null) {
@@ -116,12 +122,7 @@ public class Planet : MonoBehaviour {
 		foreach (var kv in Terrian.map) {
 			var coord = kv.Key;
 			var block = kv.Value;
-			chunks.Set (coord.x, coord.y, coord.z, 
-				new Voxel (
-					coord, 
-					block.GetTextureId(), 
-					block.transparent, 
-					block.type == TerrianBlockType.Water));
+			_chunks.Set (coord.x, coord.y, coord.z, block.ToVoxel());
 		}
 	}
 
