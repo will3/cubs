@@ -50,9 +50,9 @@ public class Planet : MonoBehaviour {
 	/// <param name="coord">Coordinate.</param>
 	/// <param name="block">Block.</param>
 	public void AddBlock(Vector3i coord, TerrianBlock block) {
-		chunks.Set (coord.x, coord.y, coord.z, block.ToVoxel());
-
-		Terrian.ReloadConnectionsAround (coord);
+		chunks.Set (coord.x, coord.y, coord.z, block.ToVoxel ());
+		Terrian.SetVoxel (coord.x, coord.y, coord.z, block);
+		Terrian.ReloadAroundCoord (coord);
 	}
 		
 	void Start () {
@@ -93,16 +93,24 @@ public class Planet : MonoBehaviour {
 					if (surface.hasObject) {
 						continue;
 					}
+					if (surface.isWater) {
+						continue;
+					}
 					DebugUtil.DrawSurface (surface);
 				}
 			}
 		}
 
 		if (drawConnections) {
-			foreach (var connection in Terrian.AllConnections.Values) {
-				var point1 = gameObject.transform.TransformPoint (connection.a.pointAbove);
-				var point2 = gameObject.transform.TransformPoint (connection.b.pointAbove);
-				Debug.DrawLine (point1, point2, Color.red);
+			foreach (var surface in _terrian.AllSurfaces.Values) {
+				foreach (var connection in surface.connectionMap.Values) {
+					var point1 = gameObject.transform.TransformPoint (connection.surfaces[0].pointAbove);
+					var point2 = gameObject.transform.TransformPoint (connection.surfaces[1].pointAbove);
+					if (connection.hasWater) {
+						continue;
+					}
+					Debug.DrawLine (point1, point2, Color.red);	
+				}
 			}
 		}
 	}

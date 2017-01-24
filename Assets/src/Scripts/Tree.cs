@@ -18,6 +18,7 @@ public class Tree : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		billboard.up = Game.Instance.Planet.gameObject.transform.TransformDirection (blockComponent.blockCoord.surface.normal);
+		var normal = blockComponent.blockCoord.surface.normal;
+		billboard.up = Game.Instance.Planet.gameObject.transform.TransformDirection (normal);
 	}
 }

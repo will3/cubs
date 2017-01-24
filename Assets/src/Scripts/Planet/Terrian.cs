@@ -15,18 +15,12 @@ namespace AssemblyCSharp
 
 		public Dictionary<Vector3i, TerrianBlock> map = new Dictionary<Vector3i, TerrianBlock>();
 
-		public IDictionary<string, Connection> AllConnections {
-			get { return connectionLookUp; }	
-		}
-
 		public IDictionary<string, Surface> AllSurfaces {
 			get { return surfaceLookUp; }
 		}
 
 		private readonly Dictionary<string, Surface> surfaceLookUp = 
 			new Dictionary<string, Surface> ();
-		private readonly Dictionary<string, Connection> connectionLookUp = 
-			new Dictionary<string, Connection> ();
 
 		private const float maxDistanceBetweenSurfaces = 1000.0f;
 
@@ -44,15 +38,15 @@ namespace AssemblyCSharp
 			if (block == null) {
 				map.Remove (coord);
 			} else {
-				map [coord] =	 block;
+				map [coord] = block;
 			}
 		}
 
-		public bool HasVoxel(int i, int j, int k) {
+		private bool HasVoxel(int i, int j, int k) {
 			return GetVoxel (i, j, k) != null;
 		}
 
-		public bool HasVoxel(Vector3i v) {
+		private bool HasVoxel(Vector3i v) {
 			return HasVoxel (v.x, v.y, v.z);
 		}
 
@@ -76,34 +70,53 @@ namespace AssemblyCSharp
 		private void initSurfaces() {
 			foreach (var kv in map) {
 				var coord = kv.Key;
-				var block = kv.Value;
+				initSurfaces (coord);
+			}
+		}
 
-				foreach (var dir in DirUtils.Dirs) {
-					var hasGravity = block.HasGravity (dir);
-					if (!hasGravity) {
-						continue;
-					}
-					var nextCoord = coord + DirUtils.GetUnitVector (dir);
-					if (HasVoxel (nextCoord)) {
-						continue;
-					}
-					var surface = block.AddSurface (dir);
-					surface.isWater = block.type == TerrianBlockType.Water;
-					surfaceLookUp [surface.identifier] = surface;
+		private void clearSurfaces(Vector3i coord) {
+			var block = map[coord];
+
+			foreach (var surface in block.surfaceMap.Values) {
+				surfaceLookUp.Remove (surface.identifier);
+			}
+			block.surfaceMap.Clear ();
+		}
+
+		private void initSurfaces(Vector3i coord) {
+			var block = map[coord];
+
+			foreach (var dir in DirUtils.Dirs) {
+				var hasGravity = block.HasGravity (dir);
+				// Has gravity
+				if (!hasGravity) {
+					continue;
 				}
+				// Not blocked
+				var nextCoord = coord + DirUtils.GetUnitVector (dir);
+				if (HasVoxel (nextCoord)) {
+					continue;
+				}
+				var surface = block.AddSurface (dir);
+				surface.isWater = block.type == TerrianBlockType.Water;
+				surfaceLookUp [surface.identifier] = surface;
 			}
 		}
 
 		private void initGravity() {
 			foreach (var kv in map) {
 				var coord = kv.Key;
-				var block = kv.Value;
+				initGravity (coord);
+			}
+		}
 
-				var dirs = GetGravities (coord.to_f() - center);
+		private void initGravity(Vector3i coord) {
+			var block = map[coord];
 
-				foreach (var dir in dirs) {
-					block.SetGravity (dir);
-				}
+			var dirs = GetGravities (coord.to_f() - center);
+
+			foreach (var dir in dirs) {
+				block.SetGravity (dir);
 			}
 		}
 			
@@ -158,12 +171,40 @@ namespace AssemblyCSharp
 			return v.normalized;
 		}			
 
-		public void ReloadConnectionsAround(Vector3i coord) {
-			reloadConnections (coord);
-			var coords = coordsAround (coord);
+
+		// TODO should go by surface coords
+		public void ReloadAroundCoord(Vector3i coord) {
+			clearConnections (coord);
+			clearSurfaces (coord);
+					
+			var coords = coordsAround (coord, 2);
 
 			foreach (var coord2 in coords) {
-				reloadConnections (coord2);
+				if (!map.ContainsKey (coord2)) {
+					continue;
+				}
+				clearSurfaces (coord2);
+				clearConnections (coord2);
+			}
+
+			initGravity (coord);
+
+			initSurfaces (coord);
+
+			foreach (var coord2 in coords) {
+				if (!map.ContainsKey (coord2)) {
+					continue;
+				}
+				initSurfaces (coord2);
+			}
+
+			initConnections (coord);
+
+			foreach (var coord2 in coords) {
+				if (!map.ContainsKey (coord2)) {
+					continue;
+				}
+				initConnections (coord2);
 			}
 		}
 
@@ -266,29 +307,20 @@ namespace AssemblyCSharp
 			}
 		}
 
-		private void reloadConnections(Vector3i coord) {
-			clearConnections (coord);
-			initConnections (coord);
-		}
-
 		private void clearConnections(Vector3i coord) {
 			var block1 = map [coord];
 			foreach (var surface1 in block1.surfaceMap.Values) {
 				graph.remove_vertex (surface1.identifier);
-
-				foreach (var connection in surface1.connectionMap.Values) {
-					connectionLookUp.Remove (connection.identifier);
-					surface1.ClearConnections ();
-				}
+				surface1.ClearConnections ();
 			}
 		}
 
-		private IList<Vector3i> coordsAround(Vector3i coord) {
+		private IList<Vector3i> coordsAround(Vector3i coord, int dis = 1) {
 			var list = new List<Vector3i> ();
 
-			for (var i = -1; i <= 1; i++) {
-				for (var j = -1; j <= 1; j++) {
-					for (var k = -1; k <= 1; k++) {
+			for (var i = -dis; i <= dis; i++) {
+				for (var j = -dis; j <= dis; j++) {
+					for (var k = -dis; k <= dis; k++) {
 						if (i == 0 && j == 0 && k == 0) {
 							continue;
 						}
@@ -303,6 +335,7 @@ namespace AssemblyCSharp
 		}
 
 		private void initConnections(Vector3i coord) {
+
 			var block1 = map [coord];
 
 			foreach(var surface1 in block1.surfaceMap.Values) {
@@ -334,7 +367,6 @@ namespace AssemblyCSharp
 
 						var connection = new Connection (surface1, surface2, distance);
 
-						connectionLookUp [connection.identifier] = connection;
 						surface1.AddConnection (surface2.identifier, connection);
 						surfaceConnections [surface2.identifier] = distance;
 					}
@@ -364,11 +396,7 @@ namespace AssemblyCSharp
 		}
 
 		public Connection ConnectionBetween(Surface a, Surface b) {
-			var identifier = Connection.IdentifierForSurfaces (a, b);
-			if (connectionLookUp.ContainsKey (identifier)) {
-				return connectionLookUp [identifier];
-			}
-			return null;
+			return a.GetConnection (b.identifier);
 		}
 
 		public Path GetPath(Surface a, Surface b, int maxStep) {

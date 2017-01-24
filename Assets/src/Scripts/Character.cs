@@ -46,7 +46,7 @@ namespace AssemblyCSharp
 
 		private Billboard billboard;
 	
-		private BlockComponent blockComponent;
+		public BlockComponent blockComponent;
 
 		public BlockCoord blockCoord {
 			get {

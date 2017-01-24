@@ -4,21 +4,26 @@ namespace AssemblyCSharp
 {
 	public class Connection
 	{
-		public readonly Surface a;
-		public readonly Surface b;
+		private readonly Surface a;
+		private readonly Surface b;
 		public readonly String identifier;
 		public readonly float distance;
+		public readonly Surface[] surfaces;
+
+		public bool hasWater {
+			get {
+				return a.isWater || b.isWater;
+			}
+		}
 
 		public Connection (Surface a, Surface b, float distance)
 		{
 			this.a = a;
 			this.b = b;
+			this.surfaces = new [] {a, b};
 			this.distance = distance;
-			identifier = IdentifierForSurfaces (a, b);
-		}
 
-		public static string IdentifierForSurfaces(Surface a, Surface b) {
-			return a.identifier + "," + b.identifier;
+			identifier = a.identifier + "," + b.identifier;
 		}
 
 		public Surface OtherSurface(Surface surface) {
