@@ -116,9 +116,9 @@ namespace AssemblyCSharp
 
 		private bool HasVision(Character target) {
 			var planet = Game.Instance.Planet;
-			var a = planet.gameObject.transform.TransformPoint (blockComponent.blockCoord.surface.pointAbove);
+			var a = planet.gameObject.transform.TransformPoint (blockComponent.surface.pointAbove);
 			var b = target.transform.position + 
-				planet.gameObject.transform.TransformDirection(target.blockComponent.blockCoord.surface.normal) * 0.5f;
+				planet.gameObject.transform.TransformDirection(target.blockComponent.surface.normal) * 0.5f;
 			var dis = Vector3.Distance (a, b);
 
 			var ray = new Ray (a, (b - a).normalized);

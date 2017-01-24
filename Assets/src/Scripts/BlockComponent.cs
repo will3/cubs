@@ -3,18 +3,13 @@ using UnityEngine;
 
 namespace AssemblyCSharp
 {
-	public class BlockComponent : MonoBehaviour, IBlock
+	public class BlockComponent : MonoBehaviour
 	{
-		private readonly BlockCoord _blockCoord = new BlockCoord();
-
-		public BlockCoord blockCoord {
-			get {
-				return _blockCoord;
-			}
-		}
+		public Surface surface;
+		public Vector2 uv;
 			
 		void Start() {
-			if (blockCoord.surface == null) {
+			if (surface == null) {
 				gameObject.SetActive (false);
 				Destroy (gameObject);
 			}

@@ -30,7 +30,7 @@ public class Critter : MonoBehaviour {
 		blockComponent = GetComponent<BlockComponent> ();
 		Debug.Assert (blockComponent != null);
 
-		if (blockComponent.blockCoord.surface == null) {
+		if (blockComponent.surface == null) {
 			Destroy (gameObject);
 		}
 

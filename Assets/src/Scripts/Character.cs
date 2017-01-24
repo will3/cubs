@@ -48,12 +48,6 @@ namespace AssemblyCSharp
 	
 		public BlockComponent blockComponent;
 
-		public BlockCoord blockCoord {
-			get {
-				return blockComponent.blockCoord;
-			}
-		}
-
 		public void Start() {
 			blockComponent = GetComponent<BlockComponent> ();
 			Debug.Assert (blockComponent != null);

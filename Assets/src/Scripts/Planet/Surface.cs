@@ -26,7 +26,7 @@ namespace AssemblyCSharp
 
 		public bool isWater = false;
 
-		public IBlock block;
+		public BlockComponent block;
 
 		private readonly Dictionary<string, Connection> _connectionMap = new Dictionary<string, Connection> ();
 

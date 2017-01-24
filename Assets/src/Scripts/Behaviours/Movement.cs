@@ -40,7 +40,7 @@ namespace AssemblyCSharp
 
 			var startPoint = currentPath.path.Count == 1 ? 
 				currentPath.path [0] : 
-				character.blockComponent.blockCoord.surface.identifier;
+				character.blockComponent.surface.identifier;
 
 			// Already at destination
 			if (startPoint == target.identifier) {
@@ -73,8 +73,8 @@ namespace AssemblyCSharp
 		float waitTime = 1;
 			
 		public void StepPath() {
-			if (character.blockComponent.blockCoord.surface != null) {
-				DebugUtil.DrawPath (character.blockComponent.blockCoord.surface, currentPath);
+			if (character.blockComponent.surface != null) {
+				DebugUtil.DrawPath (character.blockComponent.surface, currentPath);
 			}
 
 			if (Done) {
@@ -105,7 +105,7 @@ namespace AssemblyCSharp
 
 			blockedTimeout = 0;
 
-			var currentSurface = blockComponent.blockCoord.surface;
+			var currentSurface = blockComponent.surface;
 
 			var distance = nextSurface.GetConnection (currentSurface.identifier).distance;
 			stepAmount += character.speed;
@@ -132,7 +132,7 @@ namespace AssemblyCSharp
 		}
 
 		public void Patrol() {
-			var currentSurface = blockComponent.blockCoord.surface;
+			var currentSurface = blockComponent.surface;
 
 			if (Done) {
 				var next = currentSurface.RandomConnectedSurfaceIdentifier;

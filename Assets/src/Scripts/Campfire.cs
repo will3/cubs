@@ -17,14 +17,14 @@ namespace AssemblyCSharp
 			blockComponent = GetComponentInChildren<BlockComponent> ();
 			Debug.Assert (blockComponent != null);
 
-			if (blockComponent.blockCoord.surface != null) {
+			if (blockComponent.surface != null) {
 				var planet = Game.Instance.Planet;
-				surfaces = planet.Terrian.FindSurfaces (blockComponent.blockCoord.surface, 2.9f);
+				surfaces = planet.Terrian.FindSurfaces (blockComponent.surface, 2.9f);
 			}
 		}
 
 		void Update() {
-			billboard.up = Game.Instance.Planet.gameObject.transform.TransformDirection (blockComponent.blockCoord.surface.normal);
+			billboard.up = Game.Instance.Planet.gameObject.transform.TransformDirection (blockComponent.surface.normal);
 
 			foreach (var surface in surfaces) {
 				DebugUtil.DrawSurface (surface);

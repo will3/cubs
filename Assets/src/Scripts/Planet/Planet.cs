@@ -29,19 +29,15 @@ public class Planet : MonoBehaviour {
 	/// </summary>
 	/// <param name="name">Name.</param>
 	/// <param name="blockCoord">Block coordinate.</param>
-	public GameObject Create(string name, BlockCoord blockCoord) {
+	public GameObject Create(string name, Surface surface, Vector2 uv = new Vector2()) {
 		var obj = Prefabs.Create (name);
 		obj.transform.parent = gameObject.transform.parent;
 
-		var block = (IBlock)obj.GetComponent<BlockComponent> ();
+		var block = obj.GetComponent<BlockComponent> ();
 
-		SetSurface (obj, block, blockCoord);
+		SetSurface (obj, block, surface, uv);
 
 		return obj;
-	}
-
-	public GameObject Create(string name, Surface surface) {
-		return Create (name, new BlockCoord (surface));
 	}
 
 	/// <summary>
@@ -115,36 +111,28 @@ public class Planet : MonoBehaviour {
 		}
 	}
 
-	public bool SetSurface(GameObject obj, IBlock block, BlockCoord blockCoord) {
-		var surface = blockCoord.surface;
-
+	public bool SetSurface(GameObject obj, BlockComponent blockComponent, Surface surface, Vector2 uv) {
 		if (surface.hasObject) {
 			return false;
 		}
 
-		if (block.blockCoord.surface != null) {
-			block.blockCoord.surface.block = null;
+		if (blockComponent.surface != null) {
+			blockComponent.surface.block = null;
 		}
 			
-		var point = surface.pointWithUV (blockCoord.uv);
+		var point = surface.pointWithUV (uv);
 		var position = gameObject.transform.TransformPoint (point);
 		obj.transform.position = position;
-		block.blockCoord.surface = surface;
-		surface.block = block;
+		blockComponent.surface = surface;
+		surface.block = blockComponent;
 
 		obj.transform.localRotation = surface.rotation;
 
 		return true;
 	}
 
-	public bool SetSurface(GameObject obj, IBlock block, Surface surface) {
-		var blockCoord = new BlockCoord ();
-		blockCoord.surface = surface;
-		return SetSurface (obj, block, blockCoord);
-	}
-
 	// Ratio should be more than 0 and less than or equal to 1
-	public bool LerpSurface(IBlock block, GameObject obj, Surface surface1, Surface surface2, float ratio) {
+	public bool LerpSurface(BlockComponent block, GameObject obj, Surface surface1, Surface surface2, float ratio) {
 		if (surface1.identifier == surface2.identifier) {
 			throw new Exception ("Invalid surface");
 		}
@@ -161,11 +149,11 @@ public class Planet : MonoBehaviour {
 		obj.transform.position = gameObject.transform.TransformPoint (position);
 
 		if (ratio == 1.0f) {
-			if (block.blockCoord.surface != null) {
-				block.blockCoord.surface.block = null;
+			if (block.surface != null) {
+				block.surface.block = null;
 			}
 
-			block.blockCoord.surface = surface2;
+			block.surface = surface2;
 		}
 
 		surface2.block = block;

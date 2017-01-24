@@ -21,11 +21,11 @@ namespace AssemblyCSharp
 
 		void Update () {
 			spawnCooldown.Update ();
-			billboard.up = Game.Instance.Planet.gameObject.transform.TransformDirection (blockComponent.blockCoord.surface.normal);
+			billboard.up = Game.Instance.Planet.gameObject.transform.TransformDirection (blockComponent.surface.normal);
 
 			var planet = Game.Instance.Planet;
 
-			var next = blockComponent.blockCoord.surface.RandomConnectedSurfaceIdentifier;
+			var next = blockComponent.surface.RandomConnectedSurfaceIdentifier;
 
 			if (next != null) {
 				var nextSurface = planet.Terrian.GetSurface (next);
