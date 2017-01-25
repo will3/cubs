@@ -30,6 +30,10 @@ namespace AssemblyCSharp
 
 			return false;
 		}
+
+		public void SetRandom() {
+			counter = UnityEngine.Random.Range (0.0f, max);
+		}
 	}
 }
 

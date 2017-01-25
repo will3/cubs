@@ -58,26 +58,7 @@ namespace AssemblyCSharp {
 			updateCooldown.Update ();
 
 			if (updateCooldown.Ready ()) {
-				var verticesByChunksId = new Dictionary<string, Vector3[]> ();
-				foreach (var chunk in chunks.chunks.Values) {
-					var mesh = chunk.transparentObj.obj.GetComponent<MeshFilter> ().sharedMesh;
-					verticesByChunksId [chunk.id] = mesh.vertices;
-				}
-
-				foreach (var point in waterMap.points.Values) {
-					var amount = Mathf.Sin (Time.time * 2.0f + point.worldPosition.x + point.worldPosition.y + point.worldPosition.z) * waveMag + waveOffset;
-					var offset = point.normal * amount;
-
-					foreach (var vertice in point.vertices) {
-						var vertices = verticesByChunksId [vertice.chunkId];
-						var nextPosition = vertice.position + offset;
-						vertices [vertice.index] = nextPosition;
-					}
-				}
-
-				foreach (var chunk in chunks.chunks.Values) {
-					chunk.transparentObj.obj.GetComponent<MeshFilter> ().sharedMesh.vertices = verticesByChunksId [chunk.id];
-				}
+				UpdateWater ();
 			}
 				
 			if (showWaterNormals) {
@@ -87,6 +68,29 @@ namespace AssemblyCSharp {
 
 					Debug.DrawLine (a, b);
 				}
+			}
+		}
+
+		private void UpdateWater() {
+			var verticesByChunksId = new Dictionary<string, Vector3[]> ();
+			foreach (var chunk in chunks.chunks.Values) {
+				var mesh = chunk.transparentObj.obj.GetComponent<MeshFilter> ().sharedMesh;
+				verticesByChunksId [chunk.id] = mesh.vertices;
+			}
+
+			foreach (var point in waterMap.points.Values) {
+				var amount = Mathf.Sin (Time.time * 2.0f + point.worldPosition.x + point.worldPosition.y + point.worldPosition.z) * waveMag + waveOffset;
+				var offset = point.normal * amount;
+
+				foreach (var vertice in point.vertices) {
+					var vertices = verticesByChunksId [vertice.chunkId];
+					var nextPosition = vertice.position + offset;
+					vertices [vertice.index] = nextPosition;
+				}
+			}
+
+			foreach (var chunk in chunks.chunks.Values) {
+				chunk.transparentObj.obj.GetComponent<MeshFilter> ().sharedMesh.vertices = verticesByChunksId [chunk.id];
 			}
 		}
 	}

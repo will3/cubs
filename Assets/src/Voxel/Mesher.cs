@@ -59,13 +59,19 @@ namespace AssemblyCSharp
 							coord [v] = z;
 
 							var a = (x == -1) 
-								? chunks.Get(coord[0] + chunk.origin[0], coord[1] + chunk.origin[1], coord[2] + chunk.origin[2])
-								: chunk.Get (coord[0], coord[1], coord[2]);
+								? chunks.Get (coord [0] + chunk.origin [0], coord [1] + chunk.origin [1], coord [2] + chunk.origin [2])
+								: chunk.Get (coord [0], coord [1], coord [2]);
 							coord [d] += 1;
 
-							var b = coord[d] == chunk.size 
-								? chunks.Get(coord[0] + chunk.origin[0], coord[1] + chunk.origin[1], coord[2] + chunk.origin[2])
-								: chunk.Get (coord[0], coord[1], coord[2]);
+							var b = coord [d] == chunk.size 
+								? chunks.Get (coord [0] + chunk.origin [0], coord [1] + chunk.origin [1], coord [2] + chunk.origin [2])
+								: chunk.Get (coord [0], coord [1], coord [2]);
+
+							if (x == -1 && b == null) {
+								continue;
+							} else if (coord [d] == chunk.size && a == null) {
+								continue;
+							}
 
 							var front = false;
 							var back = false;

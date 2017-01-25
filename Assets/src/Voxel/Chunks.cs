@@ -65,7 +65,7 @@ namespace AssemblyCSharp
 		private void UpdateChunkMesh(Chunk chunk, bool transparent) {
 			var chunkObject = transparent ? chunk.transparentObj : chunk.obj;
 			if (chunkObject.obj == null) {
-				var name = transparent ? "mesh_transparent" : "mesh";
+				var name = transparent ? "trans_" + chunk.id : "mesh_" + chunk.id;
 				var obj = new GameObject(name, new [] { 
 					typeof(MeshRenderer), 
 					typeof(MeshFilter), 
