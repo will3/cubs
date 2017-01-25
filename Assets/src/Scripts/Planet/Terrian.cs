@@ -11,7 +11,12 @@ namespace AssemblyCSharp
 	{
 		public readonly int size;
 		private float heightDiff = 4.0f;
-		private int seaLevel = 10;
+		private int seaLevelFromTop = 4;
+		private int seaLevel {
+			get {
+				return size / 2 - seaLevelFromTop;
+			}
+		}
 
 		public Dictionary<Vector3i, TerrianBlock> map = new Dictionary<Vector3i, TerrianBlock>();
 

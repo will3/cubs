@@ -75,11 +75,6 @@ public class Planet : MonoBehaviour {
 
 		chunks.UpdateMesh ();
 		water.Load (chunks);
-
-		var dragCamera = Camera.main.GetComponent<DragCamera> ();
-		if (dragCamera != null) {
-			dragCamera.distance = size * 1.3f;
-		}
 	}
 
 	void Update () {

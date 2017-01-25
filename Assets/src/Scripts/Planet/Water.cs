@@ -60,7 +60,8 @@ namespace AssemblyCSharp {
 			if (updateCooldown.Ready ()) {
 				var verticesByChunksId = new Dictionary<string, Vector3[]> ();
 				foreach (var chunk in chunks.chunks.Values) {
-					verticesByChunksId [chunk.id] = chunk.transparentObj.obj.GetComponent<MeshFilter> ().sharedMesh.vertices;
+					var mesh = chunk.transparentObj.obj.GetComponent<MeshFilter> ().sharedMesh;
+					verticesByChunksId [chunk.id] = mesh.vertices;
 				}
 
 				foreach (var point in waterMap.points.Values) {
