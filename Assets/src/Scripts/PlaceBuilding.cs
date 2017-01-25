@@ -76,20 +76,20 @@ public class PlaceBuilding : MonoBehaviour {
 		if (placement == null) {
 			return;
 		}
-
-		var surface = planet.GetSurface ();
-		if (surface == null) {
-			return;
-		}
 			
 		if (placement.prefabName != null) {
-			planet.Create (placement.prefabName, surface);
+			var surface = planet.GetSurface ();
+			if (surface != null) {
+				planet.Create (placement.prefabName, surface);
+			}
 		}
 
 		if (placement.type.HasValue) {
-			var coord = surface.coordAbove;
-			var block = new TerrianBlock (coord, placement.type.Value);
-			planet.AddBlock (coord, block);
+			var coord = planet.GetCoord ();
+			if (coord.HasValue) {
+				var block = new TerrianBlock (coord.Value, placement.type.Value);
+				planet.AddBlock (coord.Value, block);	
+			}
 		}
 	}
 }

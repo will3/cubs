@@ -76,6 +76,11 @@ namespace AssemblyCSharp
 				obj.transform.localPosition = new Vector3 (chunk.origin [0], chunk.origin [1], chunk.origin [2]);
 				chunkObject.obj = obj;
 			}
+
+			var prevMesh = chunkObject.obj.GetComponent<MeshFilter> ().sharedMesh;
+			if (prevMesh != null) {
+				Destroy (prevMesh);
+			}
 				
 			var tileSize = Tilesets.GetTileSize (tileRows, tilePixelSize);
 			var vertices = new List<Vertice> ();

@@ -194,6 +194,30 @@ public class Planet : MonoBehaviour {
 		return null;
 	}
 
+	public Vector3i? GetCoord() {
+		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		return GetCoord (ray);
+	}
+
+	public Vector3i? GetCoord(Ray ray) {
+		RaycastHit hit;
+		if (Physics.Raycast (ray, out hit)) {
+			var diff = hit.point - ray.origin;
+
+			var pointAbove = hit.point - diff.normalized * 0.01f;
+			pointAbove = transform.InverseTransformPoint (pointAbove);
+
+			var coordAbove = new Vector3i (
+				(int)Mathf.Round (pointAbove.x),
+				(int)Mathf.Round (pointAbove.y),
+				(int)Mathf.Round (pointAbove.z));
+
+			return coordAbove;
+		}
+
+		return null;
+	}
+
 	private void loadData() {
 		foreach (var kv in Terrian.map) {
 			var coord = kv.Key;
