@@ -30,35 +30,35 @@ public class PlaceBuilding : MonoBehaviour {
 	}
 
 	void Update () {
-		if (Input.GetKeyDown (KeyCode.Q)) {
+		if (Input.GetKeyDown (KeyCode.Alpha1)) {
 			placement = Placement.Prefab (Prefabs.Swordsman);
 		} 
 
-		if (Input.GetKeyDown (KeyCode.W)) {
+		if (Input.GetKeyDown (KeyCode.Alpha2)) {
 			placement = Placement.Prefab (Prefabs.Spider);
 		}
 
-		if (Input.GetKeyDown (KeyCode.E)) {
+		if (Input.GetKeyDown (KeyCode.Alpha3)) {
 			placement = Placement.Prefab (Prefabs.Archer);
 		}
 
-		if (Input.GetKeyDown (KeyCode.R)) {
+		if (Input.GetKeyDown (KeyCode.Alpha4)) {
 			placement = Placement.Prefab (Prefabs.Objects.Trees.OfSize (Random.Range (0.0f, 1.0f)));
 		}
 
-		if (Input.GetKeyDown (KeyCode.T)) {
+		if (Input.GetKeyDown (KeyCode.Alpha5)) {
 			placement = Placement.Prefab (Prefabs.Objects.EvilGate);
 		}
 
-		if (Input.GetKeyDown(KeyCode.Y)) {
+		if (Input.GetKeyDown(KeyCode.Alpha6)) {
 			placement = Placement.Prefab (Prefabs.Objects.Campfire);
 		}
 
-		if (Input.GetKeyDown (KeyCode.A)) {
+		if (Input.GetKeyDown (KeyCode.Alpha7)) {
 			placement = Placement.Block (TerrianBlockType.StoneWall);
 		}
 
-		if (Input.GetKeyDown (KeyCode.S)) {
+		if (Input.GetKeyDown (KeyCode.Alpha8)) {
 			placement = Placement.Block (TerrianBlockType.Grass);
 		}
 

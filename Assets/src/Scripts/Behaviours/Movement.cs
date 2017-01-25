@@ -74,7 +74,7 @@ namespace AssemblyCSharp
 			
 		public void StepPath() {
 			if (character.blockComponent.surface != null) {
-				DebugUtil.DrawPath (character.blockComponent.surface, currentPath);
+//				DebugUtil.DrawPath (character.blockComponent.surface, currentPath);
 			}
 
 			if (Done) {

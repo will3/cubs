@@ -8,8 +8,7 @@ namespace AssemblyCSharp
 	{
 		private Billboard billboard;
 		private BlockComponent blockComponent;
-
-		private IEnumerable<Surface> surfaces;
+		List<Surface> surfaces;
 
 		void Start() {
 			billboard = GetComponentInChildren<Billboard> ();
@@ -19,16 +18,24 @@ namespace AssemblyCSharp
 
 			if (blockComponent.surface != null) {
 				var planet = Game.Instance.Planet;
-				surfaces = planet.Terrian.FindSurfaces (blockComponent.surface, 2.9f);
+				surfaces = new List<Surface> (planet.Terrian.FindSurfaces (blockComponent.surface, 5.0f));
+
+				var num = 7;
+				for (var i = 0; i < num; i++) {
+					if (surfaces.Count == 0) {
+						break;
+					}
+					var index = UnityEngine.Random.Range (0, surfaces.Count - 1);
+					var surface = surfaces [index];
+					surfaces.RemoveAt (index);
+
+					planet.Create (Prefabs.Swordsman, surface);
+				}
 			}
 		}
 
 		void Update() {
 			billboard.up = Game.Instance.Planet.gameObject.transform.TransformDirection (blockComponent.surface.normal);
-
-			foreach (var surface in surfaces) {
-				DebugUtil.DrawSurface (surface);
-			}
 		}
 	}
 }
