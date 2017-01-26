@@ -9,7 +9,7 @@ public class Bush : MonoBehaviour {
 	private BlockComponent blockComponent;
 
 	void Start () {
-		billboard = GetComponent<Billboard> ();
+		billboard = GetComponentInChildren<Billboard> ();
 		blockComponent = GetComponent<BlockComponent> ();
 	}
 

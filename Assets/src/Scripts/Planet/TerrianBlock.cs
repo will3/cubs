@@ -9,7 +9,8 @@ namespace AssemblyCSharp
 		Stone,
 		Grass,
 		Water,
-		StoneWall
+		StoneWall,
+		WireframeBlue
 	}
 
 	public class TerrianBlock
@@ -25,7 +26,8 @@ namespace AssemblyCSharp
 			{ TerrianBlockType.Grass, 0 },
 			{ TerrianBlockType.Stone, 1 },
 			{ TerrianBlockType.Water, 2 },
-			{ TerrianBlockType.StoneWall, 8 }
+			{ TerrianBlockType.StoneWall, 8 },
+			{ TerrianBlockType.WireframeBlue, 16 },
 		};
 
 		public bool transparent {
