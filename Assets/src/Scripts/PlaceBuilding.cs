@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using AssemblyCSharp;
+using Cubiquity;
 
 public class PlaceBuilding : MonoBehaviour {
 	private Placement placement;
@@ -15,10 +16,53 @@ public class PlaceBuilding : MonoBehaviour {
 	void Start () {
 		Game.Instance.placeBuilding = this;
 	}
-		
+
+	private Vector3i? startCoord;
+	private List<Vector3i> lastBlocks = new List<Vector3i> ();
+
 	void Update () {
-		if (Input.GetKeyDown (KeyCode.Mouse0)) {
-			HandlePlacement ();
+		var planet = Game.Instance.Planet;
+
+		if (Input.GetKey (KeyCode.Mouse0) && buildingMode) {
+			var coord = planet.GetCoord ();
+			if (coord.HasValue) {
+				if (!startCoord.HasValue) {
+					startCoord = coord.Value;
+				} else {
+					var endCoord = coord.Value;
+
+					foreach (var c in lastBlocks) {
+						planet.RemoveBuildingPlacement (c);	
+					}
+					lastBlocks.Clear ();
+
+					var xs = new List<int> (){ startCoord.Value.x, endCoord.x };
+					var ys = new List<int> (){ startCoord.Value.y, endCoord.y };
+					var zs = new List<int> (){ startCoord.Value.z, endCoord.z };
+					xs.Sort ();
+					ys.Sort ();
+					zs.Sort ();
+
+					for (var i = xs[0]; i <= xs[1]; i++) {
+						for (var j = ys[0]; j <= ys[1]; j++) {
+							for (var k = zs[0]; k <= zs[1]; k++) {
+								var c = new Vector3i (i, j, k);
+
+								var block = new TerrianBlock (c, TerrianBlockType.WireframeBlue);
+								block.placementBlock = new TerrianBlock (c, placement.type.Value);
+								planet.AddBlock (c, block);
+
+								lastBlocks.Add (c);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (Input.GetKeyUp (KeyCode.Mouse0) && buildingMode) {
+			lastBlocks.Clear ();
+			startCoord = null;
 		}
 
 		if (Input.GetKeyDown (KeyCode.Escape)) {
@@ -47,9 +91,7 @@ public class PlaceBuilding : MonoBehaviour {
 		if (placement.type.HasValue) {
 			var coord = planet.GetCoord ();
 			if (coord.HasValue) {
-				var block = new TerrianBlock (coord.Value, TerrianBlockType.WireframeBlue);
-//				var block = new TerrianBlock (coord.Value, placement.type.Value);
-				planet.AddBlock (coord.Value, block);
+		
 			}
 		}
 	}

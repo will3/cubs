@@ -16,6 +16,8 @@ namespace AssemblyCSharp
 		public int tileRows = 8;
 		public int tilePixelSize = 8;
 
+		public bool hasCollider = true;
+
 		public Voxel Get(int i, int j, int k) {
 			var origin = GetOrigin (i, j, k);
 			var key = origin [0] + "," + origin [1] + "," + origin [2];
@@ -66,10 +68,11 @@ namespace AssemblyCSharp
 			var chunkObject = transparent ? chunk.transparentObj : chunk.obj;
 			if (chunkObject.obj == null) {
 				var name = transparent ? "trans_" + chunk.id : "mesh_" + chunk.id;
-				var obj = new GameObject(name, new [] { 
-					typeof(MeshRenderer), 
-					typeof(MeshFilter), 
-					typeof(MeshCollider) });
+				var components = hasCollider ? 
+					new [] { typeof(MeshRenderer), typeof(MeshFilter), typeof(MeshCollider) } :
+					new [] { typeof(MeshRenderer), typeof(MeshFilter) };
+				
+				var obj = new GameObject(name, components);
 
 				obj.GetComponent<MeshRenderer> ().material = transparent ? transparentMaterial : material;
 				obj.transform.parent = gameObject.transform;
@@ -88,7 +91,9 @@ namespace AssemblyCSharp
 			chunkObject.vertices = vertices;
 
 			chunkObject.obj.GetComponent<MeshFilter> ().sharedMesh = m;
-			chunkObject.obj.GetComponent<MeshCollider> ().sharedMesh = m;
+			if (hasCollider) {
+				chunkObject.obj.GetComponent<MeshCollider> ().sharedMesh = m;
+			}
 		}
 	}
 }

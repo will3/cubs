@@ -33,8 +33,11 @@ public class BuildMenuController : MonoBehaviour {
 	public void OnOptionSelected(string option) {
 		if (option == "stone_wall") {
 			var placement = Placement.Block (TerrianBlockType.StoneWall);
-			Game.Instance.placeBuilding.StartPlacement(placement);
+			Game.Instance.placeBuilding.StartPlacement (placement);
 			HideMenu ();
+		} else if (option == "camp_fire") {
+			var placement = Placement.Prefab (Prefabs.Objects.Campfire);
+			Game.Instance.placeBuilding.StartPlacement (placement);
 		}
 	}
 

@@ -20,6 +20,8 @@ namespace AssemblyCSharp
 
 		public readonly Dictionary<Dir, Surface> surfaceMap = new Dictionary<Dir, Surface>();
 
+		public TerrianBlock placementBlock;
+
 		private Dir gravityMask;
 
 		private static Dictionary<TerrianBlockType, int> textureIds = new Dictionary<TerrianBlockType, int> {
@@ -29,10 +31,16 @@ namespace AssemblyCSharp
 			{ TerrianBlockType.StoneWall, 8 },
 			{ TerrianBlockType.WireframeBlue, 16 },
 		};
+			
+		public bool placeholder {
+			get {
+				return type == TerrianBlockType.WireframeBlue;
+			}
+		}
 
 		public bool transparent {
 			get {
-				return type == TerrianBlockType.Water;
+				return type == TerrianBlockType.Water || placeholder;
 			}
 		}
 
