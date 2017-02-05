@@ -7,6 +7,7 @@ public class PlanetController : MonoBehaviour {
 
 	private Quaternion nextQuaternion;
 	private Vector3 nextPosition;
+	public float cameraDistanceRatio = 2.0f;
 
 	void Awake() {
 		Game.Instance.planetController = this;
@@ -19,7 +20,7 @@ public class PlanetController : MonoBehaviour {
 		var dragCamera = Camera.main.GetComponent<DragCamera> ();
 		if (dragCamera != null) {
 			var planet = Game.Instance.Planet;
-			dragCamera.distance = planet.size * 1.3f;
+			dragCamera.distance = planet.size * cameraDistanceRatio;
 		}
 	}
 	

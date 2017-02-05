@@ -37,7 +37,7 @@ namespace AssemblyCSharp {
 	{
 		public bool showWaterNormals = false;
 		public float waveMag = 0.2f;
-		public float waveOffset = -0.2f;
+		public float waveOffset = -0.4f;
 
 		private WaterMap waterMap = new WaterMap();
 

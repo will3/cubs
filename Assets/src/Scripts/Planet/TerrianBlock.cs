@@ -78,11 +78,13 @@ namespace AssemblyCSharp
 		}
 
 		public Voxel ToVoxel() {
-			return new Voxel (
-				coord, 
-				GetTextureId (), 
-				transparent, 
-				type == TerrianBlockType.Water);
+			var voxel = new Voxel ();
+			voxel.coord = coord;
+			var textureId = GetTextureId ();
+			voxel.textureIds = new[] { textureId, textureId, textureId, textureId, textureId, textureId };
+			voxel.transparent = transparent;
+			voxel.isWater = type == TerrianBlockType.Water;
+			return voxel;
 		}
 	}
 }

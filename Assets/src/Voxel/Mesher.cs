@@ -28,6 +28,10 @@ namespace AssemblyCSharp
 
 	public class Mesher
 	{
+		private static void meshPlane(Vector3 a, Vector3 b, Vector3 c, Vector3 d, int index, Vector3 normal) {
+			
+		}
+
 		public static Mesh Mesh(Chunk chunk, Chunks chunks, int tileRows, float tileSize, List<Vertice> verticeList, bool transparent) {
 			var m = new Mesh ();
 			var vertices = new List<Vector3> ();
