@@ -26,12 +26,43 @@ namespace AssemblyCSharp
 		}
 	}
 
+	struct MCoord {
+		public int i;
+		public int j;
+		public int k;
+		public int d;
+
+		public MCoord(int i, int j, int k, int d) {
+			this.i = i;
+			this.j = j;
+			this.k = k;
+			this.d = d;
+		}
+
+		public Vector3i vector {
+			get {
+				var coord = new [] { 0, 0, 0 };
+
+				coord [d] = i;
+				coord [(d + 1) % 3] = j;
+				coord [(d + 2) % 3] = k;
+
+				return new Vector3i (coord [0], coord [1], coord [2]);
+			}
+		}
+
+		public MCoord add (int di, int dj, int dk){
+			return new MCoord (i + di, j + dj, k + dk, d);
+		}
+	}
+
 	public class Mesher
 	{
 		public static Mesh Mesh(Chunk chunk, Chunks chunks, int tileRows, float tileSize, List<Vertice> verticeList, bool transparent) {
 			var m = new Mesh ();
 			var vertices = new List<Vector3> ();
 			var uvs = new List<Vector2> ();
+			var uv2s = new List<Vector2> ();
 			var triangles = new List<int> ();
 			var normals = new List<Vector3> ();
 
@@ -141,6 +172,23 @@ namespace AssemblyCSharp
 							} else {
 								triangles.AddRange (new [] { 0 + index, 2 + index, 1 + index, 0 + index, 3 + index, 2 + index });
 							}
+
+							var mCoord = new MCoord (front ? x + 1 : x, y - 1, z - 1, d);
+
+							var s00 = getV(chunks, mCoord.add (0, 0, 0), chunk.origin);
+							var s01 = getV(chunks, mCoord.add (0, 1, 0), chunk.origin);
+							var s02 = getV(chunks, mCoord.add (0, 2, 0), chunk.origin);
+							var s10 = getV(chunks, mCoord.add (0, 0, 1), chunk.origin);
+//							var s11 = getV(chunks, mCoord.add (0, 1, 1), chunk.origin);
+							var s12 = getV(chunks, mCoord.add (0, 2, 1), chunk.origin);
+							var s20 = getV(chunks, mCoord.add (0, 0, 2), chunk.origin);
+							var s21 = getV(chunks, mCoord.add (0, 1, 2), chunk.origin);
+							var s22 = getV(chunks, mCoord.add (0, 2, 2), chunk.origin);
+
+							uv2s.Add (new Vector2 (vertexAO (s10, s01, s00), 0));
+							uv2s.Add (new Vector2 (vertexAO (s01, s12, s02), 0));
+							uv2s.Add (new Vector2 (vertexAO (s12, s21, s22), 0));
+							uv2s.Add (new Vector2 (vertexAO (s21, s10, s20), 0));
 						}		
 					}
 				}
@@ -148,10 +196,23 @@ namespace AssemblyCSharp
 
 			m.vertices = vertices.ToArray();
 			m.uv = uvs.ToArray();
+			m.uv2 = uv2s.ToArray ();
 			m.triangles = triangles.ToArray();
 			m.normals = normals.ToArray ();
 	
 			return m;
+		}
+
+		private static int getV(Chunks chunks, MCoord mCoord, int[] origin) {
+			var vector = mCoord.vector;
+			return chunks.Get(vector.x + origin[0], vector.y + origin[1], vector.z + origin[2]) != null ? 1 : 0;
+		}
+
+		private static float vertexAO(int s1, int s2, int c) {
+			if (s1 > 0 && s2 > 0) {
+				return 1 / 4.0f;
+			}
+			return (3 - (s1 + s2 + c)) / 4.0f;
 		}
 	}
 }

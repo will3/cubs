@@ -21,6 +21,8 @@ namespace AssemblyCSharp
 
 		public TerrianBlock placementBlock;
 
+		public bool belowWater = false;
+
 		private Dir gravityMask;
 
 		private static Dictionary<TerrianBlockType, int> textureIds = new Dictionary<TerrianBlockType, int> {
@@ -47,7 +49,7 @@ namespace AssemblyCSharp
 				var list = new List<int> ();
 				for (var i = 0; i < 6; i++) {
 					Dir gravity = DirUtils.GetDir (i);
-					if (HasGravity (gravity)) {
+					if (!belowWater && HasGravity (gravity)) {
 						list.Add (textureIds [TerrianBlockType.Grass]);
 					} else {
 						list.Add (textureIds [TerrianBlockType.Soil]);

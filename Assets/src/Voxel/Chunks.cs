@@ -29,6 +29,10 @@ namespace AssemblyCSharp
 			return  chunks [key].Get (i - origin[0], j - origin[1], k - origin[2]);
 		}
 
+		public bool Has(int i, int j, int k) {
+			return Get (i, j, k) != null;
+		}
+
 		public void Set(int i, int j, int k, Voxel v) {
 			var origin = GetOrigin (i, j, k);
 			var key = origin [0] + "," + origin [1] + "," + origin [2];

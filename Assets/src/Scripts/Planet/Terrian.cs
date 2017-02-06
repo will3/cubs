@@ -10,6 +10,7 @@ namespace AssemblyCSharp
 	public class Terrian : PathFindingContext
 	{
 		public readonly int size;
+		public float gravityTolerance = 2.0f;
 		private float heightDiff = 4.0f;
 		private int seaLevelFromTop = 4;
 		private int seaLevel {
@@ -65,8 +66,8 @@ namespace AssemblyCSharp
 		public void Generate() {
 			center = new Vector3 (size, size, size) * 0.5f - new Vector3 (0.5f, 0.5f, 0.5f);
 			initBlocks ();
-			generateHeightMap ();
 			generateBiomes ();
+			generateHeightMap ();
 			initGravity ();
 			initSurfaces ();
 			initConnections ();
@@ -118,14 +119,14 @@ namespace AssemblyCSharp
 		private void initGravity(Vector3i coord) {
 			var block = map[coord];
 
-			var dirs = GetGravities (coord.to_f() - center);
+			var dirs = GetGravities (coord.to_f() - center, gravityTolerance);
 
 			foreach (var dir in dirs) {
 				block.SetGravity (dir);
 			}
 		}
 			
-		public IList<Dir> GetGravities(Vector3 position, float tolerance = 1.5f) {
+		public IList<Dir> GetGravities(Vector3 position, float tolerance) {
 			var max = Math.Max (Math.Abs(position.x), 
 				Math.Max(Math.Abs(position.y), Math.Abs(position.z)));
 
@@ -162,7 +163,7 @@ namespace AssemblyCSharp
 			return dirs;
 		}
 
-		public Vector3 GetGravityDir(Vector3 position, float tolerance = 1.5f) {
+		public Vector3 GetGravityDir(Vector3 position, float tolerance) {
 			var dirs = GetGravities (position, tolerance);
 			if (dirs.Count == 0) {
 				return new Vector3 ();
@@ -265,10 +266,7 @@ namespace AssemblyCSharp
 
 							for (var k = 0; k < height; k++) {
 								coord [d] = startD + k * dir;
-							
-								var dis = new Vector3(coord[0], coord[1], coord[2]) - center;
-								var max = Math.Max (Math.Abs(dis.x), Math.Max (Math.Abs(dis.y), Math.Abs(dis.z)));
-								if (max <= seaLevel) {
+								if (belowSeaLevel(coord[0], coord[1], coord[2])) {
 									SetVoxel (coord [0], coord [1], coord [2], 
 										new TerrianBlock (new Vector3i(coord[0], coord[1], coord[2]), TerrianBlockType.Water));
 								}else {
@@ -279,6 +277,12 @@ namespace AssemblyCSharp
 					}
 				}
 			}
+		}
+
+		private bool belowSeaLevel(int i, int j, int k, bool includeWaterLevel = false) {
+			var dis = new Vector3 (i, j, k) - center;
+			var max = Math.Max (Math.Abs(dis.x), Math.Max (Math.Abs(dis.y), Math.Abs(dis.z)));
+			return includeWaterLevel ? max < seaLevel : max <= seaLevel;
 		}
 
 		private void generateBiomes() {
@@ -301,6 +305,9 @@ namespace AssemblyCSharp
 							var coord = new Vector3i (i, j, k);
 							SetVoxel (i, j, k, new TerrianBlock (coord, TerrianBlockType.Stone));
 						}
+
+						var block = GetVoxel (i, j, k);
+						block.belowWater = belowSeaLevel (i, j, k, true);
 					}
 				}
 			}

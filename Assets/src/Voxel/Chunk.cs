@@ -20,6 +20,12 @@ namespace AssemblyCSharp
 		public int[] _origin;
 		public string id;
 
+		public Vector3 originVector {
+			get {
+				return new Vector3 (_origin [0], _origin [1], _origin [2]);
+			}
+		}
+
 		public int[] origin {
 			get {
 				return _origin;

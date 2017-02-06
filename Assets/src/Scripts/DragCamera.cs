@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class DragCamera : MonoBehaviour {
 	public Vector3 target = new Vector3();
-	public Quaternion quaternion = Quaternion.Euler(-45, 45, 0);
 	public float distance = 100;
 
+	private Quaternion quaternion = Quaternion.Euler(-45, 45, 0);
 	private Camera _camera;
 
 	// Use this for initialization

@@ -18,19 +18,14 @@ public class Planet : MonoBehaviour {
 	public bool drawNormals = false;
 	public bool drawConnections = false;
 
-	public Chunks layerBuildingChunks;
-
 	private Chunks chunks;
 
 	private Water water;
 
 	private Trees trees;
 
-	/// <summary>
-	/// Create and place a block component 
-	/// </summary>
-	/// <param name="name">Name.</param>
-	/// <param name="blockCoord">Block coordinate.</param>
+	public bool hideTrees = false;
+
 	public GameObject Create(string name, Surface surface, Vector2 uv = new Vector2()) {
 		var obj = Prefabs.Create (name);
 		obj.transform.parent = gameObject.transform.parent;
@@ -41,21 +36,11 @@ public class Planet : MonoBehaviour {
 
 		return obj;
 	}
-
-	/// <summary>
-	/// Add block to terrian
-	/// </summary>
-	/// <param name="coord">Coordinate.</param>
-	/// <param name="block">Block.</param>
+		
 	public void AddBlock(Vector3i coord, TerrianBlock block) {
 		chunks.Set (coord.x, coord.y, coord.z, block.ToVoxel ());
 		Terrian.SetVoxel (coord.x, coord.y, coord.z, block);
 		Terrian.ReloadAroundCoord (coord);
-	}
-		
-	public void RemoveBuildingPlacement(Vector3i coord) {
-		this.layerBuildingChunks.Set (coord.x, coord.y, coord.z, null);
-		Terrian.SetVoxel (coord.x, coord.y, coord.z, null);
 	}
 		
 	void Start () {
@@ -76,7 +61,10 @@ public class Planet : MonoBehaviour {
 
 		trees = new Trees (this, _terrian);
 		trees.treesNum = treesNum;
-		trees.Generate ();
+
+		if (!hideTrees) {
+			trees.Generate ();
+		}
 
 		loadData ();
 
