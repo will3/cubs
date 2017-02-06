@@ -48,13 +48,9 @@ public class Planet : MonoBehaviour {
 	/// <param name="coord">Coordinate.</param>
 	/// <param name="block">Block.</param>
 	public void AddBlock(Vector3i coord, TerrianBlock block) {
-		var chunks = block.type == TerrianBlockType.WireframeBlue ? this.layerBuildingChunks : this.chunks;
-
 		chunks.Set (coord.x, coord.y, coord.z, block.ToVoxel ());
 		Terrian.SetVoxel (coord.x, coord.y, coord.z, block);
-		if (!block.placeholder) {
-			Terrian.ReloadAroundCoord (coord);
-		}
+		Terrian.ReloadAroundCoord (coord);
 	}
 		
 	public void RemoveBuildingPlacement(Vector3i coord) {

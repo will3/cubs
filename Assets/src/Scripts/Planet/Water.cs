@@ -38,6 +38,7 @@ namespace AssemblyCSharp {
 		public bool showWaterNormals = false;
 		public float waveMag = 0.2f;
 		public float waveOffset = -0.4f;
+		public float waveFrequency = 2.0f;
 
 		private WaterMap waterMap = new WaterMap();
 
@@ -79,7 +80,7 @@ namespace AssemblyCSharp {
 			}
 
 			foreach (var point in waterMap.points.Values) {
-				var amount = Mathf.Sin (Time.time * 2.0f + point.worldPosition.x + point.worldPosition.y + point.worldPosition.z) * waveMag + waveOffset;
+				var amount = Mathf.Sin (Time.time * waveFrequency + point.worldPosition.x + point.worldPosition.y + point.worldPosition.z) * waveMag + waveOffset;
 				var offset = point.normal * amount;
 
 				foreach (var vertice in point.vertices) {

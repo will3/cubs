@@ -28,10 +28,6 @@ namespace AssemblyCSharp
 
 	public class Mesher
 	{
-		private static void meshPlane(Vector3 a, Vector3 b, Vector3 c, Vector3 d, int index, Vector3 normal) {
-			
-		}
-
 		public static Mesh Mesh(Chunk chunk, Chunks chunks, int tileRows, float tileSize, List<Vertice> verticeList, bool transparent) {
 			var m = new Mesh ();
 			var vertices = new List<Vector3> ();
@@ -120,8 +116,8 @@ namespace AssemblyCSharp
 
 							var uv1 = new Vector2 (uvOffset.x, uvOffset.y);
 							var uv2 = new Vector2 (uvOffset.x + tileSize, uvOffset.y);
-							var uv3 = new Vector2 (uvOffset.x + tileSize, uvOffset.y + tileSize);
-							var uv4 = new Vector2 (uvOffset.x, uvOffset.y + tileSize);
+							var uv3 = new Vector2 (uvOffset.x + tileSize, uvOffset.y - tileSize);
+							var uv4 = new Vector2 (uvOffset.x, uvOffset.y - tileSize);
 
 							uvs.Add (uv1);
 							uvs.Add (uv2);

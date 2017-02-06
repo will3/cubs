@@ -7,10 +7,9 @@ namespace AssemblyCSharp
 {
 	public enum TerrianBlockType {
 		Stone,
+		Soil,
 		Grass,
 		Water,
-		StoneWall,
-		WireframeBlue
 	}
 
 	public class TerrianBlock
@@ -25,22 +24,15 @@ namespace AssemblyCSharp
 		private Dir gravityMask;
 
 		private static Dictionary<TerrianBlockType, int> textureIds = new Dictionary<TerrianBlockType, int> {
+			{ TerrianBlockType.Soil, 2 },
 			{ TerrianBlockType.Grass, 0 },
 			{ TerrianBlockType.Stone, 1 },
-			{ TerrianBlockType.Water, 2 },
-			{ TerrianBlockType.StoneWall, 8 },
-			{ TerrianBlockType.WireframeBlue, 16 },
+			{ TerrianBlockType.Water, 206 },
 		};
 			
-		public bool placeholder {
-			get {
-				return type == TerrianBlockType.WireframeBlue;
-			}
-		}
-
 		public bool transparent {
 			get {
-				return type == TerrianBlockType.Water || placeholder;
+				return type == TerrianBlockType.Water;
 			}
 		}
 
@@ -50,8 +42,21 @@ namespace AssemblyCSharp
 			this.type = type;
 		}
 
-		public int GetTextureId() {
-			return textureIds [type];
+		public int[] GetTextureIds() {
+			if (this.type == TerrianBlockType.Soil) {
+				var list = new List<int> ();
+				for (var i = 0; i < 6; i++) {
+					Dir gravity = DirUtils.GetDir (i);
+					if (HasGravity (gravity)) {
+						list.Add (textureIds [TerrianBlockType.Grass]);
+					} else {
+						list.Add (textureIds [TerrianBlockType.Soil]);
+					}
+				}
+				return list.ToArray ();
+			}
+			var textureId = textureIds [type];
+			return new []{ textureId, textureId, textureId, textureId, textureId, textureId };
 		}
 
 		public void SetGravity(Dir dir) {
@@ -80,8 +85,7 @@ namespace AssemblyCSharp
 		public Voxel ToVoxel() {
 			var voxel = new Voxel ();
 			voxel.coord = coord;
-			var textureId = GetTextureId ();
-			voxel.textureIds = new[] { textureId, textureId, textureId, textureId, textureId, textureId };
+			voxel.textureIds = GetTextureIds ();
 			voxel.transparent = transparent;
 			voxel.isWater = type == TerrianBlockType.Water;
 			return voxel;

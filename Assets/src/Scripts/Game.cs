@@ -8,7 +8,6 @@ namespace AssemblyCSharp
 		public Planet Planet;
 		public Terrian Terrian;
 		public PlanetController planetController;
-		public PlaceBuilding placeBuilding;
 
 		private static Game _instance;
 		public static Game Instance {

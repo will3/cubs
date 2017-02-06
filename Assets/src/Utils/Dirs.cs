@@ -81,6 +81,11 @@ namespace AssemblyCSharp
 			return Dir.None;
 		}
 
+		private static Dir[] dirList = new [] { Dir.Left, Dir.Right, Dir.Down, Dir.Up, Dir.Back, Dir.Forward };
+		public static Dir GetDir(int index) {
+			return dirList [index];
+		}
+
 		public static Quaternion GetRotation(Dir dir) {
 			switch (dir) {
 			case Dir.Up:

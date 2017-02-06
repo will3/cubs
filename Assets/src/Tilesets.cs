@@ -9,11 +9,11 @@ namespace AssemblyCSharp
 			int column = id % rows;
 			int row = id / rows;
 
-			return new Vector2 (1 / (float)rows * (float)column, 1 / (float)rows * (float)row);
+			return new Vector2 (1 / (float)rows * (float)column, 1 - 1 / (float)rows * (float)row);
 		}
 
 		public static float GetTileSize(int rows, int pixelSize) {
-			return 0.98f / (float)rows;
+			return 1.0f / (float)rows;
 		}
 	}
 }
