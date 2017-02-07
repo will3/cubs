@@ -10,7 +10,7 @@ namespace AssemblyCSharp
 	public class Terrian : PathFindingContext
 	{
 		public readonly int size;
-		public float gravityTolerance = 2.0f;
+		public float gravityTolerance = 1.5f;
 		private float heightDiff = 4.0f;
 		private int seaLevelFromTop = 4;
 		private int seaLevel {
