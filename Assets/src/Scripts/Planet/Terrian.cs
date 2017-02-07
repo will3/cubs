@@ -124,6 +124,12 @@ namespace AssemblyCSharp
 			foreach (var dir in dirs) {
 				block.SetGravity (dir);
 			}
+				
+			block.mainGravity = GetGravities(coord.to_f() - center, 1.0f)[0];
+
+			var nextCoord = coord.NextCoord (block.mainGravity);
+
+			block.hasTop = HasVoxel (nextCoord);
 		}
 			
 		public IList<Dir> GetGravities(Vector3 position, float tolerance) {

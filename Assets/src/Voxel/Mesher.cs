@@ -142,13 +142,41 @@ namespace AssemblyCSharp
 							vertices.Add (v4);
 
 							f = d * 2 + (front ? 1 : 0);									
-							textureId = (front ? a : b).textureIds[f];
+							var voxel = front ? a : b;
+							textureId = voxel.textureIds[f];
 							uvOffset=  Tilesets.GetOffset (textureId, tileRows);
 
-							var uv1 = new Vector2 (uvOffset.x, uvOffset.y);
-							var uv2 = new Vector2 (uvOffset.x + tileSize, uvOffset.y);
-							var uv3 = new Vector2 (uvOffset.x + tileSize, uvOffset.y - tileSize);
-							var uv4 = new Vector2 (uvOffset.x, uvOffset.y - tileSize);
+							var up = voxel.up;
+							var upD = (int)(up / 2);
+
+							Vector2 uv1, uv2, uv3, uv4;
+
+							if (u * 2 == up) {
+								uv4 = new Vector2 (uvOffset.x, uvOffset.y);
+								uv1 = new Vector2 (uvOffset.x + tileSize, uvOffset.y);
+								uv2 = new Vector2 (uvOffset.x + tileSize, uvOffset.y - tileSize);
+								uv3 = new Vector2 (uvOffset.x, uvOffset.y - tileSize);
+							} else if (u * 2 + 1 == up) {
+								uv2 = new Vector2 (uvOffset.x, uvOffset.y);
+								uv3 = new Vector2 (uvOffset.x + tileSize, uvOffset.y);
+								uv4 = new Vector2 (uvOffset.x + tileSize, uvOffset.y - tileSize);
+								uv1 = new Vector2 (uvOffset.x, uvOffset.y - tileSize);
+							} else if (v * 2 == up) {
+								uv1 = new Vector2 (uvOffset.x, uvOffset.y);
+								uv2 = new Vector2 (uvOffset.x + tileSize, uvOffset.y);
+								uv3 = new Vector2 (uvOffset.x + tileSize, uvOffset.y - tileSize);
+								uv4 = new Vector2 (uvOffset.x, uvOffset.y - tileSize);
+							} else if (v * 2 + 1 == up) {								
+								uv1 = new Vector2 (uvOffset.x, uvOffset.y - tileSize);
+								uv2 = new Vector2 (uvOffset.x + tileSize, uvOffset.y - tileSize);
+								uv3 = new Vector2 (uvOffset.x + tileSize, uvOffset.y);
+								uv4 = new Vector2 (uvOffset.x, uvOffset.y);
+							} else {
+								uv1 = new Vector2 (uvOffset.x, uvOffset.y);
+								uv2 = new Vector2 (uvOffset.x + tileSize, uvOffset.y);
+								uv3 = new Vector2 (uvOffset.x + tileSize, uvOffset.y - tileSize);
+								uv4 = new Vector2 (uvOffset.x, uvOffset.y - tileSize);
+							}
 
 							uvs.Add (uv1);
 							uvs.Add (uv2);

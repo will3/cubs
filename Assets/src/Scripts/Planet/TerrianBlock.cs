@@ -10,6 +10,7 @@ namespace AssemblyCSharp
 		Soil,
 		Grass,
 		Water,
+		GrassWithSoil
 	}
 
 	public class TerrianBlock
@@ -25,10 +26,15 @@ namespace AssemblyCSharp
 
 		private Dir gravityMask;
 
+		public Dir mainGravity;
+
+		public bool hasTop = false;
+
 		private static Dictionary<TerrianBlockType, int> textureIds = new Dictionary<TerrianBlockType, int> {
 			{ TerrianBlockType.Soil, 2 },
 			{ TerrianBlockType.Grass, 0 },
 			{ TerrianBlockType.Stone, 1 },
+			{ TerrianBlockType.GrassWithSoil, 3 },
 			{ TerrianBlockType.Water, 206 },
 		};
 			
@@ -49,8 +55,12 @@ namespace AssemblyCSharp
 				var list = new List<int> ();
 				for (var i = 0; i < 6; i++) {
 					Dir gravity = DirUtils.GetDir (i);
+					Dir opposite = DirUtils.GetOpposite (gravity);
+
 					if (!belowWater && HasGravity (gravity)) {
 						list.Add (textureIds [TerrianBlockType.Grass]);
+					} else if (!belowWater && !HasGravity (opposite) && !hasTop) {
+						list.Add (textureIds [TerrianBlockType.GrassWithSoil]);	
 					} else {
 						list.Add (textureIds [TerrianBlockType.Soil]);
 					}
@@ -90,6 +100,7 @@ namespace AssemblyCSharp
 			voxel.textureIds = GetTextureIds ();
 			voxel.transparent = transparent;
 			voxel.isWater = type == TerrianBlockType.Water;
+			voxel.up = DirUtils.GetIdentifier (mainGravity);
 			return voxel;
 		}
 	}

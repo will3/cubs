@@ -48,6 +48,25 @@ namespace AssemblyCSharp
 			return zero;
 		}
 
+		public static Dir GetOpposite(Dir dir) {
+			switch (dir) {
+			case Dir.Up:
+				return Dir.Down;
+			case Dir.Down:
+				return Dir.Up;
+			case Dir.Left:
+				return Dir.Right;
+			case Dir.Right:
+				return Dir.Left;
+			case Dir.Forward:
+				return Dir.Back;
+			case Dir.Back:
+				return Dir.Forward;
+			}
+
+			throw new Exception ("Invalid state");
+		}
+
 		// Given direction, return uv vectors for dir, only positive vectors are used
 		public static Vector3[] GetUV(Dir dir) {
 			switch (dir) {
@@ -79,6 +98,23 @@ namespace AssemblyCSharp
 				return Dir.Back;
 			} 
 			return Dir.None;
+		}
+			
+		public static int GetIdentifier (Dir dir) {
+			if (dir == Dir.Left) {
+				return 0;
+			} else if (dir == Dir.Right) {
+				return 1;
+			} else if (dir == Dir.Down) {
+				return 2;
+			} else if (dir == Dir.Up) {
+				return 3;
+			} else if (dir == Dir.Back) {
+				return 4;
+			} else if (dir == Dir.Forward) {
+				return 5;
+			}
+			throw new Exception ("Invalid state");
 		}
 
 		private static Dir[] dirList = new [] { Dir.Left, Dir.Right, Dir.Down, Dir.Up, Dir.Back, Dir.Forward };

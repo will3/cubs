@@ -11,10 +11,9 @@ namespace AssemblyCSharp
 		public int[] textureIds; // Left, right, down, top, back forward
 		public bool transparent;
 		public bool isWater;
-		public bool isRamp;
-		public int rampAxis;
-		public bool rampUp;
-		public bool rampLeft;
+
+		// Up direction
+		public int up;
 	}
 }
 
