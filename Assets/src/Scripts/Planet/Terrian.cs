@@ -282,7 +282,7 @@ namespace AssemblyCSharp
 		private bool belowSeaLevel(int i, int j, int k, bool includeWaterLevel = false) {
 			var dis = new Vector3 (i, j, k) - center;
 			var max = Math.Max (Math.Abs(dis.x), Math.Max (Math.Abs(dis.y), Math.Abs(dis.z)));
-			return includeWaterLevel ? max < seaLevel : max <= seaLevel;
+			return includeWaterLevel ? max < seaLevel - 1 : max <= seaLevel;
 		}
 
 		private void generateBiomes() {
