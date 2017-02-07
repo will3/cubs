@@ -64,7 +64,7 @@ namespace AssemblyCSharp
 		}
 
 		public void Generate() {
-			center = new Vector3 (size, size, size) * 0.5f - new Vector3 (0.5f, 0.5f, 0.5f);
+			center = new Vector3 (size, size, size) * 0.5f;
 			initBlocks ();
 			generateBiomes ();
 			generateHeightMap ();
@@ -119,17 +119,22 @@ namespace AssemblyCSharp
 		private void initGravity(Vector3i coord) {
 			var block = map[coord];
 
-			var dirs = GetGravities (coord.to_f() - center, gravityTolerance);
+			var pos = coord.to_f () - center;
+			var dirs = GetGravities (pos, gravityTolerance);
 
 			foreach (var dir in dirs) {
 				block.SetGravity (dir);
 			}
 				
-			block.mainGravity = GetGravities(coord.to_f() - center, 1.0f)[0];
+			var gravities = GetGravities (pos, 1.0f);
+			if (gravities.Count > 0) {
+				block.mainGravity = gravities [0];
+			}
 
-			var nextCoord = coord.NextCoord (block.mainGravity);
-
-			block.hasTop = HasVoxel (nextCoord);
+			if (block.mainGravity.HasValue) {
+				var nextCoord = coord.NextCoord (block.mainGravity.Value);
+				block.hasTop = HasVoxel (nextCoord);
+			}
 		}
 			
 		public IList<Dir> GetGravities(Vector3 position, float tolerance) {
@@ -170,6 +175,10 @@ namespace AssemblyCSharp
 		}
 
 		public Vector3 GetGravityDir(Vector3 position, float tolerance) {
+			return GetGravityVector (position, tolerance).normalized;
+		}			
+
+		public Vector3 GetGravityVector(Vector3 position, float tolerance) {
 			var dirs = GetGravities (position, tolerance);
 			if (dirs.Count == 0) {
 				return new Vector3 ();
@@ -180,8 +189,8 @@ namespace AssemblyCSharp
 				v += DirUtils.GetUnitVector (dir).to_f ();
 			}
 
-			return v.normalized;
-		}			
+			return v;
+		}
 
 
 		// TODO should go by surface coords

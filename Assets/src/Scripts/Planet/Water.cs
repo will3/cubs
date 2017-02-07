@@ -8,10 +8,12 @@ namespace AssemblyCSharp {
 		public readonly Vector3 worldPosition;
 		public readonly Vector3 normal;
 		public readonly List<Vertice> vertices = new List<Vertice>();
+		public readonly float gravityLength;
 
-		public WaterPoint(Vector3 worldPosition, Vector3 normal) {
+		public WaterPoint(Vector3 worldPosition, Vector3 normal, float gravityLength) {
 			this.worldPosition = worldPosition;
 			this.normal = normal;
+			this.gravityLength = gravityLength;
 		}
 	}
 
@@ -25,8 +27,9 @@ namespace AssemblyCSharp {
 				.TransformPoint (vertice.position);
 
 			if (!points.ContainsKey (worldPosition)) {
-				var gravity = terrian.GetGravityDir (worldPosition, 1.0f);
-				points [worldPosition] = new WaterPoint (worldPosition, gravity);
+				var gravityVector = terrian.GetGravityVector (worldPosition, 1.0f);
+				var gravity = gravityVector.normalized;
+				points [worldPosition] = new WaterPoint (worldPosition, gravity, gravityVector.magnitude);
 			}
 
 			points [worldPosition].vertices.Add (vertice);
@@ -55,11 +58,16 @@ namespace AssemblyCSharp {
 			this.chunks = chunks;
 		}
 
+		void Start() {
+			UpdateWater (false);
+		}
+
 		void Update() {
+			return;
 			updateCooldown.Update ();
 
 			if (updateCooldown.Ready ()) {
-				UpdateWater ();
+				UpdateWater (true);
 			}
 				
 			if (showWaterNormals) {
@@ -72,7 +80,7 @@ namespace AssemblyCSharp {
 			}
 		}
 
-		private void UpdateWater() {
+		private void UpdateWater(bool wave) {
 			var verticesByChunksId = new Dictionary<string, Vector3[]> ();
 			foreach (var chunk in chunks.chunks.Values) {
 				var mesh = chunk.transparentObj.obj.GetComponent<MeshFilter> ().sharedMesh;
@@ -80,7 +88,10 @@ namespace AssemblyCSharp {
 			}
 
 			foreach (var point in waterMap.points.Values) {
-				var amount = Mathf.Sin (Time.time * waveFrequency + point.worldPosition.x + point.worldPosition.y + point.worldPosition.z) * waveMag + waveOffset;
+				var amount = wave ?
+					Mathf.Sin (Time.time * waveFrequency + point.worldPosition.x + point.worldPosition.y + point.worldPosition.z) * waveMag + waveOffset :
+					waveOffset;
+				amount *= point.gravityLength;
 				var offset = point.normal * amount;
 
 				foreach (var vertice in point.vertices) {

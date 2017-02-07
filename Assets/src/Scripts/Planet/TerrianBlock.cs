@@ -26,7 +26,7 @@ namespace AssemblyCSharp
 
 		private Dir gravityMask;
 
-		public Dir mainGravity;
+		public Dir? mainGravity;
 
 		public bool hasTop = false;
 
@@ -100,7 +100,10 @@ namespace AssemblyCSharp
 			voxel.textureIds = GetTextureIds ();
 			voxel.transparent = transparent;
 			voxel.isWater = type == TerrianBlockType.Water;
-			voxel.up = DirUtils.GetIdentifier (mainGravity);
+			if (mainGravity.HasValue) {
+				voxel.up = DirUtils.GetIdentifier (mainGravity.Value);
+			}
+
 			return voxel;
 		}
 	}
