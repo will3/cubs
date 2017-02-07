@@ -26,16 +26,6 @@ namespace AssemblyCSharp
 			}
 			public static string EvilGate = "Objects/evil_gate/evil_gate";
 			public static string Campfire = "Objects/camp_fire/camp_fire";
-			public static class Bushes
-			{
-				public static string WithBerries(bool flag) {
-					if (flag) {
-						return "Objects/planets/bush_0";
-					} else {
-						return "Objects/planets/bush_1";
-					}
-				}
-			}
 		}
 
 		public static GameObject Create(string name) {
