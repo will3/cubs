@@ -12,6 +12,6 @@ features:
 
 Preview:
 
-![path finding](https://github.com/will3/Cubical-planet/blob/feature/voxel/preview1.jpg | width=100)
-![critters](https://github.com/will3/Cubical-planet/blob/feature/voxel/preview2.jpg | width=100)
-![water physics](https://github.com/will3/Cubical-planet/blob/feature/voxel/preview3.jpg | width=100)
+<img src="https://github.com/will3/Cubical-planet/blob/feature/voxel/preview1.jpg" width="100">
+<img src="https://github.com/will3/Cubical-planet/blob/feature/voxel/preview2.jpg" width="100">
+<img src="https://github.com/will3/Cubical-planet/blob/feature/voxel/preview3.jpg" width="100">
