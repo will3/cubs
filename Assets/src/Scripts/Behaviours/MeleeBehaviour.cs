@@ -17,14 +17,18 @@ namespace AssemblyCSharp
 		private Animator animator;
 
 		private CritterAnimationEvents animationEvents;
+
+		private BlockComponent blockComponent;
 			
 		public void Start() {
 			character = GetComponent<Character> ();
 			Debug.Assert (character != null);
 			animator = GetComponentInChildren<Animator> ();
 			Debug.Assert (animator != null);
+			blockComponent = GetComponent<BlockComponent> ();
+			Debug.Assert (blockComponent != null);
 
-			movement = new Movement (character);
+			movement = new Movement (character, blockComponent);
 			targeting = new Targeting (character);
 
 			animationEvents = animator.GetBehaviour<CritterAnimationEvents> ();
@@ -62,13 +66,13 @@ namespace AssemblyCSharp
 		{
 			var planet = Game.Instance.Planet;
 
-			var target = targetCharacter.blockCoord.surface;
+			var target = targetCharacter.blockComponent.surface;
 
 			movement.Move (target, true);
 
 			// If next to target
 			if (movement.Done) {
-				var connection = planet.Terrian.ConnectionBetween (character.blockCoord.surface, target);
+				var connection = planet.Terrian.ConnectionBetween (character.blockComponent.surface, target);
 			
 				if (connection != null) {
 					return true;

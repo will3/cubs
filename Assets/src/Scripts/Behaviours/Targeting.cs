@@ -16,23 +16,10 @@ namespace AssemblyCSharp
 
 		// Get targets sorted by distance
 		public IEnumerable<Character> GetTargets() {
-			var maxDisSq = character.vision * character.vision;
-			var transform = character.transform;
-
-			return GameObject
-				.FindObjectsOfType<Character> ()
-				.Where (u => {
-				if (u == character) {
-					return false;
-				}
-
-				if ((u.gameObject.transform.position - transform.position).sqrMagnitude > maxDisSq) {
-					return false;
-				}
-
-				return u.IsTarget (character);
-			})
-				.OrderBy (u => (u.gameObject.transform.position - transform.position).sqrMagnitude);
+			var search = new CharacterSearch ();
+			search.character = character;
+			search.maxDistance = character.vision;
+			return Characters.Instance.GetTargets (search);
 		}
 	}
 }

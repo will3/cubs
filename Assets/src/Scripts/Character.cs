@@ -1,5 +1,7 @@
 using System;
 using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AssemblyCSharp
 {
@@ -18,13 +20,11 @@ namespace AssemblyCSharp
 		public Vector2 centerLocation = new Vector2(0.0f, 0.5f);
 	}
 
-	public class Character : MonoBehaviour, IBlock, IDamagable {
+	public class Character : MonoBehaviour, IDamagable {
 
 		public string characterName = "<unnamed>";
 
 		public float idleLength = 0.1f;
-
-		public int patrolDis = 10;
 
 		public float speed = 0.04f;
 
@@ -46,19 +46,12 @@ namespace AssemblyCSharp
 
 		private Billboard billboard;
 	
-		#region IBlock implementation
-
-		private BlockCoord _blockCoord = new BlockCoord();
-
-		public BlockCoord blockCoord {
-			get {
-				return _blockCoord;
-			}
-		}
-
-		#endregion
+		public BlockComponent blockComponent;
 
 		public void Start() {
+			blockComponent = GetComponent<BlockComponent> ();
+			Debug.Assert (blockComponent != null);
+
 			damage.sourceName = characterName;
 
 			var animator = GetComponentInChildren<Animator> ();
@@ -67,6 +60,12 @@ namespace AssemblyCSharp
 			animator.SetIdleSpeed (animationInfo.idleSpeed);
 
 			billboard = GetComponentInChildren<Billboard> ();
+
+			Characters.Instance.Add (this);
+		}
+
+		public void OnDestroy() {
+			Characters.Instance.Remove (this);
 		}
 
 		public void Update() {
@@ -79,10 +78,6 @@ namespace AssemblyCSharp
 			get {
 				return hitPoints <= 0.0f;
 			}
-		}
-
-		public bool IsTarget(Character character) {
-			return this.isMonster != character.isMonster;
 		}
 
 		public Vector3 CalcAttackExitPoint() {
@@ -106,5 +101,51 @@ namespace AssemblyCSharp
 
 		#endregion
 	}
-	
+
+	public class CharacterSearch {
+		public float maxDistance = 0;
+		public Character character;
+	}
+
+	public class Characters {
+		private Characters() {}
+
+		private static Characters _instance;
+		public static Characters Instance {
+			get {
+				if (_instance == null) {
+					_instance = new Characters ();
+				}
+				return _instance;
+			}
+		}
+
+		private Dictionary<int, Character> characters = new Dictionary<int, Character>();
+
+		public void Add(Character character) {
+			characters[character.GetInstanceID()] = character;
+		}
+
+		public void Remove(Character character) {
+			characters.Remove (character.GetInstanceID ());
+		}
+
+		// Search for characters, returns in order of distance
+		public IEnumerable<Character> GetTargets(CharacterSearch search) {
+			var maxDisSq = search.maxDistance * search.maxDistance;
+
+			return characters.Values.Where (u => {
+				if (u == search.character) {
+					return false;
+				}
+
+				var disSq = (u.gameObject.transform.position - search.character.transform.position).sqrMagnitude;
+				if (disSq > maxDisSq) {
+					return false;
+				}
+
+				return u.isMonster != search.character.isMonster;
+			}).OrderBy (u => (u.gameObject.transform.position - search.character.transform.position).sqrMagnitude);
+		}
+	}
 }

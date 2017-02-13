@@ -12,6 +12,7 @@ namespace AssemblyCSharp
 		public IdleState(ICharacterBehaviour behaviour, Character character) {
 			this.character = character;
 			idleDoneCooldown = new Cooldown(character.idleLength);
+			idleDoneCooldown.SetRandom ();
 			this.behaviour = behaviour;
 		}
 

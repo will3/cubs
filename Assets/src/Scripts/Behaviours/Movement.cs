@@ -2,6 +2,7 @@
 using Dijkstras;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace AssemblyCSharp
 {
@@ -11,13 +12,16 @@ namespace AssemblyCSharp
 		private float stepRatio;
 		private readonly Path currentPath = new Path(new List<string>(), "");
 		private readonly Character character;
+		private readonly BlockComponent blockComponent;
 		private bool walking;
+
 		public bool Walking {
 			get { return walking; }
 		}
 
-		public Movement(Character character) {
+		public Movement(Character character, BlockComponent blockComponent) {
 			this.character = character;
+			this.blockComponent = blockComponent;
 		}
 
 		// Update route
@@ -36,7 +40,7 @@ namespace AssemblyCSharp
 
 			var startPoint = currentPath.path.Count == 1 ? 
 				currentPath.path [0] : 
-				character.blockCoord.surface.identifier;
+				character.blockComponent.surface.identifier;
 
 			// Already at destination
 			if (startPoint == target.identifier) {
@@ -64,10 +68,13 @@ namespace AssemblyCSharp
 				return currentPath.path.Count == 0 || currentPath.path.Count == 1 && currentPath.isNextTo;
 			}
 		}
+
+		float blockedTimeout = 0;
+		float waitTime = 1;
 			
 		public void StepPath() {
-			if (character.blockCoord.surface != null) {
-				DebugUtil.DrawPath (character.blockCoord.surface, currentPath);
+			if (character.blockComponent.surface != null) {
+//				DebugUtil.DrawPath (character.blockComponent.surface, currentPath);
 			}
 
 			if (Done) {
@@ -80,17 +87,27 @@ namespace AssemblyCSharp
 			var planet = Game.Instance.Planet;
 			var nextSurface = planet.Terrian.GetSurface (currentPath.path[0]);
 
-			// If next surface has object, reset path
+			// If next surface has object, pause
 			if (stepRatio == 0.0f && 
 				nextSurface.hasObject) {
 				walking = false;
-				currentPath.path.Clear ();
+
+				if (blockedTimeout == 0) {
+					blockedTimeout = Time.time + waitTime;
+				}
+
+				if (Time.time > blockedTimeout) {
+					currentPath.path.Clear ();
+				} 
+
 				return;
 			}
 
-			var currentSurface = character.blockCoord.surface;
+			blockedTimeout = 0;
 
-			var distance = nextSurface.DistanceTo (currentSurface);
+			var currentSurface = blockComponent.surface;
+
+			var distance = nextSurface.GetConnection (currentSurface.identifier).distance;
 			stepAmount += character.speed;
 
 			var ratio = stepAmount / distance;
@@ -101,7 +118,7 @@ namespace AssemblyCSharp
 			}
 
 			var a = character.transform.position;
-			planet.LerpSurface (character, character.gameObject, currentSurface, nextSurface, ratio);
+			planet.LerpSurface (character.blockComponent, character.gameObject, currentSurface, nextSurface, ratio);
 			var b = character.transform.position;
 
 			character.moveDirection = (b - a).normalized;
@@ -115,17 +132,13 @@ namespace AssemblyCSharp
 		}
 
 		public void Patrol() {
-			var planet = Game.Instance.Planet;
-			var currentSurface = character.blockCoord.surface;
+			var currentSurface = blockComponent.surface;
 
 			if (Done) {
-				var target = planet.RandomSurface (currentSurface, character.patrolDis);
-
-				if (target.identifier.Equals (currentSurface.identifier)) {
-					return;
+				var next = currentSurface.RandomConnectedSurfaceIdentifier;
+				if (next != null) {
+					currentPath.path.Add (next);
 				}
-
-				Move (target);
 			}
 		}
 	}
