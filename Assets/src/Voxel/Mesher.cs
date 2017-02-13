@@ -144,10 +144,10 @@ namespace AssemblyCSharp
 							f = d * 2 + (front ? 1 : 0);									
 							var voxel = front ? a : b;
 							textureId = voxel.textureIds[f];
+
 							uvOffset=  Tilesets.GetOffset (textureId, tileRows);
 
 							var up = voxel.up;
-							var upD = (int)(up / 2);
 
 							Vector2 uv1, uv2, uv3, uv4;
 

@@ -13,7 +13,7 @@ namespace AssemblyCSharp
 		}
 
 		public static float GetTileSize(int rows, int pixelSize) {
-			return 1.0f / (float)rows;
+			return 1.0f / (float)rows * (float)(pixelSize - 1) / (float)pixelSize;
 		}
 	}
 }

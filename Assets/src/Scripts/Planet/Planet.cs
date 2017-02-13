@@ -8,7 +8,6 @@ using System.Linq;
 
 public class Planet : MonoBehaviour {
 	public int size = 24;
-	public float treesNum = 1.0f;
 
 	private Terrian _terrian;
 	public Terrian Terrian {
@@ -21,10 +20,6 @@ public class Planet : MonoBehaviour {
 	private Chunks chunks;
 
 	private Water water;
-
-	private Trees trees;
-
-	public bool hideTrees = false;
 
 	public GameObject Create(string name, Surface surface, Vector2 uv = new Vector2()) {
 		var obj = Prefabs.Create (name);
@@ -58,13 +53,6 @@ public class Planet : MonoBehaviour {
 		gameObject.transform.position = center;
 
 		Terrian.Generate ();
-
-		trees = new Trees (this, _terrian);
-		trees.treesNum = treesNum;
-
-		if (!hideTrees) {
-			trees.Generate ();
-		}
 
 		loadData ();
 

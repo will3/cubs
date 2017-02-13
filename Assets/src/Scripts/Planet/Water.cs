@@ -63,7 +63,6 @@ namespace AssemblyCSharp {
 		}
 
 		void Update() {
-			return;
 			updateCooldown.Update ();
 
 			if (updateCooldown.Ready ()) {
