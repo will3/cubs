@@ -53,7 +53,7 @@ namespace AssemblyCSharp
 						UnityEngine.Random.Range (-0.3f, 0.3f), 
 						UnityEngine.Random.Range (-0.3f, 0.3f));
 
-					planet.Create (Prefabs.Objects.Trees.OfSize(size), surface, uv);
+					// planet.Create (Prefabs.Objects.Trees.OfSize(size), surface, uv);
 				}
 			}
 		}

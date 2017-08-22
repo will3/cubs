@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using Cubiquity;
 using System.Collections.Generic;
 
 namespace AssemblyCSharp {
@@ -63,20 +62,20 @@ namespace AssemblyCSharp {
 		}
 
 		void Update() {
-			updateCooldown.Update ();
+			//updateCooldown.Update ();
 
-			if (updateCooldown.Ready ()) {
-				UpdateWater (true);
-			}
+			//if (updateCooldown.Ready ()) {
+			//	UpdateWater (true);
+			//}
 				
-			if (showWaterNormals) {
-				foreach (var point in waterMap.points.Values) {
-					var a = Game.Instance.planetController.gameObject.transform.TransformPoint (point.worldPosition);
-					var b = Game.Instance.planetController.gameObject.transform.TransformPoint (point.worldPosition + point.normal * 0.5f);
+			//if (showWaterNormals) {
+			//	foreach (var point in waterMap.points.Values) {
+			//		var a = Game.Instance.planetController.gameObject.transform.TransformPoint (point.worldPosition);
+			//		var b = Game.Instance.planetController.gameObject.transform.TransformPoint (point.worldPosition + point.normal * 0.5f);
 
-					Debug.DrawLine (a, b);
-				}
-			}
+			//		Debug.DrawLine (a, b);
+			//	}
+			//}
 		}
 
 		private void UpdateWater(bool wave) {
